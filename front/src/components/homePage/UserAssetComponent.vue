@@ -1,7 +1,7 @@
 <template>
   <div class="asset-card">
-    <!-- 헤더 -->
-    <div class="header">
+    <!-- 타이틀 헤더 -->
+    <div class="title-header">
       <h2 class="title">✨ {{ userName }}의 현재 자산 상황 ✨</h2>
     </div>
 
@@ -129,7 +129,7 @@ onMounted(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.header {
+.title-header {
   text-align: center;
   margin-bottom: 24px;
 }

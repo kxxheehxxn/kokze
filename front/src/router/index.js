@@ -10,6 +10,11 @@ const router = createRouter({
             name: 'home',
             component: HomeView,
         },
+        {
+            path: '/terms',
+            name: 'TermsPage',
+            component: () => import('@/pages/TermsPage.vue')
+        },
         ...authRoutes,
     ],
 });

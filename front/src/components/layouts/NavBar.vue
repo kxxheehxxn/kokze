@@ -81,7 +81,7 @@ const selectItem = (itemName) => {
   margin: 0;
   padding: 0;
   display: flex; /* 리스트 아이템들을 가로로 나열 */
-  gap: 30px; /* 아이템들 사이의 간격 */
+  gap: 100px; /* 아이템들 사이의 간격 */
 }
 
 .navbar-item {

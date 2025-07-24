@@ -36,21 +36,21 @@ const handleHamburgerMenuClick = (menuType) => {
 </script>
 
 <template>
-  <header class="header sticky-top">
-    <div class="header-container container-xxl">
-      <!-- 로고 영역 -->
+  <header class="header">
+    <div class="header-container">
+      <!-- 로고 영역 (왼쪽 고정) -->
       <router-link to="/" class="logo-section text-decoration-none">
         <div class="logo d-flex align-items-center">
           <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
         </div>
       </router-link>
 
-      <!-- 네비게이션 컴포넌트 공간 -->
-      <div class="navigation-space flex-grow-1 d-flex justify-content-center align-items-center">
+      <!-- 네비게이션 컴포넌트 공간 (중앙) -->
+      <div class="navigation-space d-flex justify-content-center align-items-center">
         <NavBar />
       </div>
 
-      <!-- 햄버거 메뉴 버튼 -->
+      <!-- 햄버거 메뉴 버튼 (오른쪽 고정) -->
       <div class="hamburger-section d-flex align-items-center">
         <button
           class="hamburger-btn btn d-flex align-items-center justify-content-center"
@@ -69,26 +69,37 @@ const handleHamburgerMenuClick = (menuType) => {
 
 <style scoped>
 .header {
+  position: fixed; /* fixed로 변경 */
+  top: 0; /* 상단에 고정 */
+  left: 0; /* 왼쪽부터 시작 */
+  right: 0; /* 오른쪽까지 확장 */
   z-index: 1000;
   background-color: transparent;
-  /* 안개 효과 추가 */
-  backdrop-filter: blur(2px); /* 픽셀 값을 조절하여 블러 강도 변경 */
+
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 .header-container {
-  padding: 0 15px;
+  width: 100%;
+  max-width: none !important;
+  padding: 0; /* 좌우 패딩 제거 */
   height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: transparent;
+  position: relative;
 }
 
-/* 로고 영역 */
+/* 로고 영역 (왼쪽 고정) */
 .logo-section {
   cursor: pointer;
   transition: transform 0.2s ease;
   background-color: transparent;
+  flex-shrink: 0;
+  margin-left: 20px; /* 로고에만 왼쪽 여백 */
 }
 
 .logo {
@@ -99,27 +110,30 @@ const handleHamburgerMenuClick = (menuType) => {
   transform: scale(1.05);
 }
 
-/* 로고 영역 */
 .logo-icon {
-  width: 54px; /* 햄버거 버튼보다 4px 크게 */
+  width: 54px;
   height: 54px;
   background: transparent !important;
   border-radius: 50%;
-  padding: 2px; /* 패딩 줄임 */
+  padding: 2px;
   object-fit: contain;
 }
 
-/* 네비게이션 공간 */
+/* 네비게이션 공간 (중앙) */
 .navigation-space {
-  margin: 0 40px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: transparent;
 }
 
+/* 햄버거 버튼 (오른쪽 고정) */
 .hamburger-section {
   background-color: transparent;
+  flex-shrink: 0;
+  margin-right: 20px; /* 햄버거 버튼에만 오른쪽 여백 */
 }
 
-/* 사이드바 메뉴 */
 .hamburger-btn {
   width: 50px;
   height: 50px;
@@ -132,10 +146,9 @@ const handleHamburgerMenuClick = (menuType) => {
   padding: 0;
 }
 
-/* 사이드바 버튼 내부 아이콘 스타일 */
 .hamburger-btn i {
-  color: white; /* 이미 추가하셨던 흰색 색상 */
-  font-size: 24px; /* 원하는 크기로 조절하세요 (예: 24px) */
+  color: white;
+  font-size: 24px;
 }
 
 .hamburger-btn:hover {
@@ -149,58 +162,5 @@ const handleHamburgerMenuClick = (menuType) => {
 
 .hamburger-btn:focus {
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-/* 반응형 */
-@media (max-width: 768px) {
-  .header-container {
-    padding: 0 15px;
-    height: 60px;
-  }
-
-  .navigation-space {
-    margin: 0 20px;
-  }
-
-  .logo-icon {
-    width: 46px; /* 햄버거보다 4px 크게 */
-    height: 46px;
-    padding: 2px;
-  }
-
-  .hamburger-btn {
-    width: 42px;
-    height: 42px;
-  }
-
-  .hamburger-btn i {
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-container {
-    padding: 0 10px;
-    height: 50px;
-  }
-
-  .navigation-space {
-    margin: 0 15px;
-  }
-
-  .logo-icon {
-    width: 39px; /* 햄버거보다 4px 크게 */
-    height: 39px;
-    padding: 2px;
-  }
-
-  .hamburger-btn {
-    width: 35px;
-    height: 35px;
-  }
-
-  .hamburger-btn i {
-    font-size: 14px;
-  }
 }
 </style>

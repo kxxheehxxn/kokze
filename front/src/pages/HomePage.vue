@@ -56,14 +56,18 @@ const scrollToTop = () => {
   min-height: 100vh;
   background-color: #fbfbfb;
   padding: 0;
-  width: 100%;
+  margin: 0; /* 마진 제거 */
+  width: 100vw; /* 뷰포트 전체 너비 */
+  max-width: none; /* 최대 너비 제한 해제 */
   overflow-x: hidden;
+  box-sizing: border-box; /* 박스 사이징 설정 */
 }
 
 .main-content {
   background-color: transparent;
-  max-width: 800px;
+  max-width: none; /* 최대 너비 제한 해제 */
   margin: 0 auto; /* 중앙 정렬 */
+  margin-top: 80px;
   padding: 30px 20px;
   display: flex;
   flex-direction: column;
@@ -78,7 +82,8 @@ const scrollToTop = () => {
   display: flex;
   gap: 20px;
   width: 100%;
-  max-width: 800px; /* 최대 너비 제한 */
+  height: 680px;
+  max-width: none; /* 최대 너비 제한 해제 */
   justify-content: center; /* 중앙 정렬 */
 }
 
@@ -91,7 +96,7 @@ const scrollToTop = () => {
 }
 
 .chart-component {
-  flex: 1;
+  flex: 1.4;
   background-color: #d1d5db;
   border-radius: 16px;
   display: flex;
@@ -110,7 +115,8 @@ const scrollToTop = () => {
   gap: 20px;
   min-height: 250px;
   width: 100%;
-  max-width: 800px; /* 최대 너비 제한 */
+  margin-top: 100px; /* 상단 여백 */
+  max-width: none;
   justify-content: center; /* 중앙 정렬 */
 }
 
@@ -135,7 +141,7 @@ const scrollToTop = () => {
 }
 
 .quiz-component {
-  flex: 3;
+  flex: 2.7;
   background-color: #d1d5db;
   border-radius: 16px;
   display: flex;
@@ -149,7 +155,7 @@ const scrollToTop = () => {
 }
 
 .notice-component {
-  flex: 2;
+  flex: 2.7;
   background-color: #d1d5db;
   border-radius: 16px;
   display: flex;
@@ -177,7 +183,8 @@ const scrollToTop = () => {
   border: 2px dashed #9ca3af;
   font-size: 18px;
   width: 100%;
-  max-width: 800px; /* 최대 너비 제한 */
+  margin-top: 100px; /* 상단 여백 */
+  max-width: none;
 }
 
 /* ===== 4. 하단 네비게이션 카드 ===== */
@@ -186,7 +193,7 @@ const scrollToTop = () => {
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   width: 100%;
-  max-width: 800px; /* 최대 너비 제한 */
+  max-width: none;
   justify-content: center; /* 그리드 중앙 정렬 */
 }
 

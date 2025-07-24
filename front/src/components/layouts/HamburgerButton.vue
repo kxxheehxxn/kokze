@@ -79,24 +79,30 @@ const handleMenuClick = (menuType) => {
   word-break: break-all;
 }
 
-/* 사이드바 */
+/* 햄버거 메뉴 - 위에서 아래로 드롭다운 */
 .hamburgerbar {
   position: fixed;
-  top: 80px;
-  right: -200px;
+  top: 80px; /* 헤더 바로 아래 고정 위치 */
+  right: 20px;
   width: 200px;
-  height: auto;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  transition: right 0.3s ease;
-  z-index: 1002;
   border: 1px solid #e5e7eb;
+  z-index: 1002;
+
+  /* 드롭다운 애니메이션 효과 */
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
 }
 
 .hamburgerbar-open {
-  right: 20px; /* 고정 픽셀 값 사용 */
-  top: 80px; /* 나타나는 높이 조정 */
+  max-height: 500px; /* 충분한 높이값 설정 */
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .hamburgerbar-content {

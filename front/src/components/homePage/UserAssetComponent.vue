@@ -124,9 +124,12 @@ onMounted(() => {
   background: #f8f9fa;
   border-radius: 20px;
   padding: 24px;
-  max-width: 400px;
-  margin: 0 auto;
+  width: 100%; /* 부모 너비에 맞춤 */
+  height: 100%;
+  max-width: none; /* 최대 너비 제한 해제 */
+  margin: 0; /* 마진 제거 */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box; /* 패딩 포함 박스 사이징 */
 }
 
 .title-header {
@@ -135,10 +138,10 @@ onMounted(() => {
 }
 
 .title {
-  font-size: 16px;
+  font-size: 30px;
   font-weight: 600;
   color: #333;
-  margin: 0;
+  margin-top: 30px;
   line-height: 1.4;
 }
 
@@ -153,7 +156,8 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  margin-top: 30px;
+  padding: 20px;
   border-radius: 12px;
   font-weight: 600;
 }
@@ -169,7 +173,7 @@ onMounted(() => {
 }
 
 .label {
-  font-size: 14px;
+  font-size: 30px;
   font-weight: 500;
   background-color: transparent;
 }
@@ -181,7 +185,11 @@ onMounted(() => {
 }
 
 .progress-section {
-  margin-bottom: 24px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+  border: 1px solid #cfcfd0;
+  border-radius: 12px;
+  padding: 20px;
 }
 
 .progress-info {
@@ -192,13 +200,13 @@ onMounted(() => {
 }
 
 .progress-label {
-  font-size: 14px;
+  font-size: 30px;
   color: #666;
   font-weight: 500;
 }
 
 .progress-value {
-  font-size: 16px;
+  font-size: 30px;
   font-weight: 700;
   color: #22c55e;
 }
@@ -220,11 +228,12 @@ onMounted(() => {
 .action-button {
   width: 100%;
   padding: 16px;
+  margin-top: 20px;
   background: #fd5757;
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 30px;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -237,17 +246,5 @@ onMounted(() => {
 
 .action-button:active {
   transform: translateY(0);
-}
-
-/* 반응형 */
-@media (max-width: 480px) {
-  .asset-card {
-    margin: 0 16px;
-    padding: 20px;
-  }
-
-  .amount {
-    font-size: 16px;
-  }
 }
 </style>

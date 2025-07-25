@@ -1,7 +1,9 @@
 <template>
   <UserCardLayout>
     <template v-if="step < questions.length">
-      <h2 class="title">금융 MBTI 찾기 ({{ step + 1 }} / {{ questions.length }})</h2>
+      <h2 class="title">
+        금융 MBTI 찾기 ({{ step + 1 }} / {{ questions.length }})
+      </h2>
       <div class="question">{{ questions[step].question }}</div>
       <div class="choices">
         <div
@@ -15,7 +17,13 @@
       </div>
       <div class="button-row">
         <button class="cancel-btn" @click="onCancel">취소하기</button>
-        <button class="submit-btn" :disabled="selected === null" @click="onNext">다음</button>
+        <button
+          class="submit-btn"
+          :disabled="selected === null"
+          @click="onNext"
+        >
+          다음
+        </button>
       </div>
     </template>
     <template v-else>
@@ -42,45 +50,45 @@ const questions = [
     question: '월급을 받았을 때 나는?',
     choices: [
       { text: '사고 싶었던 걸 바로 지른다', type: 'fast', score: 4 },
-      { text: '지출계획을 세우고 천천히 쓴다', type: 'slow', score: 4 }
-    ]
+      { text: '지출계획을 세우고 천천히 쓴다', type: 'slow', score: 4 },
+    ],
   },
   {
     question: '앱에서 투자 상품을 볼 때 나는?',
     choices: [
       { text: '직관적으로 빠르게 결정한다', type: 'fast', score: 4 },
-      { text: '여러 번 비교하고 분석 후 결정한다', type: 'slow', score: 4 }
-    ]
+      { text: '여러 번 비교하고 분석 후 결정한다', type: 'slow', score: 4 },
+    ],
   },
   {
     question: '새 금융 서비스를 알게 되면?',
     choices: [
       { text: '일단 써보면서 배운다', type: 'fast', score: 4 },
-      { text: '리뷰와 후기 충분히 보고 결정한다', type: 'slow', score: 4 }
-    ]
+      { text: '리뷰와 후기 충분히 보고 결정한다', type: 'slow', score: 4 },
+    ],
   },
   // 하이리스크 VS 로우리스크
   {
     question: '투자할 때 나는?',
     choices: [
       { text: '수익이 크면 리스크도 감수한다', type: 'high', score: 4 },
-      { text: '안정적이고 꾸준한 수익을 선호한다', type: 'low', score: 4 }
-    ]
+      { text: '안정적이고 꾸준한 수익을 선호한다', type: 'low', score: 4 },
+    ],
   },
   {
     question: '재테크 수단을 고를 때 나는?',
     choices: [
       { text: '새로운 코인, 스타트업 투자도 도전', type: 'high', score: 4 },
-      { text: '예금, 적금 등 확실한 수단을 선택', type: 'low', score: 4 }
-    ]
+      { text: '예금, 적금 등 확실한 수단을 선택', type: 'low', score: 4 },
+    ],
   },
   {
     question: '손실 가능성이 있는 상황에서 나는?',
     choices: [
       { text: '손해 나더라도 기회라면 베팅', type: 'high', score: 4 },
-      { text: '손해는 피하고 확실한 걸 고른다', type: 'low', score: 4 }
-    ]
-  }
+      { text: '손해는 피하고 확실한 걸 고른다', type: 'low', score: 4 },
+    ],
+  },
 ]
 
 const step = ref(0)
@@ -111,8 +119,8 @@ function onRetry() {
 
 const mbtiResult = computed(() => {
   if (step.value < questions.length) return ''
-  const isFast = scores.value.fast > scores.value.slow
-  const isHigh = scores.value.high > scores.value.low
+  const isFast = scores.value.fast >= scores.value.slow
+  const isHigh = scores.value.high >= scores.value.low
   if (isFast && isHigh) return '신속한 승부사'
   if (!isFast && isHigh) return '신중한 승부사'
   if (isFast && !isHigh) return '신속한 분석가'
@@ -137,7 +145,7 @@ const mbtiDesc = computed(() => {
 
 <style scoped>
 .title {
-    background-color: #fff;
+  background-color: #fff;
   font-size: 28px;
   font-weight: bold;
   margin: 0 auto 32px auto;
@@ -145,7 +153,7 @@ const mbtiDesc = computed(() => {
   width: 100%;
 }
 .question {
-    background-color: #fff;
+  background-color: #fff;
   font-size: 22px;
   font-weight: 500;
   text-align: center;
@@ -158,8 +166,8 @@ const mbtiDesc = computed(() => {
   gap: 40px;
   margin-bottom: 48px;
 }
-.choice>div{
-    background-color: #fff;
+.choice > div {
+  background-color: #fff;
 }
 .choice {
   background: #fff;
@@ -183,14 +191,15 @@ const mbtiDesc = computed(() => {
   box-shadow: 0 4px 16px 0 #bcdcff;
 }
 .button-row {
-    background-color: #fff;
+  background-color: #fff;
   display: flex;
   justify-content: center;
   gap: 32px;
   margin-top: 32px;
   width: 100%;
 }
-.cancel-btn, .submit-btn {
+.cancel-btn,
+.submit-btn {
   width: 180px;
   height: 48px;
   border-radius: 18px;
@@ -222,4 +231,4 @@ const mbtiDesc = computed(() => {
   white-space: pre-line;
   margin-bottom: 32px;
 }
-</style> 
+</style>

@@ -19,13 +19,20 @@
           class="input"
           placeholder="비밀번호를 입력하세요."
         />
-        <div v-if="passwordCheck && password !== passwordCheck" class="error-msg">
+        <div
+          v-if="passwordCheck && password !== passwordCheck"
+          class="error-msg"
+        >
           비밀번호가 일치하지 않습니다!
         </div>
       </div>
       <div class="button-row">
-        <button type="button" class="cancel-btn" @click="onCancel">취소하기</button>
-        <button type="submit" class="submit-btn" :disabled="!canSubmit">수정</button>
+        <button type="button" class="cancel-btn" @click="onCancel">
+          취소하기
+        </button>
+        <button type="submit" class="submit-btn" :disabled="!canSubmit">
+          수정
+        </button>
       </div>
     </form>
   </UserCardLayout>
@@ -40,7 +47,29 @@ const password = ref('')
 const passwordCheck = ref('')
 const router = useRouter()
 
-const canSubmit = computed(() => password.value && password.value === passwordCheck.value)
+const passwordStrength = computed(() => {
+  const pwd = password.value
+  if (!pwd) return { valid: false, message: '' }
+
+  const hasLength = pwd.length >= 8
+  const hasUpper = /[A-Z]/.test(pwd)
+  const hasLower = /[a-z]/.test(pwd)
+  const hasNumber = /\d/.test(pwd)
+  const hasSpecial = /[!@#$%^&*]/.test(pwd)
+
+  const valid = hasLength && hasUpper && hasLower && hasNumber
+  return {
+    valid,
+    message: valid ? '' : '8자 이상, 대소문자, 숫자 포함 필요',
+  }
+})
+
+const canSubmit = computed(
+  () =>
+    password.value &&
+    passwordStrength.value.valid &&
+    password.value === passwordCheck.value,
+)
 
 function onCancel() {
   router.back()
@@ -50,6 +79,15 @@ function onSubmit() {
   // 실제 비밀번호 변경 API 연동 필요
   alert('비밀번호가 변경되었습니다!')
   router.back()
+
+  // // Add proper API call with error handling
+  // try {
+  //   // await updatePassword(password.value)
+  //   // Use toast notification instead of alert
+  //   // router.back()
+  // } catch (error) {
+  //   // Handle API errors appropriately
+  // }
 }
 </script>
 
@@ -103,7 +141,8 @@ function onSubmit() {
   margin-top: 32px;
   width: 100%;
 }
-.cancel-btn, .submit-btn {
+.cancel-btn,
+.submit-btn {
   width: 180px;
   height: 48px;
   border-radius: 18px;
@@ -122,4 +161,4 @@ function onSubmit() {
   color: #fff;
   border: none;
 }
-</style> 
+</style>

@@ -19,19 +19,31 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getUserInfo, getUserPoints } from '@/api/userApi'
 
 const user = ref({ name: '', mbti: '', user_id: null })
 const point = ref(0)
 const router = useRouter()
 
 function goTo(path) {
-  router.push(path)
+  router.push(path).catch(err => {
+    console.error('Navigation error:', err)
+    // TODO: optionally show a user-facing notification
+  })
 }
 
-onMounted(() => {
-  // MOCK 데이터
-  user.value = { name: '김콕재', mbti: '안정추구 거북이형', user_id: 1 }
-  point.value = 13700
+onMounted(async () => {
+  try {
+    const [userInfo, userPoints] = await Promise.all([
+      getUserInfo(),
+      getUserPoints(),
+    ])
+    user.value = userInfo
+    point.value = userPoints
+  } catch (error) {
+    console.error('Failed to load user data:', error)
+    // Handle error appropriately
+  }
 })
 </script>
 

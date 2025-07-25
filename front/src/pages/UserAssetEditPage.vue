@@ -6,7 +6,15 @@
         <label class="label-group">수입</label>
         <div class="input-row">
           <span class="input-label">월급</span>
-          <input v-model="income" type="number" class="input" placeholder="0" />
+          <input
+            v-model="income"
+            type="number"
+            class="input"
+            placeholder="0"
+            min="0"
+            max="999999999"
+            step="1000"
+          />
           <span class="unit">원</span>
         </div>
       </div>
@@ -14,7 +22,12 @@
         <label class="label-group">지출</label>
         <div class="input-row">
           <span class="input-label">월 지출비</span>
-          <input v-model="expense" type="number" class="input" placeholder="0" />
+          <input
+            v-model="expense"
+            type="number"
+            class="input"
+            placeholder="0"
+          />
           <span class="unit">원</span>
         </div>
       </div>
@@ -39,6 +52,14 @@ function onCancel() {
   router.back()
 }
 function onSubmit() {
+  if (income.value < 0 || expense.value < 0) {
+    alert('음수 값은 입력할 수 없습니다.')
+    return
+  }
+  if (income.value > 999999999 || expense.value > 999999999) {
+    alert('입력 가능한 최대값을 초과했습니다.')
+    return
+  }
   // 실제 저장 로직은 추후 API 연동
   alert('자산정보가 수정되었습니다!')
   router.back()
@@ -109,7 +130,8 @@ function onSubmit() {
   margin-top: 64px;
   width: 100%;
 }
-.cancel-btn, .submit-btn {
+.cancel-btn,
+.submit-btn {
   width: 220px;
   height: 56px;
   border-radius: 24px;
@@ -129,13 +151,13 @@ function onSubmit() {
   border: none;
 }
 /* Chrome, Safari, Edge, Opera */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 /* Firefox */
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 </style>

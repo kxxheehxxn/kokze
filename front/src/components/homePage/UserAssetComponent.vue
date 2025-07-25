@@ -57,7 +57,7 @@ const loading = ref(false);
 const error = ref(null);
 
 // 현재 사용자 ID (로그인 시스템 구현 후 동적으로 변경)
-const currentUserId = ref('550e8400-e29b-41d4-a716-446655440001');
+const currentUserId = ref('550e8400-e29b-41d4-a716-446655440002');
 
 // Computed 속성
 const formattedAverageGoalRate = computed(() => {

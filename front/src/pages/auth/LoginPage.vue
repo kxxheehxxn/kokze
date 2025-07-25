@@ -41,9 +41,11 @@ const handleKakaoLogin = () => {
 
 <template>
     <div class="container">
-        <div class="header">
-            <img class="logo" alt="Logo" :src="logo" />
+        <router-link to="/" class="logo-section text-decoration-none">
+        <div class="logo d-flex align-items-center">
+          <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
         </div>
+      </router-link>
 
         <div class="login-box">
             <div class="title">로그인</div>
@@ -96,7 +98,7 @@ const handleKakaoLogin = () => {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    padding: 40px 16px;
+    padding: 0 16px 40px 16px;
     position: relative;
 }
 
@@ -111,6 +113,31 @@ const handleKakaoLogin = () => {
     height: 50px;
     width: 50px;
     object-fit: cover;
+}
+
+.logo-section {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    background-color: transparent;
+    flex-shrink: 0;
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 0;
+    align-self: flex-start;
+}
+.logo-section:hover {
+    transform: scale(1.05);
+}
+.logo {
+    background-color: transparent;
+}
+.logo-icon {
+    width: 54px;
+    height: 54px;
+    background: transparent !important;
+    border-radius: 50%;
+    padding: 2px;
+    object-fit: contain;
 }
 
 /* login-box */
@@ -128,6 +155,7 @@ const handleKakaoLogin = () => {
 }
 
 .title {
+    background-color: #fff;
     font-size: 24px;
     font-weight: 600;
     text-align: left;
@@ -145,6 +173,7 @@ const handleKakaoLogin = () => {
 }
 
 .form-group input {
+    background-color: #fff;
     border-radius: 12px;
     border: 1px solid #d9d9d9;
     padding: 14px 16px;
@@ -153,6 +182,7 @@ const handleKakaoLogin = () => {
 }
 
 .forgot-password {
+    background-color: #fff;
     text-align: right;
     color: #3573ee;
     font-size: 14px;
@@ -183,6 +213,7 @@ const handleKakaoLogin = () => {
 }
 
 .sign-up-prompt {
+    background-color: #fff;
     text-align: center;
     font-size: 16px;
 }

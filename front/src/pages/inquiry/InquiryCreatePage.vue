@@ -1,9 +1,9 @@
 <script setup>
-import inquiryApi from '@/api/inquiryApi';
+import api from '@/api/inquiryApi';
 import { computed, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-// import { useAuthStore } from '@/stores/auth';
-//const auth = useAuthStore();
+import { userAuthStore } from '@/stores/auth';
+const auth = userAuthStore();
 const router = useRouter();
 const route = useRoute();
 const back = () => {
@@ -19,13 +19,13 @@ const article = reactive({
 const disableSubmit = computed(() => !article.title);
 const submit = async () => {
   if (!confirm('등록할까요?')) return;
-  await inquiryApi.create(article);
+  await api.create(article);
   router.push('/inquiry/list');
 };
 </script>
 <template>
-  <div class="position-relative">
-    <div class="position-absolute custom-box shadow p-5">
+  <div class="custom-box-wrapper">
+    <div class="custom-box p-5">
       <div class="m-2">
         <h4 class="fw-bold">문의사항 작성</h4>
         <form @submit.prevent="submit">
@@ -52,7 +52,7 @@ const submit = async () => {
               ></textarea>
             </div>
           </div>
-          <div class="my-5 text-center">
+          <div class="mt-5 text-center">
             <button
               type="submit"
               class="btn fw-bold create"
@@ -68,14 +68,19 @@ const submit = async () => {
   </div>
 </template>
 <style scoped>
+.custom-box-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
 .custom-box {
   width: 920px;
-  min-height: 550px;
-  top: 100px;
-  left: 296px;
-  bottom: 80px;
+  min-height: 530px;
+  background-color: #fff;
   border-radius: 28px;
-  background-color: #ffffff;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 .btn {
   width: 120px;
@@ -127,10 +132,9 @@ const submit = async () => {
   padding: 15px;
   box-sizing: border-box;
 }
-
 .textarea-input {
   width: 100%;
-  height: 200px;
+  height: 250px;
   border: none;
   outline: none;
   resize: none;

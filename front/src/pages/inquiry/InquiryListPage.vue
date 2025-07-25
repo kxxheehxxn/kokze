@@ -63,18 +63,21 @@ const maskName = (name) => {
   return name[0] + '*' + name.slice(2);
 };
 </script>
+
 <template>
-  <div class="position-relative">
-    <div class="position-absolute custom-box shadow p-5">
+  <div class="custom-box-wrapper">
+    <div class="custom-box p-5">
       <h4 class="fw-bold m-2">문의사항</h4>
-      <div class="search-container my-3">
-        <input
-          type="text"
-          class="search-input"
-          v-model="searchKeyword"
-          @keyup.enter="search"
-        />
-        <i class="search-icon fa-solid fa-magnifying-glass" @click="search" />
+      <div class="d-flex justify-content-end mb-3">
+        <div class="search-container mt-3 text-end">
+          <input
+            type="text"
+            class="search-input"
+            v-model="searchKeyword"
+            @keyup.enter="search"
+          />
+          <i class="search-icon fa-solid fa-magnifying-glass" @click="search" />
+        </div>
       </div>
       <table class="table">
         <thead>
@@ -86,6 +89,22 @@ const maskName = (name) => {
           </tr>
         </thead>
         <tbody>
+          <!-- 나중에 첫 tr 삭제 -->
+          <tr>
+            <td style="width: 70px" class="text-center">1</td>
+            <td>
+              <router-link
+                class="ellipsis-title link-reset ms-5"
+                :to="{ name: 'inquiryDetail', params: { no: 111 } }"
+              >
+                [답변완료] 임시제목
+              </router-link>
+            </td>
+            <td class="grayfont ellipsis-writer">
+              {{ maskName('김콕재') }}
+            </td>
+            <td class="grayfont">2025-06-14</td>
+          </tr>
           <tr v-for="(inquiry, index) in inquiries" :key="inquiry.infoId">
             <td style="width: 70px" class="text-center">
               {{
@@ -98,22 +117,15 @@ const maskName = (name) => {
                 class="ellipsis-title link-reset ms-5"
                 :to="{ name: 'inquiryDetail', params: { no: inquiry.infoId } }"
               >
-                {{ inquiry.title }}
+                <span v-if="inquiry.isAnswered">[답변완료] </span
+                >{{ inquiry.title }}
               </router-link>
             </td>
             <td class="grayfont ellipsis-writer">
               {{ maskName(inquiry.userName) }}
             </td>
             <td class="grayfont">
-              {{
-                moment(
-                  new Date(
-                    inquiry.createdAt.year,
-                    inquiry.createdAt.monthValue - 1,
-                    inquiry.createdAt.dayOfMonth
-                  )
-                ).format('YYYY-MM-DD')
-              }}
+              {{ moment(inquiry.createdAt).format('YYYY-MM-DD') }}
             </td>
           </tr>
         </tbody>
@@ -164,14 +176,19 @@ td {
   vertical-align: middle;
   font-size: 15px;
 }
+.custom-box-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
 .custom-box {
   width: 920px;
   min-height: 530px;
-  top: 100px;
-  left: 296px;
-  bottom: 80px;
+  background-color: #fff;
   border-radius: 28px;
-  background-color: #ffffff;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 .grayfont {
   padding-left: 25px;
@@ -190,7 +207,7 @@ td {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  display: block;
+  /* display: block; */
   max-width: 470px;
 }
 .ellipsis-writer {
@@ -204,8 +221,6 @@ td {
   text-decoration: none;
 }
 .search-container {
-  position: absolute;
-  left: 555px;
   width: 320px;
   height: 37px;
   background: #fff;

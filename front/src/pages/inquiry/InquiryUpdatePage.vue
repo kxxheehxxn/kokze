@@ -1,9 +1,9 @@
 <script setup>
-import inquiryApi from '@/api/inquiryApi';
+import api from '@/api/inquiryApi';
 import { computed, ref, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-// import { useAuthStore } from '@/stores/auth';
-//const auth = useAuthStore();
+import { userAuthStore } from '@/stores/auth';
+const auth = userAuthStore();
 const router = useRouter();
 const route = useRoute();
 const orgArticle = ref({});
@@ -18,10 +18,11 @@ const submit = async () => {
 
   const updatedFields = {};
   updatedFields.infoId = article.infoId;
+  updatedFields.userId = article.userId;
   updatedFields.title = article.title;
   updatedFields.content = article.content;
   console.log(updatedFields);
-  await inquiryApi.update(updatedFields);
+  await api.update(updatedFields);
 
   router.push({
     name: 'inquiryDetail',
@@ -30,21 +31,22 @@ const submit = async () => {
   });
 };
 const reset = () => {
-  article.infoId = orgArticle.value.infoId; //나중에 삭제 ?
+  article.infoId = orgArticle.value.infoId;
+  article.userId = orgArticle.value.userId;
   article.title = orgArticle.value.title;
   article.content = orgArticle.value.content;
   console.log(article);
 };
 const load = async () => {
-  const data = await inquiryApi.get(infoId);
+  const data = await api.get(infoId);
   orgArticle.value = { ...data };
   reset();
 };
 load();
 </script>
 <template>
-  <div class="position-relative">
-    <div class="position-absolute custom-box shadow p-5">
+  <div class="custom-box-wrapper">
+    <div class="custom-box p-5">
       <div class="m-2">
         <h4 class="fw-bold">문의사항 수정</h4>
         <form @submit.prevent="submit">
@@ -71,15 +73,11 @@ load();
               ></textarea>
             </div>
           </div>
-          <div class="my-5 text-center">
-            <button
-              type="submit"
-              class="btn fw-bold create"
-              :disabled="disableSubmit"
-            >
+          <div class="mt-5 text-center">
+            <button type="submit" class="btn create" :disabled="disableSubmit">
               확인
             </button>
-            <button class="btn ms-3 fw-bold back" @click="back">취소</button>
+            <button class="btn ms-3 back" @click="back">취소</button>
           </div>
         </form>
       </div>
@@ -87,14 +85,19 @@ load();
   </div>
 </template>
 <style scoped>
+.custom-box-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
 .custom-box {
   width: 920px;
-  min-height: 550px;
-  top: 100px;
-  left: 296px;
-  bottom: 80px;
+  min-height: 530px;
+  background-color: #fff;
   border-radius: 28px;
-  background-color: #ffffff;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 .btn {
   width: 120px;
@@ -102,6 +105,7 @@ load();
   border-radius: 20px;
   text-align: center;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
 }
 .create {
   background-color: #3573ee;
@@ -149,7 +153,7 @@ load();
 
 .textarea-input {
   width: 100%;
-  height: 200px;
+  height: 250px;
   border: none;
   outline: none;
   resize: none;

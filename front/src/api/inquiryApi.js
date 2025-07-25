@@ -38,4 +38,16 @@ export default {
     console.log('BOARD PATCH: ', data);
     return data;
   },
+  async updateAnswer(article) {
+    console.log('article.infoId: ', article);
+    const { data } = await api.patch(
+      `${BASE_URL}/${article.infoId}/answer`,
+      article,
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+    console.log('BOARD PATCH: ', data);
+    return data;
+  },
 };

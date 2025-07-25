@@ -1,7 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap');
-
-* {
+html,
+body {
   background-color: #fbfbfb;
+}
+/* 페이지 네이션 */
+.pagination-container {
+  display: flex;
+  /* column-gap: 10px; */
+}
+.paginate-buttons {
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+  background-color: rgb(255, 255, 255); /*rgb(242, 242, 242);*/
+  border: 1px solid white; /* rgb(217, 217, 217);*/
+  color: rgb(63, 63, 63);
+}
+.paginate-buttons:hover {
+  background-color: #f0efef;
+  border-radius: 5px;
+}
+.active-page {
+  color: black;
+  font-weight: bold;
+}
+.active-page:hover {
+  background-color: #f2f2f2;
 }
 
 /* assets/main.css 파일에 추가 */

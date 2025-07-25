@@ -1,9 +1,9 @@
 <script setup>
 import { userAuthStore } from '@/stores/auth.js';
-
+import { useRouter } from 'vue-router';
 // Pinia store 사용
 const authStore = userAuthStore();
-
+const router = useRouter();
 // Props 정의
 const props = defineProps({
   isOpen: {
@@ -32,7 +32,9 @@ const handleMenuClick = (menuType) => {
   if (menuType === '로그아웃') {
     authStore.logout();
   }
-
+  if (menuType === '문의하기') {
+    router.push({ name: 'inquiryList' }); // ← 여기에 해당 이름 맞게 설정
+  }
   // 부모 컴포넌트로 메뉴 클릭 이벤트 전달
   emit('menu-click', menuType);
 
@@ -52,11 +54,27 @@ const handleMenuClick = (menuType) => {
 
       <!-- 햄버거 메뉴 항목들 -->
       <div class="hamburgerbar-menu">
-        <div class="hamburgerbar-menu-item" @click="handleMenuClick('공지사항')">공지사항</div>
-        <div class="hamburgerbar-menu-item" @click="handleMenuClick('문의하기')">문의하기</div>
+        <div
+          class="hamburgerbar-menu-item"
+          @click="handleMenuClick('공지사항')"
+        >
+          공지사항
+        </div>
+        <div
+          class="hamburgerbar-menu-item"
+          @click="handleMenuClick('문의하기')"
+        >
+          문의하기
+        </div>
 
         <!-- 로그인된 사용자만 보이는 메뉴 -->
-        <div v-if="isLoggedIn" class="hamburgerbar-menu-item" @click="handleMenuClick('로그아웃')">로그아웃</div>
+        <div
+          v-if="isLoggedIn"
+          class="hamburgerbar-menu-item"
+          @click="handleMenuClick('로그아웃')"
+        >
+          로그아웃
+        </div>
       </div>
     </div>
   </div>

@@ -27,3 +27,47 @@ body {
 .active-page:hover {
   background-color: #f2f2f2;
 }
+
+/* assets/main.css 파일에 추가 */
+
+/* Bootstrap container 제한 완전 해제 */
+#app {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 100vh;
+}
+
+/* 모든 container 클래스들의 제한 해제 */
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+  max-width: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* 기본 여백 제거 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Bootstrap gutter 제거 */
+:root {
+  --bs-gutter-x: 0 !important;
+  --bs-gutter-y: 0 !important;
+}

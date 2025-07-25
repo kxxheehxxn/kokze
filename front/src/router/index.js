@@ -40,6 +40,11 @@ const router = createRouter({
             name: 'UserWithdrawPage',
             component: () => import('@/pages/UserWithdrawPage.vue')
         },
+        {
+            path: '/find-password',
+            name: 'FindPasswordPage',
+            component: () => import('@/pages/FindPasswordPage.vue')
+        },
         ...authRoutes,
     ],
 });

@@ -8,72 +8,41 @@
       </div>
       <div class="form-group">
         <label>이메일</label>
-        <input
-          v-model="email"
-          class="input"
-          placeholder="이메일을 입력하세요"
-        />
-        <button type="button" class="btn" @click="onEmailCheck">인증</button>
-        <div v-if="emailChecked === false" class="error-msg">
-          존재하지 않는 계정입니다
+        <div class="input-row">
+          <input v-model="email" class="input" placeholder="이메일을 입력하세요" />
+          <button type="button" class="btn" @click="onEmailCheck">인증</button>
         </div>
+        <div v-if="emailChecked === false" class="error-msg">존재하지 않는 계정입니다</div>
       </div>
       <div class="form-group">
         <label>인증번호</label>
-        <input
-          v-model="code"
-          class="input"
-          placeholder="인증번호를 입력하세요"
-        />
-        <button type="button" class="btn" @click="onCodeCheck">확인</button>
-        <div v-if="codeChecked === true" class="success-msg">
-          이메일 인증 완료
+        <div class="input-row">
+          <input v-model="code" class="input" placeholder="인증번호를 입력하세요" />
+          <button type="button" class="btn" @click="onCodeCheck">확인</button>
         </div>
-        <div v-if="codeChecked === false" class="error-msg">
-          인증번호가 일치하지 않습니다
-        </div>
+        <div v-if="codeChecked === true" class="success-msg">이메일 인증 완료</div>
+        <div v-if="codeChecked === false" class="error-msg">인증번호가 일치하지 않습니다</div>
       </div>
       <div class="button-row">
-        <button type="button" class="cancel-btn" @click="onCancel">
-          취소하기
-        </button>
-        <button type="submit" class="submit-btn" :disabled="!canNext">
-          다음 단계
-        </button>
+        <button type="button" class="cancel-btn" @click="onCancel">취소하기</button>
+        <button type="submit" class="submit-btn" :disabled="!canNext">다음 단계</button>
       </div>
     </form>
     <form v-else class="pw-form" @submit.prevent="onChangePassword">
       <div class="form-group">
         <label>새 비밀번호</label>
-        <input
-          v-model="password"
-          type="password"
-          class="input"
-          placeholder="비밀번호를 입력하세요."
-        />
+        <input v-model="password" type="password" class="input" placeholder="비밀번호를 입력하세요." />
       </div>
       <div class="form-group">
         <label>비밀번호 확인</label>
-        <input
-          v-model="passwordCheck"
-          type="password"
-          class="input"
-          placeholder="비밀번호를 입력하세요."
-        />
-        <div
-          v-if="password && passwordCheck && password !== passwordCheck"
-          class="error-msg"
-        >
+        <input v-model="passwordCheck" type="password" class="input" placeholder="비밀번호를 입력하세요." />
+        <div v-if="password && passwordCheck && password !== passwordCheck" class="error-msg">
           비밀번호가 일치하지 않습니다
         </div>
       </div>
       <div class="button-row">
-        <button type="button" class="cancel-btn" @click="onCancel">
-          취소하기
-        </button>
-        <button type="submit" class="submit-btn" :disabled="!canChange">
-          수정
-        </button>
+        <button type="button" class="cancel-btn" @click="onCancel">취소하기</button>
+        <button type="submit" class="submit-btn" :disabled="!canChange">수정</button>
       </div>
     </form>
   </UserCardLayout>
@@ -144,6 +113,20 @@ function onCancel() {
   background-color: #fff;
   margin-bottom: 32px;
 }
+.form-group label {
+  background-color: #fff;
+}
+.input-row {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+}
+.input-row .input {
+  flex: 1;
+}
+.input-row .btn {
+  margin-left: 12px;
+}
 .input {
   width: 100%;
   border: none;
@@ -156,7 +139,6 @@ function onCancel() {
   margin: 0 8px 0 0;
 }
 .btn {
-  margin-left: 12px;
   background: #2573ee;
   color: #fff;
   border: none;
@@ -168,16 +150,10 @@ function onCancel() {
   box-shadow: 0 2px 8px 0 #e5e7eb;
   transition: background 0.2s;
 }
-.error-msg {
-  color: #e74c3c;
-  font-size: 15px;
-  margin-top: 6px;
-}
-.success-msg {
-  color: #2573ee;
-  font-size: 15px;
-  margin-top: 6px;
-}
+.error-msg { 
+  background-color: #fff;
+  color: #e74c3c; font-size: 15px; margin-top: 6px; }
+.success-msg { color: #2573ee; font-size: 15px; margin-top: 6px; }
 .button-row {
   background-color: #fff;
   display: flex;
@@ -186,8 +162,7 @@ function onCancel() {
   margin-top: 32px;
   width: 100%;
 }
-.cancel-btn,
-.submit-btn {
+.cancel-btn, .submit-btn {
   width: 180px;
   height: 48px;
   border-radius: 18px;

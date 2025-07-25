@@ -69,13 +69,12 @@ const handleHamburgerMenuClick = (menuType) => {
 
 <style scoped>
 .header {
-  position: fixed; /* fixed로 변경 */
-  top: 0; /* 상단에 고정 */
-  left: 0; /* 왼쪽부터 시작 */
-  right: 0; /* 오른쪽까지 확장 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
-  background-color: transparent;
-
+  background-color: #fff;
   width: 100%;
   padding: 0;
   margin: 0;
@@ -84,12 +83,12 @@ const handleHamburgerMenuClick = (menuType) => {
 .header-container {
   width: 100%;
   max-width: none !important;
-  padding: 0; /* 좌우 패딩 제거 */
+  padding: 0;
   height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: transparent;
+  background-color: #fff;
   position: relative;
 }
 
@@ -100,6 +99,7 @@ const handleHamburgerMenuClick = (menuType) => {
   background-color: transparent;
   flex-shrink: 0;
   margin-left: 20px; /* 로고에만 왼쪽 여백 */
+  
 }
 
 .logo {

@@ -12,3 +12,14 @@ import Footer from './Footer.vue';
     <Footer></Footer>
   </div>
 </template>
+
+<style scoped>
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.content {
+  flex: 1;
+}
+</style>

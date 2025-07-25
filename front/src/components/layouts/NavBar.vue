@@ -36,7 +36,7 @@ const defaultNavItems = [
 ];
 
 const loggedOutItem = { name: '로그인', route: '/auth/login' };
-const loggedInItem = { name: '마이페이지', route: '/mypage' };
+const loggedInItem = { name: '마이페이지', route: '/userpage' };
 
 // computed 속성을 사용하여 로그인 상태에 따라 다른 navItems를 반환
 const dynamicNavItems = computed(() => {

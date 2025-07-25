@@ -23,3 +23,13 @@ export async function fetchUserPoint(user_id) {
     throw error
   }
 }
+
+export async function getUserInfo() {
+  // 실제 API 연동 전까지는 mock 데이터 사용
+  return { name: '김콕재', mbti: '안정추구 거북이형', user_id: 1 }
+}
+
+export async function getUserPoints() {
+  // 실제 API 연동 전까지는 mock 데이터 사용
+  return 13700
+}

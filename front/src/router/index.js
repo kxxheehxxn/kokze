@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../pages/HomePage.vue';
 import inquiryRoutes from './inquiry';
+import noticeRoutes from './notice';
 import authRoutes from './auth';
 
 const router = createRouter({
@@ -48,6 +49,7 @@ const router = createRouter({
     },
     ...authRoutes,
     ...inquiryRoutes,
+    ...noticeRoutes,
   ],
 });
 

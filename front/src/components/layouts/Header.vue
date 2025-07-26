@@ -2,7 +2,9 @@
 import { ref } from 'vue';
 import NavBar from './NavBar.vue';
 import HamburgerButton from './HamburgerButton.vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 // 햄버거 메뉴 상태
 const isHamburgerOpen = ref(false);
 
@@ -23,10 +25,10 @@ const handleHamburgerMenuClick = (menuType) => {
   // 실제 구현 시 각 메뉴별 라우팅 처리
   switch (menuType) {
     case '공지사항':
-      // router.push('/notice')
+      router.push({ name: 'noticeList' });
       break;
     case '문의하기':
-      // router.push('/inquiry')
+      router.push({ name: 'inquiryList' });
       break;
     case '로그아웃':
       // 로그아웃 처리
@@ -46,7 +48,9 @@ const handleHamburgerMenuClick = (menuType) => {
       </router-link>
 
       <!-- 네비게이션 컴포넌트 공간 (중앙) -->
-      <div class="navigation-space d-flex justify-content-center align-items-center">
+      <div
+        class="navigation-space d-flex justify-content-center align-items-center"
+      >
         <NavBar />
       </div>
 
@@ -57,14 +61,21 @@ const handleHamburgerMenuClick = (menuType) => {
           @click="toggleHamburger"
           :class="{ active: isHamburgerOpen }"
         >
-          <i class="fa-solid fa-bars" style="background-color: transparent; color: white"></i>
+          <i
+            class="fa-solid fa-bars"
+            style="background-color: transparent; color: white"
+          ></i>
         </button>
       </div>
     </div>
   </header>
 
   <!-- Sidebar 컴포넌트 -->
-  <HamburgerButton :is-open="isHamburgerOpen" @close="closeHamburger" @menu-click="handleHamburgerMenuClick" />
+  <HamburgerButton
+    :is-open="isHamburgerOpen"
+    @close="closeHamburger"
+    @menu-click="handleHamburgerMenuClick"
+  />
 </template>
 
 <style scoped>
@@ -99,7 +110,6 @@ const handleHamburgerMenuClick = (menuType) => {
   background-color: transparent;
   flex-shrink: 0;
   margin-left: 20px; /* 로고에만 왼쪽 여백 */
-  
 }
 
 .logo {

@@ -1,5 +1,5 @@
 <template>
-  <div class="goal-add-card">
+  <div class="goal-add-card" @click="goToCreate">
     <div class="plus-icon">+</div>
     <p>목표 추가하기</p>
   </div>
@@ -7,7 +7,11 @@
 
 <script>
 export default {
-  name: 'GoalAddCard',
+  methods: {
+    goToCreate() {
+      this.$router.push({ name: 'GoalCreatePage' });
+    },
+  },
 };
 </script>
 

@@ -1,7 +1,7 @@
 <template>
-  <div class="goal-card">
+  <div class="goal-card" @click="goToDetail">
     <h3>{{ goal.title }}</h3>
-    <hr></hr>
+    <hr />
     <p>기간:<br />{{ goal.period1 }}<br />{{ goal.period2 }}</p>
     <p>금액: {{ goal.amount }}</p>
     <div class="progress-box">
@@ -21,6 +21,14 @@ export default {
   name: 'GoalCard',
   props: {
     goal: Object,
+  },
+  methods: {
+    goToDetail() {
+      this.$router.push({
+        name: 'GoalDetailPage',
+        params: { goalId: this.goal.id },
+      });
+    },
   },
 };
 </script>
@@ -46,5 +54,4 @@ export default {
   height: 100%;
   background: #4caf50;
 }
-
 </style>

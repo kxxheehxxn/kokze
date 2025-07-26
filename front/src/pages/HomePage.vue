@@ -1,5 +1,6 @@
 <script setup>
 import UserAssetComponent from '@/components/homePage/UserAssetComponent.vue';
+import AssetChartComponent from '@/components/homePage/AssetChartComponent.vue';
 
 // 최상단으로 스크롤하는 함수
 const scrollToTop = () => {
@@ -19,7 +20,9 @@ const scrollToTop = () => {
         <div class="asset-info-component">
           <UserAssetComponent />
         </div>
-        <div class="chart-component">차트 컴포넌트</div>
+        <div class="chart-component">
+          <AssetChartComponent />
+        </div>
       </div>
 
       <!-- 2. 광고 + (퀴즈/공지사항) (중간) -->
@@ -97,16 +100,10 @@ const scrollToTop = () => {
 
 .chart-component {
   flex: 1.4;
-  background-color: #d1d5db;
-  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  color: #374151;
-  border: 2px dashed #9ca3af;
   min-height: 200px;
-  font-size: 16px;
 }
 
 /* ===== 2. 광고 + 퀴즈/공지사항 영역 ===== */

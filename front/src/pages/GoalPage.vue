@@ -3,7 +3,9 @@
     <section class="goal-summary">
       <div class="header-row">
         <h2>전체 목표 관리</h2>
-        <button class="past-goal-button">지난 목표 리스트</button>
+        <button class="past-goal-button" @click="showSidebar = true">
+          지난 목표 리스트
+        </button>
       </div>
 
       <div class="average-progress">
@@ -18,19 +20,41 @@
         <GoalCard v-for="goal in goals" :key="goal.id" :goal="goal" />
         <GoalAddCard v-for="n in emptySlots" :key="'add-' + n" />
       </div>
+
+      <div class="product-grid">
+        <div
+          v-for="goal in goals"
+          :key="'product-' + goal.id"
+          class="product-box"
+        >
+          {{ goal.product || '-' }}
+        </div>
+        <div
+          v-for="n in emptySlots"
+          :key="'product-empty-' + n"
+          class="product-box"
+        ></div>
+      </div>
     </section>
+
+    <!-- ✅ 트랜지션으로 감싸기 -->
+    <transition name="sidebar-fade">
+      <PastGoalSidebar v-if="showSidebar" @close="showSidebar = false" />
+    </transition>
   </div>
 </template>
 
 <script>
 import GoalCard from '@/components/GoalCard.vue';
 import GoalAddCard from '@/components/GoalAddCard.vue';
+import PastGoalSidebar from '@/components/PastGoalSidebar.vue';
 
 export default {
   name: 'GoalPage',
   components: {
     GoalCard,
     GoalAddCard,
+    PastGoalSidebar,
   },
   data() {
     return {
@@ -38,7 +62,8 @@ export default {
         {
           id: 1,
           title: '노후준비',
-          period: '2025.07.15 ~ 2100.01.01 (약 75년)',
+          period1: '2025.07.15 ~',
+          period2: '2100.01.01 (약 75년)',
           amount: '100억 원',
           progress: 9,
           product: '(적금) 매달 5일 20만원',
@@ -46,7 +71,8 @@ export default {
         {
           id: 2,
           title: '내 집 마련',
-          period: '2025.07.15 ~ 2100.01.01 (약 75년)',
+          period1: '2025.07.15 ~',
+          period2: '2100.01.01 (약 75년)',
           amount: '100억 원',
           progress: 21,
           product: '(예금) 200만원',
@@ -54,13 +80,15 @@ export default {
         {
           id: 3,
           title: '대출 갚기',
-          period: '2025.07.15 ~ 2100.01.01 (약 75년)',
+          period1: '2025.07.15 ~',
+          period2: '2100.01.01 (약 75년)',
           amount: '10억 원',
           progress: 18,
           product: '(펀드) 뭐가 될지 몰라',
         },
       ],
       maxGoals: 5,
+      showSidebar: false,
     };
   },
   computed: {
@@ -121,5 +149,37 @@ export default {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
+  margin-bottom: 1rem;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+.product-box {
+  border: 1px solid #a2c3ff;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.8rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #111;
+  box-shadow: 0 0 6px rgba(0, 120, 255, 0.15);
+}
+
+/* ✅ 애니메이션 정의 */
+.sidebar-fade-enter-active,
+.sidebar-fade-leave-active {
+  transition: all 0.2s ease;
+}
+.sidebar-fade-enter-from,
+.sidebar-fade-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+.sidebar-fade-enter-to,
+.sidebar-fade-leave-from {
+  transform: translateX(0);
+  opacity: 1;
 }
 </style>

@@ -46,6 +46,11 @@ const router = createRouter({
       name: 'FindPasswordPage',
       component: () => import('@/pages/FindPasswordPage.vue'),
     },
+    {
+      path: '/tax-management',
+      name: 'TaxPage.vue',
+      component: () => import('@/pages/tax/TaxPage.vue'),
+    },
     ...authRoutes,
     ...inquiryRoutes,
   ],

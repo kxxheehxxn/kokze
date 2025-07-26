@@ -90,10 +90,6 @@ const load = async () => {
   console.log('DETAIL', article.value);
 };
 load();
-const maskName = (name) => {
-  if (!name || name.length < 2) return name;
-  return name[0] + '*' + name.slice(2);
-};
 </script>
 
 <template>
@@ -107,7 +103,7 @@ const maskName = (name) => {
             >{{ article.title }}
           </h5>
           <div class="inquiry-info">
-            <span>{{ maskName(article.userName) }}</span>
+            <span>{{ article.userName }}</span>
             <span v-if="article.createdAt" class="ms-5">
               {{ moment(article.createdAt).format('YYYY-MM-DD HH:mm') }}
             </span>

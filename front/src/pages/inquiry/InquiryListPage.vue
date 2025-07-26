@@ -58,10 +58,10 @@ const load = async (query) => {
   } catch {}
 };
 load(pageRequest);
-const maskName = (name) => {
-  if (!name || name.length < 2) return name;
-  return name[0] + '*' + name.slice(2);
-};
+// const maskName = (name) => {
+//   if (!name || name.length < 2) return name;
+//   return name[0] + '*' + name.slice(2);
+// };
 </script>
 
 <template>
@@ -101,7 +101,7 @@ const maskName = (name) => {
               </router-link>
             </td>
             <td class="grayfont ellipsis-writer">
-              {{ maskName('김콕재') }}
+              {{ '김콕재' }}
             </td>
             <td class="grayfont">2025-06-14</td>
           </tr>
@@ -122,7 +122,7 @@ const maskName = (name) => {
               </router-link>
             </td>
             <td class="grayfont ellipsis-writer">
-              {{ maskName(inquiry.userName) }}
+              {{ inquiry.userName }}
             </td>
             <td class="grayfont">
               {{ moment(inquiry.createdAt).format('YYYY-MM-DD') }}

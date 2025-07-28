@@ -246,7 +246,7 @@ const goToDetail = () => {
 }
 
 @media (max-width: 768px) {
-  .youth-leap-container {
+  ..ad-card {
     padding: 24px 16px;
   }
   .learn-more-button {

@@ -24,6 +24,7 @@
   background-color: #d3d3d3;
   padding: 24px 0;
   margin-top: auto;
+  width: 100%;
 }
 
 .footer-container {
@@ -57,7 +58,26 @@
   font-size: 13px;
   color: #9ca3af;
 }
+/* 1023px 이하 (데스크탑 -> 태블릿 전환 지점) */
+@media (max-width: 1023px) {
+  .footer {
+    padding: 22px 0; /* 패딩 약간 줄임 */
+  }
 
+  .footer-logo {
+    width: 55px; /* 로고 크기 약간 줄임 */
+    height: 55px;
+  }
+
+  .company-name {
+    font-size: 13.5px; /* 폰트 크기 약간 줄임 */
+  }
+
+  .company-address,
+  .copyright {
+    font-size: 12.5px; /* 폰트 크기 약간 줄임 */
+  }
+}
 /* 반응형 */
 @media (max-width: 768px) {
   .footer {

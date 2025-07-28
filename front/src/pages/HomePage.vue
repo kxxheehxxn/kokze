@@ -80,7 +80,7 @@ const scrollToTop = () => {
   /* max-width: none; 최대 너비 제한 해제 */
   margin: 0 auto; /* 중앙 정렬 */
   margin-top: 60px;
-  padding: 30px 0px;
+  padding: 30px 70px;
   display: flex;
   flex-direction: column;
   gap: 30px;

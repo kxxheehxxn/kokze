@@ -6,7 +6,7 @@ import Footer from './Footer.vue';
 <template>
   <div class="container">
     <Header></Header>
-    <div class="content my-5">
+    <div class="content mt-5">
       <slot></slot>
     </div>
     <Footer></Footer>
@@ -21,5 +21,6 @@ import Footer from './Footer.vue';
 }
 .content {
   flex: 1;
+  width: 100%;
 }
 </style>

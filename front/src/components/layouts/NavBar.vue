@@ -126,15 +126,32 @@ const selectItem = (itemName) => {
   color: #3b82f6;
   font-weight: 600;
 }
+/* 1023px 이하 (데스크탑 -> 태블릿 전환 지점) */
+@media (max-width: 1023px) {
+  .navbar {
+    padding: 8px 15px; /* 패딩 약간 줄임 */
+  }
+  .navbar-list {
+    gap: 40px; /* 아이템 간격 크게 줄임 */
+    flex-wrap: wrap; /* 공간이 부족하면 줄바꿈 허용 */
+    justify-content: center; /* 줄바꿈 시 중앙 정렬 */
+  }
+  .navbar-item {
+    padding: 6px 12px; /* 패딩 줄임 */
+  }
+  .navbar-link {
+    font-size: 14px; /* 폰트 크기 줄임 */
+  }
+}
 
-/* 기존 flex-wrap: wrap 제거 */
 @media (max-width: 768px) {
   .navbar {
     padding: 6px 12px; /* 패딩 더 줄임 */
   }
   .navbar-list {
     gap: 15px; /* 간격 줄임 */
-    /* flex-wrap: wrap 삭제 */
+    flex-wrap: nowrap; /* 768px 이하에서는 줄바꿈 방지 */
+    /* justify-content: center; (필요시) 중앙 정렬을 유지하거나 다른 정렬 방식 선택 */
   }
   .navbar-item {
     padding: 4px 8px; /* 패딩 더 줄임 */

@@ -99,7 +99,6 @@ const handleHamburgerMenuClick = (menuType) => {
   background-color: transparent;
   flex-shrink: 0;
   margin-left: 20px; /* 로고에만 왼쪽 여백 */
-  
 }
 
 .logo {
@@ -162,5 +161,103 @@ const handleHamburgerMenuClick = (menuType) => {
 
 .hamburger-btn:focus {
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* 1023px 이하 (데스크탑 -> 태블릿 전환 지점) */
+@media (max-width: 1023px) {
+  .header-container {
+    height: 70px; /* 헤더 높이 약간 줄임 */
+  }
+
+  .logo-section {
+    margin-left: 15px; /* 왼쪽 여백 줄임 */
+  }
+
+  .logo-icon {
+    width: 48px; /* 로고 아이콘 크기 줄임 */
+    height: 48px;
+  }
+
+  /* 네비게이션 바는 이 크기부터는 숨김 (햄버거 메뉴로 대체) */
+  .navigation-space {
+    /* 기존 display: none !important; 를 제거하고 flex 아이템으로 동작하도록 변경 */
+    position: static; /* absolute 포지셔닝 해제 */
+    left: auto; /* 기존 absolute 속성 제거 */
+    transform: none; /* 기존 absolute 속성 제거 */
+    flex-grow: 1; /* 남은 공간을 채우도록 설정하여 로고와 햄버거 버튼 사이에 배치 */
+    justify-content: center; /* NavBar 내부 정렬 (NavBar가 flex 컨테이너라고 가정) */
+    align-items: center;
+  }
+
+  .hamburger-section {
+    margin-right: 15px; /* 오른쪽 여백 줄임 */
+  }
+
+  .hamburger-btn {
+    width: 45px; /* 햄버거 버튼 크기 줄임 */
+    height: 45px;
+  }
+
+  .hamburger-btn i {
+    font-size: 22px; /* 햄버거 아이콘 크기 줄임 */
+  }
+}
+
+/* 768px 이하 (태블릿 -> 모바일 전환 지점) */
+@media (max-width: 768px) {
+  .header-container {
+    height: 60px; /* 헤더 높이 더 줄임 */
+  }
+
+  .logo-section {
+    margin-left: 10px; /* 왼쪽 여백 더 줄임 */
+  }
+
+  .logo-icon {
+    width: 40px; /* 로고 아이콘 크기 더 줄임 */
+    height: 40px;
+  }
+
+  .hamburger-section {
+    margin-right: 10px; /* 오른쪽 여백 더 줄임 */
+  }
+
+  .hamburger-btn {
+    width: 40px; /* 햄버거 버튼 크기 더 줄임 */
+    height: 40px;
+  }
+
+  .hamburger-btn i {
+    font-size: 20px; /* 햄버거 아이콘 크기 더 줄임 */
+  }
+}
+
+/* 480px 이하 (모바일) */
+@media (max-width: 480px) {
+  .header-container {
+    height: 50px; /* 헤더 높이 최소화 */
+  }
+
+  .logo-section {
+    margin-left: 8px; /* 왼쪽 여백 최소화 */
+  }
+
+  .logo-icon {
+    width: 35px; /* 로고 아이콘 크기 최소화 */
+    height: 35px;
+  }
+
+  .hamburger-section {
+    margin-right: 8px; /* 오른쪽 여백 최소화 */
+  }
+
+  .hamburger-btn {
+    width: 35px; /* 햄버거 버튼 크기 최소화 */
+    height: 35px;
+  }
+
+  .hamburger-btn i {
+    font-size: 18px; /* 햄버거 아이콘 크기 최소화 */
+  }
 }
 </style>

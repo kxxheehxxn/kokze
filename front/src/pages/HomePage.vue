@@ -79,8 +79,8 @@ const scrollToTop = () => {
   background-color: transparent;
   /* max-width: none; 최대 너비 제한 해제 */
   margin: 0 auto; /* 중앙 정렬 */
-  margin-top: 60px;
-  padding: 30px 0px;
+  margin-top: 15px;
+  padding: 30px 70px;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -161,7 +161,7 @@ const scrollToTop = () => {
 
 .notice-component {
   flex: 2.7;
-  background-color: #d1d5db;
+  background-color: transparent;
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -261,6 +261,7 @@ const scrollToTop = () => {
 @media (max-width: 1024px) {
   .main-content {
     max-width: none;
+    margin-top: 0px;
     padding: 25px 0px; /* 좌우 패딩 없음 */
     gap: 25px;
   }
@@ -305,8 +306,9 @@ const scrollToTop = () => {
 /* ===== 모바일 반응형 (768px 이하) ===== */
 @media (max-width: 768px) {
   .main-content {
-    padding: 20px 0px; /* 좌우 패딩 없음 */
-    gap: 20px;
+    margin: 15px 0px 0px 0px;
+    padding: 10px 0px; /* 좌우 패딩 없음 */
+    gap: 15px;
   }
 
   /* 자산 + 차트 세로 배치 */
@@ -383,7 +385,7 @@ const scrollToTop = () => {
 /* ===== 작은 모바일 반응형 (480px 이하) ===== */
 @media (max-width: 480px) {
   .main-content {
-    padding: 15px 0px; /* 좌우 패딩 없음 */
+    margin-top: 0px;
     gap: 15px;
   }
 

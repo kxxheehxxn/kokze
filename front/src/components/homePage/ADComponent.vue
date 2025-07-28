@@ -57,7 +57,7 @@ const goToDetail = () => {
 
 <style scoped>
 .ad-card {
-  background: #fbfbfb;
+  background: #ffffff;
   border-radius: 0 20px 20px 0; /* 오른쪽만 둥근 모서리 */
   padding: 48px 48px 0px 48px;
   width: 100%; /* 부모의 너비를 꽉 채우도록 설정 */
@@ -246,7 +246,7 @@ const goToDetail = () => {
 }
 
 @media (max-width: 768px) {
-  ..ad-card {
+  .ad-card {
     padding: 24px 16px;
   }
   .learn-more-button {

@@ -174,7 +174,7 @@ onMounted(() => {
 
 <style scoped>
 .user-asset-chart {
-  background: #fbfbfb;
+  background: #ffffff;
   border-radius: 20px;
   padding: 24px;
   width: 100%;

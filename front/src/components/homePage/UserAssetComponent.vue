@@ -115,7 +115,7 @@ onMounted(() => {
 
 <style scoped>
 .asset-card {
-  background: #fbfbfb;
+  background: #ffffff;
   border-radius: 20px;
   padding: 24px;
   width: 100%;

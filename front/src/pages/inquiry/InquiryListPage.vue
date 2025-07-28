@@ -58,10 +58,6 @@ const load = async (query) => {
   } catch {}
 };
 load(pageRequest);
-// const maskName = (name) => {
-//   if (!name || name.length < 2) return name;
-//   return name[0] + '*' + name.slice(2);
-// };
 </script>
 
 <template>
@@ -89,22 +85,6 @@ load(pageRequest);
           </tr>
         </thead>
         <tbody>
-          <!-- 나중에 첫 tr 삭제 -->
-          <tr>
-            <td style="width: 70px" class="text-center">1</td>
-            <td>
-              <router-link
-                class="ellipsis-title link-reset ms-5"
-                :to="{ name: 'inquiryDetail', params: { no: 111 } }"
-              >
-                [답변완료] 임시제목
-              </router-link>
-            </td>
-            <td class="grayfont ellipsis-writer">
-              {{ '김콕재' }}
-            </td>
-            <td class="grayfont">2025-06-14</td>
-          </tr>
           <tr v-for="(inquiry, index) in inquiries" :key="inquiry.infoId">
             <td style="width: 70px" class="text-center">
               {{

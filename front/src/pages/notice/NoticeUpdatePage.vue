@@ -1,24 +1,27 @@
 <script setup>
 import api from '@/api/noticeApi';
-import { computed, ref, reactive } from 'vue';
+import { computed, ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
+
 const auth = userAuthStore();
 const router = useRouter();
 const route = useRoute();
+
 const orgArticle = ref({});
 const noticeId = route.params.no;
-const disableSubmit = computed(() => !article.title);
-const back = () => {
-  router.push({ name: 'noticeList', query: route.query });
-};
 const article = reactive({});
+
+const disableSubmit = computed(() => !article.title);
+
+const back = () => {
+  router.back();
+};
 const submit = async () => {
   if (!confirm('수정할까요?')) return;
 
   const updatedFields = {};
   updatedFields.noticeId = article.noticeId;
-  updatedFields.userId = article.userId;
   updatedFields.title = article.title;
   updatedFields.content = article.content;
   console.log(updatedFields);
@@ -42,6 +45,16 @@ const load = async () => {
   orgArticle.value = { ...data };
   reset();
 };
+// 👉 권한 확인
+onMounted(() => {
+  if (auth.role !== 'ADMIN') {
+    alert('권한이 없습니다.');
+    router.replace('/');
+    return;
+  }
+
+  load(); // 권한이 있을 경우에만 데이터 로드
+});
 load();
 </script>
 <template>
@@ -77,7 +90,9 @@ load();
             <button type="submit" class="btn create" :disabled="disableSubmit">
               확인
             </button>
-            <button class="btn ms-3 back" @click="back">취소</button>
+            <button type="button" class="btn ms-3 back" @click="back">
+              취소
+            </button>
           </div>
         </form>
       </div>

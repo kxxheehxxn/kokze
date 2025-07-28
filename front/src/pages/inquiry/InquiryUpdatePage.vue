@@ -10,7 +10,7 @@ const orgArticle = ref({});
 const infoId = route.params.no;
 const disableSubmit = computed(() => !article.title);
 const back = () => {
-  router.push({ name: 'inquiryList', query: route.query });
+  router.back();
 };
 const article = reactive({});
 const submit = async () => {
@@ -77,7 +77,9 @@ load();
             <button type="submit" class="btn create" :disabled="disableSubmit">
               확인
             </button>
-            <button class="btn ms-3 back" @click="back">취소</button>
+            <button type="button" class="btn ms-3 back" @click="back">
+              취소
+            </button>
           </div>
         </form>
       </div>

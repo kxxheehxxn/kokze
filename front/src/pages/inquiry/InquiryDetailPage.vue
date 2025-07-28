@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/inquiryApi';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import moment from 'moment';
 import { userAuthStore } from '@/stores/auth';
 const auth = userAuthStore();
@@ -10,6 +10,7 @@ const router = useRouter();
 const infoId = route.params.no;
 const article = ref({});
 const isEditingAnswer = ref(false);
+const isAdmin = computed(() => auth.role === 'ADMIN');
 const back = () => {
   router.push({ name: 'inquiryList', query: route.query });
 };
@@ -113,61 +114,66 @@ load();
             <div class="content">{{ article.content }}</div>
           </div>
           <!-- 답변 페이지 -->
-          <!--  v-if 로 auth.role = 'admin'-->
-          <div v-if="!article.isAnswered">
-            <form @submit.prevent="submit">
-              <div class="d-flex mb-3 mt-3 align-items-start">
-                <div class="textarea-container w-100">
-                  <textarea
-                    class="form-control textarea-input"
-                    v-model="article.answeredContent"
-                    rows="10"
-                  ></textarea>
+          <!-- 1. 관리자 화면 -->
+          <div v-if="isAdmin">
+            <div v-if="!article.isAnswered">
+              <form @submit.prevent="submit">
+                <div class="d-flex mb-3 mt-3 align-items-start">
+                  <div class="textarea-container w-100">
+                    <textarea
+                      class="form-control textarea-input"
+                      v-model="article.answeredContent"
+                      rows="10"
+                    ></textarea>
+                  </div>
+                  <button
+                    class="btn ms-3 answer"
+                    type="submit"
+                    :disabled="!article.answeredContent"
+                  >
+                    입력
+                  </button>
                 </div>
-                <button
-                  class="btn ms-3 answer"
-                  type="submit"
-                  :disabled="!article.answeredContent"
-                >
-                  입력
+              </form>
+            </div>
+            <div v-else>
+              <div class="d-flex mb-3 mt-3 align-items-start">
+                <div class="w-100">
+                  <div v-if="!isEditingAnswer">
+                    {{ article.answeredContent }}
+                  </div>
+                  <div v-else class="textarea-container">
+                    <textarea
+                      class="form-control textarea-input"
+                      v-model="article.answeredContent"
+                      rows="10"
+                    ></textarea>
+                  </div>
+                </div>
+                <button class="btn ms-3 answer" @click="updateAnswer">
+                  {{ isEditingAnswer ? '입력' : '수정' }}
                 </button>
               </div>
-            </form>
+            </div>
           </div>
+          <!-- 유저 -->
           <div v-else>
-            <div class="fw-bold mb-3">답변</div>
             <div class="d-flex mb-3 mt-3 align-items-start">
-              <div class="w-100">
-                <div v-if="!isEditingAnswer">{{ article.answeredContent }}</div>
-                <div v-else class="textarea-container">
-                  <textarea
-                    class="form-control textarea-input"
-                    v-model="article.answeredContent"
-                    rows="10"
-                  ></textarea>
-                </div>
+              <div class="w-100" v-if="article.isAnswered">
+                <div class="fw-bold mb-3">답변</div>
+                {{ article.answeredContent }}
               </div>
-              <button class="btn ms-3 answer" @click="updateAnswer">
-                {{ isEditingAnswer ? '입력' : '수정' }}
-              </button>
             </div>
           </div>
         </div>
       </div>
-      <!-- 
-      isAnswered = false && role='user' => 목록, 수정, 삭제 버튼
-      isAnswered = true && role='user' => 답변 화면, 목록 버튼
-
-      isAnswered = false && role='admin' => 답변 폼, 입력 버튼
-      isAnswered = true && role='admin' => 답변 화면, 수정 버튼
- -->
       <div class="d-flex mt-4 w-100 justify-content-between align-items-center">
         <button class="btn back" @click="back">목록</button>
-        <!-- <template v-if auth.roles = "ADMIN" >-->
-        <button class="btn delete" @click="remove">문의 삭제</button>
-        <!-- !isAnswered && 현재 auth.roles = 'USER' 일 때 나타나기 -->
-        <template v-if="!article.isAnswered" class="w-100 text-end"
-          ><div class="ms-auto">
+        <button class="btn delete" @click="remove" v-if="isAdmin">
+          문의 삭제
+        </button>
+        <template v-if="!article.isAnswered && !isAdmin" class="w-100 text-end">
+          <div class="ms-auto">
             <button class="btn edit" @click="update">수정</button>
             <button class="btn delete" @click="remove">삭제</button>
           </div>

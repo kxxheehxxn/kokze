@@ -4,10 +4,13 @@ import { ref, reactive, computed, watch } from 'vue';
 import moment from 'moment';
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted } from 'vue';
+import { userAuthStore } from '@/stores/auth';
+const auth = userAuthStore();
 const route = useRoute();
 const router = useRouter();
 const page = ref({});
 const notices = computed(() => page.value.list);
+const isAdmin = computed(() => auth.role === 'ADMIN');
 const pageRequest = reactive({
   page: parseInt(route.query.page ?? 1),
   amount: parseInt(route.query.amount ?? 10),
@@ -55,6 +58,7 @@ const load = async (query) => {
   try {
     page.value = await api.getList(query);
     console.log(page.value);
+    console.log('ROLE: ', auth.role);
   } catch {}
 };
 load(pageRequest);
@@ -80,12 +84,18 @@ const maskName = (name) => {
         </div>
       </div>
       <div v-for="notice in notices" :key="notice.noticeId">
-        <router-link
-          class="ellipsis-title link-reset ms-5"
-          :to="{ name: 'noticeDetail', params: { no: 111 } }"
-        >
-          임시제목
-        </router-link>
+        <div class="my-3 ms-2">
+          <router-link
+            class="ellipsis-title link-reset mt-4"
+            :to="{ name: 'noticeDetail', params: { no: notice.noticeId } }"
+          >
+            {{ notice.title }}
+          </router-link>
+          <div class="mt-3 date">
+            {{ moment(notice.createdAt).format('YYYY-MM-DD HH:mm') }}
+          </div>
+        </div>
+        <hr />
       </div>
       <div>
         <div class="flex-grow-1 text-center">
@@ -111,8 +121,7 @@ const maskName = (name) => {
             </template>
           </vue-awesome-paginate>
         </div>
-        <div class="text-end">
-          <!-- auth.roles = 'ADMIN' -->
+        <div class="text-end" v-if="isAdmin">
           <router-link
             :to="{ name: 'noticeCreate', query: route.query }"
             class="btn fw-bold"
@@ -148,10 +157,6 @@ td {
   padding: 2rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
-.grayfont {
-  padding-left: 25px;
-  color: #9a9a9a;
-}
 .btn {
   width: 110px;
   height: 41px;
@@ -165,14 +170,14 @@ td {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  /* display: block; */
+  font-size: large;
+  font-weight: bold;
+  display: block;
   max-width: 470px;
 }
-.ellipsis-writer {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100px;
+.date {
+  color: #9a9a9a;
+  font-size: 10pt;
 }
 .link-reset {
   color: inherit;

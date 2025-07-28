@@ -31,17 +31,9 @@ export default {
     return data;
   },
   async update(article) {
-    console.log('article.infoId: ', article);
-    const { data } = await api.patch(`${BASE_URL}/${article.infoId}`, article, {
-      headers: { 'Content-Type': 'application/json' },
-    });
-    console.log('NOTICE PATCH: ', data);
-    return data;
-  },
-  async updateAnswer(article) {
-    console.log('article.infoId: ', article);
+    console.log('article.noticeId: ', article);
     const { data } = await api.patch(
-      `${BASE_URL}/${article.infoId}/answer`,
+      `${BASE_URL}/${article.noticeId}`,
       article,
       {
         headers: { 'Content-Type': 'application/json' },

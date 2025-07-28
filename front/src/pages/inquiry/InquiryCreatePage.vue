@@ -1,13 +1,12 @@
 <script setup>
 import api from '@/api/inquiryApi';
 import { computed, reactive } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
 const auth = userAuthStore();
 const router = useRouter();
-const route = useRoute();
 const back = () => {
-  router.push({ name: 'inquiryList', query: route.query });
+  router.back();
 };
 const article = reactive({
   userId: '24a0f5c7-66d7-11f0-8ab4-8cb0e9d84583', // 실제 로그인된 사용자 ID 넣어야 함
@@ -60,7 +59,9 @@ const submit = async () => {
             >
               확인
             </button>
-            <button class="btn ms-3 fw-bold back" @click="back">취소</button>
+            <button type="button" class="btn ms-3 fw-bold back" @click="back">
+              취소
+            </button>
           </div>
         </form>
       </div>

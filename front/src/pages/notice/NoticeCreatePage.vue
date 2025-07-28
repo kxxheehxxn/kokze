@@ -1,13 +1,13 @@
 <script setup>
 import api from '@/api/noticeApi';
-import { computed, reactive } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
 const auth = userAuthStore();
 const router = useRouter();
-const route = useRoute();
 const back = () => {
-  router.push({ name: 'noticeList', query: route.query });
+  console.log('취소 버튼 클릭됨');
+  router.back();
 };
 const article = reactive({
   adminId: '3e7db2f4-66d7-11f0-8ab4-8cb0e9d84583', // 임시 운영자 adminId
@@ -20,6 +20,14 @@ const submit = async () => {
   await api.create(article);
   router.push('/notice/list');
 };
+// 👉 권한 확인
+onMounted(() => {
+  if (auth.role !== 'ADMIN') {
+    alert('권한이 없습니다.');
+    router.replace('/'); // 또는 router.push('/') 등 원하는 경로로
+    return;
+  }
+});
 </script>
 <template>
   <div class="custom-box-wrapper">
@@ -58,7 +66,9 @@ const submit = async () => {
             >
               확인
             </button>
-            <button class="btn ms-3 fw-bold back" @click="back">취소</button>
+            <button type="button" class="btn ms-3 fw-bold back" @click="back">
+              취소
+            </button>
           </div>
         </form>
       </div>

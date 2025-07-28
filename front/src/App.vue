@@ -7,7 +7,11 @@ import DefaultLayout from './components/layouts/DefaultLayout.vue';
 const route = useRoute();
 
 // 헤더/풋터가 없어야 하는 페이지 목록
-const pagesWithoutHeaderFooter = ['/auth/login', '/signup/step1/local'];
+const pagesWithoutHeaderFooter = [
+    '/auth/login',
+    '/signup/step1/local',
+    '/signup/step1/kakao',
+];
 
 const showHeaderFooter = computed(() => {
     return !pagesWithoutHeaderFooter.includes(route.path);

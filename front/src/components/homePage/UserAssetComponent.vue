@@ -1,26 +1,21 @@
 <template>
   <div class="asset-card">
-    <!-- 타이틀 헤더 -->
     <div class="title-header">
       <h2 class="title">✨ {{ userName }}의 현재 자산 상황 ✨</h2>
     </div>
 
-    <!-- 자산 정보 -->
     <div class="asset-info">
-      <!-- 총 자산 -->
       <div class="asset-item total-asset">
         <span class="label">총 자산</span>
         <span class="amount">{{ formatCurrency(totalAsset) }}</span>
       </div>
 
-      <!-- 월 순수익 -->
       <div class="asset-item monthly-income">
         <span class="label">월 순수익</span>
         <span class="amount">{{ formatCurrency(monthlyIncome) }}</span>
       </div>
     </div>
 
-    <!-- 진행률 -->
     <div class="progress-section">
       <div class="progress-info">
         <span class="progress-label">전체 목표 진행률</span>
@@ -31,7 +26,6 @@
       </div>
     </div>
 
-    <!-- 액션 버튼 -->
     <button class="action-button" @click="handleAssetLookup">현재 자산 조회 하기</button>
   </div>
 </template>
@@ -121,27 +115,32 @@ onMounted(() => {
 
 <style scoped>
 .asset-card {
-  background: #f8f9fa;
+  background: #ffffff;
   border-radius: 20px;
   padding: 24px;
-  width: 100%; /* 부모 너비에 맞춤 */
+  width: 100%;
   height: 100%;
-  max-width: none; /* 최대 너비 제한 해제 */
-  margin: 0; /* 마진 제거 */
+  max-width: none;
+  margin: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box; /* 패딩 포함 박스 사이징 */
+  box-sizing: border-box;
+  display: flex; /* 내부 콘텐츠를 세로로 정렬 */
+  flex-direction: column;
+  justify-content: space-between; /* 요소들 사이 공간 균등 분배 */
 }
 
 .title-header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px; /* 마진 조정 */
 }
 
 .title {
-  font-size: 30px;
+  font-size: 24px; /* 폰트 크기 조정 */
   font-weight: 600;
+  background-color: transparent;
   color: #333;
-  margin-top: 30px;
+  text-align: center;
+  margin-top: 10px; /* 마진 조정 */
   line-height: 1.4;
 }
 
@@ -149,15 +148,15 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 32px;
+  margin-bottom: 24px; /* 마진 조정 */
 }
 
 .asset-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 30px;
-  padding: 20px;
+  padding: 18px 20px; /* 패딩 조정 */
+  margin: 20px 0; /* 상하 마진 조정 */
   border-radius: 12px;
   font-weight: 600;
 }
@@ -173,23 +172,25 @@ onMounted(() => {
 }
 
 .label {
-  font-size: 30px;
+  font-size: 18px; /* 폰트 크기 조정 */
   font-weight: 500;
   background-color: transparent;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 }
 
 .amount {
-  font-size: 18px;
+  font-size: 22px; /* 폰트 크기 조정 */
   font-weight: 700;
   background-color: transparent;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 }
 
 .progress-section {
-  margin-bottom: 30px;
-  margin-top: 30px;
+  margin-top: 12px;
+  margin-bottom: 24px; /* 마진 조정 */
   border: 1px solid #cfcfd0;
   border-radius: 12px;
-  padding: 20px;
+  padding: 18px 20px; /* 패딩 조정 */
 }
 
 .progress-info {
@@ -200,15 +201,17 @@ onMounted(() => {
 }
 
 .progress-label {
-  font-size: 30px;
+  font-size: 18px; /* 폰트 크기 조정 */
   color: #666;
   font-weight: 500;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 }
 
 .progress-value {
-  font-size: 30px;
+  font-size: 22px; /* 폰트 크기 조정 */
   font-weight: 700;
   color: #22c55e;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 }
 
 .progress-bar {
@@ -228,15 +231,15 @@ onMounted(() => {
 .action-button {
   width: 100%;
   padding: 16px;
-  margin-top: 20px;
+  margin-top: auto; /* 하단으로 자동 배치 */
   background: #fd5757;
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 30px;
+  font-size: 20px; /* 폰트 크기 조정 */
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0; /* 버튼이 줄어들지 않도록 */
 }
 
 .action-button:hover {
@@ -246,5 +249,127 @@ onMounted(() => {
 
 .action-button:active {
   transform: translateY(0);
+}
+
+@media (max-width: 1023px) {
+  .title {
+    font-size: 22px; /* 폰트 크기 조정 */
+  }
+  .label {
+    font-size: 17px; /* 폰트 크기 조정 */
+  }
+  .amount {
+    font-size: 20px; /* 폰트 크기 조정 */
+  }
+  .progress-label {
+    font-size: 17px; /* 폰트 크기 조정 */
+  }
+  .progress-value {
+    font-size: 20px; /* 폰트 크기 조정 */
+  }
+  .action-button {
+    font-size: 18px; /* 폰트 크기 조정 */
+  }
+}
+
+/* 반응형 디자인 추가 (필요시 더 세분화) */
+@media (max-width: 768px) {
+  .asset-card {
+    padding: 20px;
+  }
+  .title {
+    font-size: 22px;
+  }
+  .label,
+  .progress-label {
+    font-size: 16px;
+  }
+  .amount,
+  .progress-value {
+    font-size: 20px;
+  }
+  .action-button {
+    font-size: 18px;
+    padding: 14px;
+  }
+}
+
+/* 768px 미만 화면 (태블릿 세로, 모바일 가로) */
+@media (max-width: 768px) {
+  .asset-card {
+    padding: 16px;
+  }
+  .title {
+    font-size: 20px;
+  }
+  .asset-info {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .asset-item {
+    padding: 14px 16px;
+    margin: 10px 0;
+  }
+  .label {
+    font-size: 15px; /* 폰트 크기 더 줄임 */
+  }
+  .amount {
+    font-size: 18px; /* 폰트 크기 더 줄임 */
+  }
+  .progress-section {
+    padding: 14px 16px;
+    margin-top: 8px;
+    margin-bottom: 20px;
+  }
+  .progress-label {
+    font-size: 15px; /* 폰트 크기 더 줄임 */
+  }
+  .progress-value {
+    font-size: 18px; /* 폰트 크기 더 줄임 */
+  }
+  .action-button {
+    font-size: 16px;
+    padding: 12px;
+  }
+}
+
+/* 480px 미만 화면 (모바일 세로) */
+@media (max-width: 480px) {
+  .asset-card {
+    padding: 12px;
+  }
+  .title {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  .asset-info {
+    gap: 6px;
+    margin-bottom: 15px;
+  }
+  .asset-item {
+    padding: 12px 14px;
+    margin: 8px 0;
+  }
+  .label {
+    font-size: 13px; /* 폰트 크기 더 줄임 */
+  }
+  .amount {
+    font-size: 16px; /* 폰트 크기 더 줄임 */
+  }
+  .progress-section {
+    padding: 12px 14px;
+    margin-top: 6px;
+    margin-bottom: 15px;
+  }
+  .progress-label {
+    font-size: 13px; /* 폰트 크기 더 줄임 */
+  }
+  .progress-value {
+    font-size: 16px; /* 폰트 크기 더 줄임 */
+  }
+  .action-button {
+    font-size: 14px;
+    padding: 10px;
+  }
 }
 </style>

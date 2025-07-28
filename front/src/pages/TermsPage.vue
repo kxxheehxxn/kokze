@@ -3,11 +3,7 @@
     <TermsSidebar :categories="categories" v-model="selectedCategory" />
     <div class="terms-content">
       <div class="terms-search-wrap">
-        <input
-          v-model="search"
-          placeholder="검색어를 입력하세요"
-          class="terms-search"
-        />
+        <input v-model="search" placeholder="검색어를 입력하세요" class="terms-search" />
         <span class="search-icon">🔍</span>
       </div>
       <TermsAccordion :terms="filteredTerms" />
@@ -16,28 +12,27 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import TermsSidebar from '@/components/TermsSidebar.vue'
-import TermsAccordion from '@/components/TermsAccordion.vue'
-import { fetchTerms } from '@/api/termsApi.js'
+import { ref, computed, onMounted } from 'vue';
+import TermsSidebar from '@/components/TermsSidebar.vue';
+import TermsAccordion from '@/components/TermsAccordion.vue';
+import { fetchTerms } from '@/api/termsApi.js';
 
-const categories = ['예금', '적금', '보험', '세금']
-const selectedCategory = ref('예금')
-const search = ref('')
-const terms = ref([])
+const categories = ['예금', '적금', '보험', '세금'];
+const selectedCategory = ref('예금');
+const search = ref('');
+const terms = ref([]);
 
 onMounted(async () => {
-  terms.value = await fetchTerms()
-})
+  terms.value = await fetchTerms();
+});
 
 const filteredTerms = computed(() =>
   terms.value.filter(
-    term =>
+    (term) =>
       term.category === selectedCategory.value &&
-      (term.title.includes(search.value) ||
-        term.description.includes(search.value)),
-  ),
-)
+      (term.title.includes(search.value) || term.description.includes(search.value))
+  )
+);
 </script>
 
 <style scoped>

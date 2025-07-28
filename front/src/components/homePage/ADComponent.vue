@@ -190,7 +190,7 @@ const goToDetail = () => {
 
 /* 반응형 디자인 */
 @media (max-width: 992px) {
-  .youth-leap-container {
+  .ad-card {
     padding: 32px 24px;
     min-height: auto;
     border-radius: 0 20px 20px 0; /* 반응형에서도 오른쪽만 둥근 모서리 유지 */

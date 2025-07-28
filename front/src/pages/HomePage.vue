@@ -1,6 +1,9 @@
 <script setup>
 import UserAssetComponent from '@/components/homePage/UserAssetComponent.vue';
 import AssetChartComponent from '@/components/homePage/AssetChartComponent.vue';
+import AdComponent from '@/components/homePage/ADComponent.vue';
+import QuizComponent from '@/components/homePage/QuizComponent.vue';
+import NoticeSummaryComponent from '@/components/homePage/NoticeSummaryComponent.vue';
 
 // 최상단으로 스크롤하는 함수
 const scrollToTop = () => {
@@ -27,10 +30,16 @@ const scrollToTop = () => {
 
       <!-- 2. 광고 + (퀴즈/공지사항) (중간) -->
       <div class="middle-section">
-        <div class="ad-component">광고 컴포넌트</div>
+        <div class="ad-component">
+          <AdComponent />
+        </div>
         <div class="right-section">
-          <div class="quiz-component">퀴즈 컴포넌트</div>
-          <div class="notice-component">공지사항 컴포넌트</div>
+          <div class="quiz-component">
+            <QuizComponent />
+          </div>
+          <div class="notice-component">
+            <NoticeSummaryComponent />
+          </div>
         </div>
       </div>
 
@@ -68,10 +77,10 @@ const scrollToTop = () => {
 
 .main-content {
   background-color: transparent;
-  max-width: none; /* 최대 너비 제한 해제 */
+  /* max-width: none; 최대 너비 제한 해제 */
   margin: 0 auto; /* 중앙 정렬 */
-  margin-top: 80px;
-  padding: 30px 20px;
+  margin-top: 60px;
+  padding: 30px 0px;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -83,9 +92,9 @@ const scrollToTop = () => {
 /* ===== 1. 자산 현황 + 차트 영역 ===== */
 .asset-section {
   display: flex;
-  gap: 20px;
+  gap: 0px; /* 자산 컴포넌트와 차트 컴포넌트 사이 간격 */
   width: 100%;
-  height: 680px;
+  /* height: 630px; */
   max-width: none; /* 최대 너비 제한 해제 */
   justify-content: center; /* 중앙 정렬 */
 }
@@ -96,6 +105,7 @@ const scrollToTop = () => {
   align-items: center;
   justify-content: center;
   min-height: 200px;
+  padding: 20px;
 }
 
 .chart-component {
@@ -104,6 +114,7 @@ const scrollToTop = () => {
   align-items: center;
   justify-content: center;
   min-height: 200px;
+  padding: 20px;
 }
 
 /* ===== 2. 광고 + 퀴즈/공지사항 영역 ===== */
@@ -112,21 +123,21 @@ const scrollToTop = () => {
   gap: 20px;
   min-height: 250px;
   width: 100%;
+  padding-right: 20px;
   margin-top: 100px; /* 상단 여백 */
   max-width: none;
   justify-content: center; /* 중앙 정렬 */
 }
 
 .ad-component {
-  flex: 2;
-  background-color: #d1d5db;
-  border-radius: 16px;
+  flex: 1.6;
+  background-color: #fbfbfb;
+  border-radius: 0 20px 20px 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   color: #374151;
-  border: 2px dashed #9ca3af;
   font-size: 18px;
 }
 
@@ -139,32 +150,27 @@ const scrollToTop = () => {
 
 .quiz-component {
   flex: 2.7;
-  background-color: #d1d5db;
-  border-radius: 16px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   color: #374151;
-  border: 2px dashed #9ca3af;
   min-height: 140px;
-  font-size: 14px;
 }
 
 .notice-component {
   flex: 2.7;
   background-color: #d1d5db;
-  border-radius: 16px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  color: #374151;
-  border: 2px dashed #9ca3af;
   text-align: center;
-  padding: 15px;
   min-height: 95px;
-  font-size: 14px;
+  width: 100%;
+  height: 100%;
 }
 
 /* ===== 3. 서비스 소개 타이틀 ===== */
@@ -254,9 +260,17 @@ const scrollToTop = () => {
 /* ===== 태블릿 반응형 (1024px 이하) ===== */
 @media (max-width: 1024px) {
   .main-content {
-    max-width: 900px;
-    padding: 25px 20px;
+    max-width: none;
+    padding: 25px 0px; /* 좌우 패딩 없음 */
     gap: 25px;
+  }
+
+  /* 모든 섹션이 main-content의 너비를 채우도록 */
+  .asset-section,
+  .middle-section,
+  .service-title-section,
+  .bottom-navigation-section {
+    max-width: 100%;
   }
 
   .asset-section,
@@ -279,12 +293,19 @@ const scrollToTop = () => {
     bottom: 25px;
     right: 25px;
   }
+
+  .ad-component {
+    border-radius: 0 20px 20px 0; /* border-radius 유지 */
+    /* 1024px 이하에서는 main-content의 좌우 패딩이 0이므로 음수 마진 필요 없음 */
+    margin-left: 0;
+    width: 100%; /* 부모 너비에 꽉 채움 */
+  }
 }
 
 /* ===== 모바일 반응형 (768px 이하) ===== */
 @media (max-width: 768px) {
   .main-content {
-    padding: 20px 15px;
+    padding: 20px 0px; /* 좌우 패딩 없음 */
     gap: 20px;
   }
 
@@ -304,15 +325,19 @@ const scrollToTop = () => {
     flex-direction: column;
     gap: 15px;
     min-height: auto;
+    justify-content: flex-start; /* 왼쪽 정렬 유지 */
   }
 
   .ad-component {
     height: 180px;
     font-size: 16px;
+    border-radius: 0 20px 20px 0; /* border-radius 유지 */
+    margin-left: 0; /* 좌우 패딩이 0이므로 음수 마진 필요 없음 */
+    width: 100%; /* 부모 너비에 꽉 채움 */
   }
 
   .right-section {
-    flex-direction: row;
+    flex-direction: row; /* 퀴즈/공지사항은 가로 배치 유지 */
     gap: 15px;
   }
 
@@ -332,14 +357,14 @@ const scrollToTop = () => {
   /* 네비게이션 카드 - 모든 화면에서 가로 3개 유지 */
   .bottom-navigation-section {
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px; /* 간격 줄임 */
+    gap: 12px;
   }
 
   .nav-card {
-    height: 120px; /* 높이 축소 */
-    font-size: 12px; /* 폰트 크기 축소 */
-    padding: 12px; /* 패딩 축소 */
-    border-radius: 12px; /* 모서리 둥글기 축소 */
+    height: 120px;
+    font-size: 12px;
+    padding: 12px;
+    border-radius: 12px;
   }
 
   /* 스크롤 버튼 */
@@ -358,7 +383,7 @@ const scrollToTop = () => {
 /* ===== 작은 모바일 반응형 (480px 이하) ===== */
 @media (max-width: 480px) {
   .main-content {
-    padding: 15px 10px;
+    padding: 15px 0px; /* 좌우 패딩 없음 */
     gap: 15px;
   }
 
@@ -374,6 +399,9 @@ const scrollToTop = () => {
   .ad-component {
     height: 150px;
     font-size: 14px;
+    border-radius: 0 20px 20px 0; /* border-radius 유지 */
+    margin-left: 0; /* 좌우 패딩이 0이므로 음수 마진 필요 없음 */
+    width: 100%; /* 부모 너비에 꽉 채움 */
   }
 
   .right-section {
@@ -394,15 +422,14 @@ const scrollToTop = () => {
   }
 
   .nav-card {
-    height: 100px; /* 더 작게 */
-    font-size: 11px; /* 더 작은 폰트 */
-    padding: 8px; /* 더 작은 패딩 */
-    border-radius: 10px; /* 더 작은 모서리 */
-    /* 간격도 더 줄임 */
+    height: 100px;
+    font-size: 11px;
+    padding: 8px;
+    border-radius: 10px;
   }
 
   .bottom-navigation-section {
-    gap: 8px; /* 간격 더 줄임 */
+    gap: 8px;
   }
 
   .scroll-top-btn {
@@ -414,63 +441,6 @@ const scrollToTop = () => {
 
   .scroll-top-icon {
     font-size: 16px;
-  }
-}
-
-/* ===== 매우 작은 화면 (320px 이하) ===== */
-@media (max-width: 320px) {
-  .main-content {
-    padding: 10px 8px;
-    gap: 12px;
-  }
-
-  .asset-info-component,
-  .chart-component {
-    min-height: 120px;
-  }
-
-  .chart-component {
-    font-size: 13px;
-  }
-
-  .ad-component {
-    height: 130px;
-    font-size: 13px;
-  }
-
-  .quiz-component,
-  .notice-component {
-    min-height: 90px;
-    font-size: 11px;
-    padding: 8px;
-  }
-
-  .service-title-section {
-    height: 50px;
-    font-size: 13px;
-  }
-
-  .nav-card {
-    height: 85px; /* 매우 작게 */
-    font-size: 10px; /* 매우 작은 폰트 */
-    padding: 6px; /* 최소 패딩 */
-    border-radius: 8px; /* 작은 모서리 */
-    line-height: 1.2; /* 줄 간격 조정 */
-  }
-
-  .bottom-navigation-section {
-    gap: 6px; /* 최소 간격 */
-  }
-
-  .scroll-top-btn {
-    width: 40px;
-    height: 40px;
-    bottom: 12px;
-    right: 12px;
-  }
-
-  .scroll-top-icon {
-    font-size: 14px;
   }
 }
 </style>

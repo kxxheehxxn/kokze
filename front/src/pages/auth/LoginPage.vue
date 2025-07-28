@@ -35,7 +35,11 @@ const handleLogin = async () => {
 }
 
 const handleKakaoLogin = () => {
-  window.location.href = 'https://kauth.kakao.com/oauth/authorize?...' // 실제 인증 URL로 교체
+  // 환경변수에서 가져오거나 기본값 사용
+  const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID
+  const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`
+  window.location.href = kakaoAuthUrl
 }
 </script>
 

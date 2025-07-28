@@ -42,6 +42,29 @@ const router = createRouter({
       component: () => import('@/pages/UserWithdrawPage.vue'),
     },
     {
+      path: '/goals',
+      name: 'GoalPage',
+      component: () => import('@/pages/GoalPage.vue'),
+    },
+    {
+      path: '/goals/:goalId', // 상세 페이지 경로
+      name: 'GoalDetailPage',
+      component: () => import('@/pages/GoalDetailPage.vue'),
+      props: true, // goalId를 props로 전달
+    },
+    {
+      path: '/goals/create',
+      name: 'GoalCreatePage',
+      component: () => import('@/pages/GoalCreatePage.vue'),
+    },
+    {
+      path: '/goal/edit/:goalId',
+      name: 'GoalEditPage',
+      component: () => import('@/pages/GoalEditPage.vue'),
+      props: true, // goalId param을 props로 전달
+    },
+
+    {
       path: '/find-password',
       name: 'FindPasswordPage',
       component: () => import('@/pages/FindPasswordPage.vue'),

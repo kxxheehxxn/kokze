@@ -28,9 +28,18 @@ export const userAuthStore = defineStore('auth', () => {
                     roles: ['USER'],
                 };
             } else {
-                // 일반 로그인의 경우 실제 API 호출
+                // 일반 로그인의 경우 UserController 사용
                 const response = await axios.post('http://localhost:8080/api/auth/login', member);
-                state.value = { ...response.data };
+                
+                if (response.data && response.data.success) {
+                    state.value.token = response.data.token;
+                    state.value.user = {
+                        email: response.data.user.email,
+                        roles: ['USER'],
+                    };
+                } else {
+                    throw new Error(response.data.message || '로그인에 실패했습니다.');
+                }
             }
 
             localStorage.setItem('auth', JSON.stringify(state.value));

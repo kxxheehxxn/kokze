@@ -1,5 +1,7 @@
-import api from '@/api';
+import api from '@/api'; // 여기서 'api'는 axios 인스턴스라고 가정합니다.
+
 const BASE_URL = '/api/inquiry';
+
 export default {
   async getList(params) {
     //전체 리스트
@@ -21,6 +23,7 @@ export default {
     return data;
   },
   async get(no) {
+    // 이 메서드는 이제 단순히 게시글 상세 정보를 가져오는 역할만 합니다.
     const { data } = await api.get(`${BASE_URL}/${no}`);
     console.log('BOARD GET', data);
     return data;
@@ -49,5 +52,16 @@ export default {
     );
     console.log('BOARD PATCH: ', data);
     return data;
+  },
+  // 새로 추가된 FAQ 목록 가져오는 API
+  async getFaqList() {
+    const { data } = await api.get(`${BASE_URL}/faq`);
+    console.log('FAQ LIST: ', data);
+    return data;
+  },
+  // 조회수 증가 API
+  async increaseViewCount(infoId) {
+    await api.patch(`${BASE_URL}/${infoId}/increaseViewCount`);
+    console.log(`View count increased for infoId: ${infoId}`);
   },
 };

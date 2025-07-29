@@ -1,18 +1,59 @@
 <script setup>
-import api from '@/api/inquiryApi';
+import api from '@/api/inquiryApi'; // inquiryApi에 조회수 증가 API 호출 메서드가 필요합니다.
 import { ref, reactive, computed, watch } from 'vue';
 import moment from 'moment';
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted } from 'vue';
+
 const route = useRoute();
 const router = useRouter();
-const page = ref({});
-const inquiries = computed(() => page.value.list);
+
+const page = ref({}); // 일반 문의사항 페이지네이션 데이터
+const faqInquiries = ref([]); // FAQ 게시글 목록
+
+// 모든 문의사항 (FAQ + 일반)을 합쳐서 계산된 속성으로 만듭니다.
+const combinedInquiries = computed(() => {
+  const currentPagedInquiries = page.value.list || [];
+  const faqInfoIds = new Set(faqInquiries.value.map((faq) => faq.infoId));
+
+  const filteredInquiries = currentPagedInquiries.filter(
+    (inquiry) => !faqInfoIds.has(inquiry.infoId)
+  );
+
+  const combined = [...faqInquiries.value, ...filteredInquiries];
+  return combined;
+});
+
 const pageRequest = reactive({
   page: parseInt(route.query.page ?? 1),
   amount: parseInt(route.query.amount ?? 10),
 });
 const searchKeyword = ref('');
+
+// getOriginalIndex 함수 정의
+const getOriginalIndex = (inquiry) => {
+  if (!faqInquiries.value.some((faq) => faq.infoId === inquiry.infoId)) {
+    return (page.value.list || []).findIndex(
+      (item) => item.infoId === inquiry.infoId
+    );
+  }
+  return -1;
+};
+
+// ⭐⭐ 조회수 증가 및 상세 페이지 이동 처리 함수 추가 ⭐⭐
+const goToInquiryDetail = async (infoId) => {
+  try {
+    // 백엔드의 새로운 조회수 증가 API 호출
+    await api.increaseViewCount(infoId); // 이 메서드는 inquiryApi에 추가해야 합니다.
+    console.log(`조회수 증가 성공: ${infoId}`);
+  } catch (e) {
+    console.error(`조회수 증가 실패: ${infoId}`, e);
+    // 조회수 증가에 실패해도 상세 페이지로 이동은 계속 진행
+  } finally {
+    // 상세 페이지로 라우팅
+    router.push({ name: 'inquiryDetail', params: { no: infoId } });
+  }
+};
 
 const search = async () => {
   try {
@@ -27,13 +68,31 @@ const search = async () => {
     console.error('검색 실패:', e);
   }
 };
-//페이지네이션 - 페이지 변경
+
 const handlePageChange = async (pageNum) => {
   router.push({
     query: { page: pageNum, amount: pageRequest.amount },
   });
 };
-// pageRequest의 값 변경된 경우 호출
+
+const loadInquiries = async (query) => {
+  try {
+    page.value = await api.getList(query);
+    console.log('일반 문의 목록:', page.value);
+  } catch (e) {
+    console.error('일반 문의 목록 로드 실패:', e);
+  }
+};
+
+const loadFaq = async () => {
+  try {
+    faqInquiries.value = await api.getFaqList();
+    console.log('FAQ 목록:', faqInquiries.value);
+  } catch (e) {
+    console.error('FAQ 목록 로드 실패:', e);
+  }
+};
+
 watch(route, async () => {
   pageRequest.page = parseInt(route.query.page);
   pageRequest.amount = parseInt(route.query.amount);
@@ -41,23 +100,18 @@ watch(route, async () => {
   if (searchKeyword.value) {
     await search();
   } else {
-    await load(pageRequest);
+    await loadInquiries(pageRequest);
   }
 });
+
 onMounted(async () => {
+  await loadFaq();
   if (searchKeyword.value) {
     await search();
   } else {
-    await load(pageRequest);
+    await loadInquiries(pageRequest);
   }
 });
-const load = async (query) => {
-  try {
-    page.value = await api.getList(query);
-    console.log(page.value);
-  } catch {}
-};
-load(pageRequest);
 </script>
 
 <template>
@@ -82,20 +136,38 @@ load(pageRequest);
             <th>제목</th>
             <th style="width: 100px">작성자</th>
             <th style="width: 120px">작성일</th>
+            <th style="width: 100px">조회수</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(inquiry, index) in inquiries" :key="inquiry.infoId">
+          <tr
+            v-for="(inquiry, index) in combinedInquiries"
+            :key="inquiry.infoId"
+            :class="{
+              'faq-row': faqInquiries.some(
+                (faq) => faq.infoId === inquiry.infoId
+              ),
+            }"
+          >
             <td style="width: 70px" class="text-center">
-              {{
-                page.totalCount -
-                ((pageRequest.page - 1) * pageRequest.amount + index)
-              }}
+              <template
+                v-if="faqInquiries.some((faq) => faq.infoId === inquiry.infoId)"
+              >
+                FAQ
+              </template>
+              <template v-else>
+                {{
+                  page.totalCount -
+                  ((pageRequest.page - 1) * pageRequest.amount +
+                    getOriginalIndex(inquiry))
+                }}
+              </template>
             </td>
             <td>
               <router-link
                 class="ellipsis-title link-reset ms-5"
                 :to="{ name: 'inquiryDetail', params: { no: inquiry.infoId } }"
+                @click.prevent="goToInquiryDetail(inquiry.infoId)"
               >
                 <span v-if="inquiry.isAnswered">[답변완료] </span
                 >{{ inquiry.title }}
@@ -106,6 +178,9 @@ load(pageRequest);
             </td>
             <td class="grayfont">
               {{ moment(inquiry.createdAt).format('YYYY-MM-DD') }}
+            </td>
+            <td class="grayfont text-center">
+              {{ inquiry.viewCount }}
             </td>
           </tr>
         </tbody>
@@ -146,6 +221,7 @@ load(pageRequest);
   </div>
 </template>
 <style scoped>
+/* 기존 스타일 유지 */
 th {
   text-align: center;
 }
@@ -230,5 +306,9 @@ table {
 }
 i {
   background-color: transparent;
+}
+.faq-row td {
+  background-color: #dfefff; /* 연한 하늘색 */
+  font-weight: bold;
 }
 </style>

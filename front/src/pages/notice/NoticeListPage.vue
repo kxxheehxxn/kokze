@@ -121,7 +121,8 @@ const maskName = (name) => {
             </template>
           </vue-awesome-paginate>
         </div>
-        <div class="text-end" v-if="isAdmin">
+        <!-- TODO: 테스트용으로 빼놓음 나중에 추가하기 v-if="isAdmin"  -->
+        <div class="text-end">
           <router-link
             :to="{ name: 'noticeCreate', query: route.query }"
             class="btn fw-bold"

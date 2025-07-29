@@ -156,7 +156,7 @@ load();
               </div>
             </div>
           </div>
-          <!-- 유저 -->
+          <!-- 2. 유저 화면  -->
           <div v-else>
             <div class="d-flex mb-3 mt-3 align-items-start">
               <div class="w-100" v-if="article.isAnswered">
@@ -172,6 +172,7 @@ load();
         <button class="btn delete" @click="remove" v-if="isAdmin">
           문의 삭제
         </button>
+        <!-- TODO: v-if에 && article.userId == 현재로그인된userId 조건 추가하기-->
         <template v-if="!article.isAnswered && !isAdmin" class="w-100 text-end">
           <div class="ms-auto">
             <button class="btn edit" @click="update">수정</button>

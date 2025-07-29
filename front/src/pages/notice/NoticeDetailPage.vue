@@ -26,13 +26,6 @@ const remove = async () => {
   router.push({ name: 'noticeList', query: route.query });
 };
 const load = async () => {
-  article.value = {
-    noticeId: 111,
-    userId: 'user001',
-    title: '임시 제목입니다.',
-    content: '이건 임시 내용입니다. 프론트 확인용입니다.',
-    createdAt: '2025-06-14T12:00:00',
-  };
   article.value = await api.get(noticeId);
   console.log('DETAIL', article.value);
 };

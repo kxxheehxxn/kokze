@@ -5,40 +5,66 @@ import PrivacyPolicyModal from '@/components/PrivacyPolicyModal.vue';
 
 const router = useRouter();
 
+// // 실제 사용
+// const userInfo = reactive({
+//     name: '',
+//     gender: '',
+//     birth: '',
+//     phone1: '',
+//     phone2: '',
+//     phone3: '',
+//     emailId: '',
+//     emailDomain: '',
+//     emailCode: '',
+//     password: '',
+//     passwordConfirm: '',
+//     agreed: false,
+//     agreeSub0: false,
+//     agreeSub1: false,
+//     agreeSub2: false,
+// });
+
+// 테스트 용
 const userInfo = reactive({
-    name: '',
-    gender: '',
-    birth: '',
-    phone1: '',
-    phone2: '',
-    phone3: '',
-    emailId: '',
-    emailDomain: '',
-    emailCode: '',
-    password: '',
-    passwordConfirm: '',
-    agreed: false,
-    agreeSub0: false,
-    agreeSub1: false,
-    agreeSub2: false,
+    name: '홍길동',
+    gender: 'M',
+    birth: '1995-01-01',
+    phone1: '010',
+    phone2: '1234',
+    phone3: '5678',
+    emailId: 'testuser',
+    emailDomain: 'gmail.com',
+    emailCode: '123456',
+    password: 'Test@1234',
+    passwordConfirm: 'Test@1234',
+    agreed: true,
+    agreeSub0: true,
+    agreeSub1: true,
+    agreeSub2: true,
 });
 
 const emailSent = ref(false);
+const emailSentError = ref('');
 const emailVerified = ref(false);
-const emailError = ref('');
+const emailVerifiedError = ref('');
 const passwordError = ref('');
 const isPolicyModalOpen = ref(false);
 
 // 이메일 인증
 const sendEmailVerification = () => {
+    if (!userInfo.emailId || !userInfo.emailDomain) {
+        emailSentError.value = '이메일을 정확히 입력해주세요.';
+        return;
+    }
+
     emailSent.value = true;
-    emailError.value = '';
+    emailSentError.value = ''; // 오류 메시지 초기화
 };
 
 // 이메일 인증번호 검사
 const confirmEmailCode = () => {
     emailVerified.value = userInfo.emailCode === '123456';
-    emailError.value = emailVerified.value
+    emailVerifiedError.value = emailVerified.value
         ? ''
         : '인증번호가 올바르지 않습니다.';
 };
@@ -220,6 +246,9 @@ const goNext = () => {
                 <p v-if="emailSent" class="hint">
                     이메일로 인증번호가 전송되었습니다.
                 </p>
+                <p v-else-if="emailSentError" class="error">
+                    {{ emailSentError }}
+                </p>
             </div>
 
             <div class="form-group">
@@ -229,7 +258,9 @@ const goNext = () => {
                     <button @click="confirmEmailCode">확인</button>
                 </div>
                 <p v-if="emailVerified" class="success">이메일 인증 완료</p>
-                <p v-else-if="emailError" class="error">{{ emailError }}</p>
+                <p v-else-if="emailVerifiedError" class="error">
+                    {{ emailVerifiedError }}
+                </p>
             </div>
 
             <div class="form-group">

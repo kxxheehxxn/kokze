@@ -11,6 +11,7 @@ const pagesWithoutHeaderFooter = [
     '/auth/login',
     '/signup/step1/local',
     '/signup/step1/kakao',
+    '/signup/step2',
 ];
 
 const showHeaderFooter = computed(() => {

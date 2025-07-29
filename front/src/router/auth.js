@@ -14,4 +14,9 @@ export default [
         name: 'signup-step1-kakao',
         component: () => import('../pages/auth/SignupStep1Kakao.vue'),
     },
+    {
+        path: '/signup/step2',
+        name: 'signup-step2',
+        component: () => import('../pages/auth/SignupStep2.vue'),
+    },
 ];

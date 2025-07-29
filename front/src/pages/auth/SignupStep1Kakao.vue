@@ -5,16 +5,30 @@ import PrivacyPolicyModal from '@/components/PrivacyPolicyModal.vue';
 
 const router = useRouter();
 
+// // 실제 사용
+// const userInfo = reactive({
+//     gender: '',
+//     birth: '',
+//     phone1: '',
+//     phone2: '',
+//     phone3: '',
+//     agreed: false,
+//     agreeSub0: false,
+//     agreeSub1: false,
+//     agreeSub2: false,
+// });
+
+// 테스트 용
 const userInfo = reactive({
-    gender: '',
-    birth: '',
-    phone1: '',
-    phone2: '',
-    phone3: '',
-    agreed: false,
-    agreeSub0: false,
-    agreeSub1: false,
-    agreeSub2: false,
+    gender: 'F',
+    birth: '1992-07-15',
+    phone1: '010',
+    phone2: '9876',
+    phone3: '4321',
+    agreed: true,
+    agreeSub0: true,
+    agreeSub1: true,
+    agreeSub2: true,
 });
 
 const isPolicyModalOpen = ref(false);

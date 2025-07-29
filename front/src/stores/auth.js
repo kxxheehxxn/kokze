@@ -5,16 +5,17 @@ import axios from 'axios';
 const initState = {
   token: '', // 접근 토큰(JWT)
   user: {
+    userId: '', // 사용자 ID
     email: '', // email
     role: '', // 권한 목록
   },
 };
-
 export const userAuthStore = defineStore('auth', () => {
   const state = ref({ ...initState });
 
   // 로그인 여부 파악
   const isLogin = computed(() => !!state.value.user.email); // 로그인 여부
+  const userId = computed(() => state.value.user.userId); // 로그인 사용자 email
   const email = computed(() => state.value.user.email); // 로그인 사용자 email
   const role = computed(() => state.value.user.role); // 로그인 사용자 role
 
@@ -25,8 +26,9 @@ export const userAuthStore = defineStore('auth', () => {
       if (member.token) {
         state.value.token = member.token;
         state.value.user = {
+          userId: member.userId || '',
           email: member.email,
-          roles: 'USER',
+          role: 'USER',
         };
       } else {
         // 일반 로그인의 경우 UserController 사용
@@ -38,8 +40,9 @@ export const userAuthStore = defineStore('auth', () => {
         if (response.data && response.data.success) {
           state.value.token = response.data.token;
           state.value.user = {
+            userId: response.data.user.userId || '',
             email: response.data.user.email,
-            roles: 'USER',
+            role: 'USER',
           };
         } else {
           throw new Error(response.data.message || '로그인에 실패했습니다.');
@@ -74,6 +77,7 @@ export const userAuthStore = defineStore('auth', () => {
 
   return {
     state,
+    userId,
     email,
     isLogin,
     role,

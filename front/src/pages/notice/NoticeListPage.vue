@@ -59,6 +59,7 @@ const load = async (query) => {
     page.value = await api.getList(query);
     console.log(page.value);
     console.log('ROLE: ', auth.role);
+    console.log('USERID: ', auth.userId);
   } catch {}
 };
 load(pageRequest);

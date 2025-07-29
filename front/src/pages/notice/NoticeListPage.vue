@@ -59,14 +59,9 @@ const load = async (query) => {
     page.value = await api.getList(query);
     console.log(page.value);
     console.log('ROLE: ', auth.role);
-    console.log('USERID: ', auth.userId);
   } catch {}
 };
 load(pageRequest);
-const maskName = (name) => {
-  if (!name || name.length < 2) return name;
-  return name[0] + '*' + name.slice(2);
-};
 </script>
 
 <template>
@@ -122,8 +117,7 @@ const maskName = (name) => {
             </template>
           </vue-awesome-paginate>
         </div>
-        <!-- TODO: 테스트용으로 빼놓음 나중에 추가하기 v-if="isAdmin"  -->
-        <div class="text-end">
+        <div class="text-end" v-if="isAdmin">
           <router-link
             :to="{ name: 'noticeCreate', query: route.query }"
             class="btn fw-bold"

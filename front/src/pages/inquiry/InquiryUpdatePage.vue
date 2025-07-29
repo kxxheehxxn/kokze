@@ -44,7 +44,6 @@ const submit = async () => {
 
   try {
     await api.update(updatedFields);
-    alert('문의사항이 성공적으로 수정되었습니다.');
 
     router.replace({
       name: 'inquiryDetail',

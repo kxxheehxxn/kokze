@@ -44,7 +44,6 @@ const reset = () => {
   console.log(article);
 };
 const load = async () => {
-  console.log('--- 공지 로드 시작 ---');
   console.log('로드할 noticeId:', noticeId);
 
   if (!noticeId) {

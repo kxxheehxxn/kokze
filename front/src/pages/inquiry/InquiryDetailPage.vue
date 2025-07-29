@@ -76,17 +76,7 @@ const remove = async () => {
   router.push({ name: 'inquiryList', query: route.query });
 };
 const load = async () => {
-  article.value = {
-    infoId: 111,
-    userId: 'user001',
-    userName: '김콕재',
-    title: '임시 제목입니다.',
-    content: '이건 임시 내용입니다. 프론트 확인용입니다.',
-    createdAt: '2025-06-14T12:00:00',
-    isAnswered: true,
-    answeredContent: '이건 임시 답변 내용입니다.',
-  };
-
+  console.log('userName',auth.userName);
   article.value = await api.get(infoId);
   console.log('DETAIL', article.value);
 };
@@ -172,8 +162,7 @@ load();
         <button class="btn delete" @click="remove" v-if="isAdmin">
           문의 삭제
         </button>
-        <!-- TODO: v-if에 && article.userId == 현재로그인된userId 조건 추가하기-->
-        <template v-if="!article.isAnswered && !isAdmin" class="w-100 text-end">
+        <template v-if="!article.isAnswered && !isAdmin && auth.userId == article.userId"" class="w-100 text-end">
           <div class="ms-auto">
             <button class="btn edit" @click="update">수정</button>
             <button class="btn delete" @click="remove">삭제</button>

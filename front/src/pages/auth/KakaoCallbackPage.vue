@@ -55,6 +55,7 @@ onMounted(async () => {
       auth.login({
         email: result.user?.email || 'kakao_user',
         userId: result.user?.userId || '',
+        userName: result.user?.username || '',
         token: result.token,
       });
 

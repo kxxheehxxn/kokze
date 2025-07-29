@@ -15,8 +15,8 @@ const MAX_CONTENT_LENGTH = 1000;
 // 입력 필드 데이터 정의
 const article = reactive({
   // 실제 로그인된 사용자 ID를 auth 스토어에서 가져옴
-  userId: auth.userId || '24a0f5c7-66d7-11f0-8ab4-8cb0e9d84583', // auth.userId가 없을 경우 기본값 설정
-  userName: auth.userName || '알 수 없음', // auth.userName이 없을 경우 기본값 설정
+  userId: auth.userId,
+  userName: auth.userName, // auth.userName이 없을 경우 기본값 설정
   title: '',
   content: '',
   isAnswered: false, // 작성 시에는 항상 false로 시작
@@ -36,7 +36,6 @@ const submit = async () => {
 
   try {
     await api.create(article);
-    alert('문의사항이 성공적으로 등록되었습니다.');
     router.push('/inquiry/list'); // 목록 페이지로 이동 - 히스토리 스택을 교체하여 뒤로가기 방지
   } catch (e) {
     console.error('문의사항 등록 실패:', e);
@@ -105,7 +104,6 @@ const back = () => {
 </template>
 
 <style scoped>
-/* 기존 스타일 유지 */
 .custom-box-wrapper {
   display: flex;
   justify-content: center;

@@ -24,7 +24,6 @@ const submit = async () => {
 };
 // 👉 권한 확인
 onMounted(() => {
-  //  TODO: 나중에 권한 다시 추가
   if (auth.role !== 'ADMIN') {
     alert('권한이 없습니다.');
     router.replace('/'); // 또는 router.push('/') 등 원하는 경로로
@@ -87,7 +86,6 @@ onMounted(() => {
   </div>
 </template>
 <style scoped>
-/* 기존 스타일 유지 */
 .custom-box-wrapper {
   display: flex;
   justify-content: center;

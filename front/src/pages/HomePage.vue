@@ -4,6 +4,23 @@ import AssetChartComponent from '@/components/homePage/AssetChartComponent.vue';
 import AdComponent from '@/components/homePage/ADComponent.vue';
 import QuizComponent from '@/components/homePage/QuizComponent.vue';
 import NoticeSummaryComponent from '@/components/homePage/NoticeSummaryComponent.vue';
+import { ref, computed } from 'vue';
+import { userAuthStore } from '@/stores/auth';
+
+// 현재 사용자 ID (실제로는 로그인한 사용자 정보에서 가져와야 함)
+const auth = userAuthStore();
+
+// 사용자가 로그인했는지 확인 (디버깅 추가)
+const isUserLoggedIn = computed(() => {
+  console.log('=== 로그인 상태 디버깅 ===');
+  console.log('auth.state:', auth.state);
+  console.log('auth.email:', auth.email);
+  console.log('auth.userId:', auth.userId);
+  console.log('auth.isLogin:', auth.isLogin);
+  console.log('========================');
+
+  return auth.isLogin; // auth store의 isLogin computed 속성 사용
+});
 
 // 최상단으로 스크롤하는 함수
 const scrollToTop = () => {
@@ -16,20 +33,22 @@ const scrollToTop = () => {
 
 <template>
   <div class="homepage">
+    <!-- 디버깅 정보 (개발용) -->
+
     <!-- 메인 컨텐츠 -->
     <div class="main-content">
-      <!-- 1. 사용자 자산 현황 + 차트 (상단) -->
-      <div class="asset-section">
+      <!-- 1. 사용자 자산 현황 + 차트 (상단) - 로그인 시에만 표시 -->
+      <div class="asset-section" v-if="isUserLoggedIn">
         <div class="asset-info-component">
-          <UserAssetComponent />
+          <UserAssetComponent :userId="auth.userId" />
         </div>
         <div class="chart-component">
-          <AssetChartComponent />
+          <AssetChartComponent :userId="auth.userId" />
         </div>
       </div>
 
       <!-- 2. 광고 + (퀴즈/공지사항) (중간) -->
-      <div class="middle-section">
+      <div class="middle-section" :class="{ 'no-asset-section': !isUserLoggedIn }">
         <div class="ad-component">
           <AdComponent />
         </div>
@@ -127,6 +146,11 @@ const scrollToTop = () => {
   margin-top: 100px; /* 상단 여백 */
   max-width: none;
   justify-content: center; /* 중앙 정렬 */
+}
+
+/* 자산 섹션이 없을 때 middle-section의 상단 여백 조정 */
+.middle-section.no-asset-section {
+  margin-top: 30px; /* 자산 섹션이 없을 때는 여백 줄임 */
 }
 
 .ad-component {
@@ -279,6 +303,11 @@ const scrollToTop = () => {
     gap: 15px;
   }
 
+  /* 자산 섹션이 없을 때 여백 조정 */
+  .middle-section.no-asset-section {
+    margin-top: 20px;
+  }
+
   .bottom-navigation-section {
     gap: 15px;
   }
@@ -328,6 +357,11 @@ const scrollToTop = () => {
     gap: 15px;
     min-height: auto;
     justify-content: flex-start; /* 왼쪽 정렬 유지 */
+  }
+
+  /* 자산 섹션이 없을 때 여백 조정 */
+  .middle-section.no-asset-section {
+    margin-top: 15px;
   }
 
   .ad-component {
@@ -396,6 +430,11 @@ const scrollToTop = () => {
 
   .chart-component {
     font-size: 14px;
+  }
+
+  /* 자산 섹션이 없을 때 여백 조정 */
+  .middle-section.no-asset-section {
+    margin-top: 10px;
   }
 
   .ad-component {

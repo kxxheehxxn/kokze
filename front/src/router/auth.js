@@ -19,4 +19,9 @@ export default [
         name: 'signup-step2',
         component: () => import('../pages/auth/SignupStep2.vue'),
     },
+    {
+        path: '/signup/step3',
+        name: 'signup-step3',
+        component: () => import('../pages/auth/SignupStep3.vue'),
+    },
 ];

@@ -5,6 +5,11 @@ export default [
         component: () => import('../pages/auth/LoginPage.vue'),
     },
     {
+        path: '/auth/kakao/callback',
+        name: 'kakaoCallback',
+        component: () => import('../pages/auth/KakaoCallbackPage.vue'),
+    },
+    {
         path: '/signup/step1/local',
         name: 'signup-step1-local',
         component: () => import('../pages/auth/SignupStep1Local.vue'),

@@ -201,19 +201,6 @@ const back = () => {
   bottom: 8px; /* 아래쪽으로 이동 */
   right: 15px;
 }
-
-/* ⭐ 유효성 검사 경고 메시지 스타일 ⭐ */
-.alert-danger {
-  color: #fd5757;
-  background-color: #f2dede;
-  border: 1px solid #ebccd1;
-  border-radius: 4px;
-  padding: 10px 15px;
-  margin-top: 15px;
-  text-align: center;
-  font-size: 14px;
-}
-
 /* 버튼 비활성화 시 스타일 */
 .btn:disabled {
   opacity: 0.6;

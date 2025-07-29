@@ -3,77 +3,83 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 
 const initState = {
-    token: '', // 접근 토큰(JWT)
-    user: {
-        email: '', // email
-        roles: [], // 권한 목록
-    },
+  token: '', // 접근 토큰(JWT)
+  user: {
+    userId: '', // 사용자 ID
+    email: '', // email
+    role: '', // 권한 목록
+  },
 };
-
 export const userAuthStore = defineStore('auth', () => {
-    const state = ref({ ...initState });
+  const state = ref({ ...initState });
 
-    // 로그인 여부 파악
-    const isLogin = computed(() => !!state.value.user.email); // 로그인 여부
-    const email = computed(() => state.value.user.email); // 로그인 사용자 email
+  // 로그인 여부 파악
+  const isLogin = computed(() => !!state.value.user.email); // 로그인 여부
+  const userId = computed(() => state.value.user.userId); // 로그인 사용자 email
+  const email = computed(() => state.value.user.email); // 로그인 사용자 email
+  const role = computed(() => state.value.user.role); // 로그인 사용자 role
 
-    // 로그인
-    const login = async (member) => {
-        try {
-            // 카카오 로그인의 경우 토큰이 포함되어 있음
-            if (member.token) {
-                state.value.token = member.token;
-                state.value.user = {
-                    email: member.email,
-                    roles: ['USER'],
-                };
-            } else {
-                // 일반 로그인의 경우 UserController 사용
-                const response = await axios.post('http://localhost:8080/api/auth/login', member);
-                
-                if (response.data && response.data.success) {
-                    state.value.token = response.data.token;
-                    state.value.user = {
-                        email: response.data.user.email,
-                        roles: ['USER'],
-                    };
-                } else {
-                    throw new Error(response.data.message || '로그인에 실패했습니다.');
-                }
-            }
+  // 로그인
+  const login = async (member) => {
+    try {
+      // 카카오 로그인의 경우 토큰이 포함되어 있음
+      if (member.token) {
+        state.value.token = member.token;
+        state.value.user = {
+          userId: member.userId || '',
+          email: member.email,
+          role: 'USER',
+        };
+      } else {
+        // 일반 로그인의 경우 UserController 사용
+        const response = await axios.post('http://localhost:8080/api/auth/login', member);
 
-            localStorage.setItem('auth', JSON.stringify(state.value));
-        } catch (error) {
-            console.error('로그인 실패:', error);
-            throw error;
+        if (response.data && response.data.success) {
+          state.value.token = response.data.token;
+          state.value.user = {
+            userId: response.data.user.userId || '',
+            email: response.data.user.email,
+            role: 'USER',
+          };
+        } else {
+          throw new Error(response.data.message || '로그인에 실패했습니다.');
         }
-    };
+      }
 
-    // 로그아웃
-    const logout = () => {
-        localStorage.removeItem('auth');
-        state.value = { ...initState };
-    };
+      localStorage.setItem('auth', JSON.stringify(state.value));
+    } catch (error) {
+      console.error('로그인 실패:', error);
+      throw error;
+    }
+  };
 
-    const getToken = () => state.value.token;
+  // 로그아웃
+  const logout = () => {
+    localStorage.removeItem('auth');
+    state.value = { ...initState };
+  };
 
-    // 새로고침 후 상태 복원
-    const load = () => {
-        const auth = localStorage.getItem('auth');
-        if (auth != null) {
-            state.value = JSON.parse(auth);
-            console.log('복원 : ', state.value);
-        }
-    };
+  const getToken = () => state.value.token;
 
-    load();
+  // 새로고침 후 상태 복원
+  const load = () => {
+    const auth = localStorage.getItem('auth');
+    if (auth != null) {
+      state.value = JSON.parse(auth);
+      console.log('복원 : ', state.value);
+    }
+  };
 
-    return {
-        state,
-        email,
-        isLogin,
-        login,
-        logout,
-        getToken,
-    };
+  load();
+
+  return {
+    state,
+    userId,
+    email,
+    isLogin,
+    role,
+    login,
+    logout,
+    getToken,
+  };
 });

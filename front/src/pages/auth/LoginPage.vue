@@ -35,7 +35,14 @@ const handleLogin = async () => {
 }
 
 const handleKakaoLogin = () => {
-  window.location.href = 'https://kauth.kakao.com/oauth/authorize?...' // 실제 인증 URL로 교체
+  const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID
+  const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`
+  window.location.href = kakaoAuthUrl
+}
+
+const handleSignup = () => {
+  router.push('/signup/step1/local')
 }
 </script>
 
@@ -87,7 +94,7 @@ const handleKakaoLogin = () => {
 
       <p class="sign-up-prompt">
         <span>아직 콕재 회원이 아닌가요?&nbsp;</span>
-        <span class="sign-up">가입하기</span>
+        <span class="sign-up" @click="handleSignup">가입하기</span>
       </p>
     </div>
   </div>

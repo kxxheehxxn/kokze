@@ -18,21 +18,33 @@ export const userAuthStore = defineStore('auth', () => {
   const email = computed(() => state.value.user.email); // 로그인 사용자 email
   const role = computed(() => state.value.user.role); // 로그인 사용자 role
 
-  // 로그인
-  const login = async (member) => {
-    // 테스트용: 이메일만 사용
-    state.value.token = 'test-token';
-    state.value.user = {
-      email: member.email,
-      role: 'USER',
+    // 로그인
+    const login = async (member) => {
+        try {
+            // 카카오 로그인의 경우 토큰이 포함되어 있음
+            if (member.token) {
+                state.value.token = member.token;
+                state.value.user = {
+                    email: member.email,
+                    roles: ['USER'],
+                };
+            } else {
+                // 일반 로그인의 경우 UserController 사용
+                const response = await axios.post('http://localhost:8080/api/auth/login', member);
+                
+                if (response.data && response.data.success) {
+                    state.value.token = response.data.token;
+                    state.value.user = {
+                        email: response.data.user.email,
+                        roles: ['USER'],
+                    };
+                } else {
+                    throw new Error(response.data.message || '로그인에 실패했습니다.');
+                }
+            }
+
+        localStorage.setItem('auth', JSON.stringify(state.value));
     };
-
-    // 실제 로그인 API 예시 (나중에 주석 해제하고 사용)
-    // const { data } = await axios.post('/api/auth/login',user);
-    // state.value = { ...data };
-
-    localStorage.setItem('auth', JSON.stringify(state.value));
-  };
 
   // 로그아웃
   const logout = () => {

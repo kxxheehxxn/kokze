@@ -173,3 +173,28 @@ export async function createTestUser() {
     throw error
   }
 }
+
+// 포인트 관련 API
+export async function getMyPoints() {
+  const { data } = await api.get('/auth/points');
+  return data;
+}
+
+export async function getMyPointHistory() {
+  const { data } = await api.get('/auth/points/history');
+  return data;
+}
+
+export async function withdrawPoints(amount, reason) {
+  const { data } = await api.post('/points/withdraw', {
+    amount,
+    reason
+  });
+  return data;
+}
+
+// 은행 목록 관련 API
+export async function getBankList() {
+  const { data } = await api.get('/banks');
+  return data;
+}

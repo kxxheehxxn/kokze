@@ -22,6 +22,11 @@ const router = createRouter({
       component: () => import('@/pages/UserPage.vue'),
     },
     {
+      path: '/points',
+      name: 'PointPage',
+      component: () => import('@/pages/PointPage.vue'),
+    },
+    {
       path: '/user/asset',
       name: 'UserAssetEditPage',
       component: () => import('@/pages/UserAssetEditPage.vue'),
@@ -79,8 +84,8 @@ const router = createRouter({
       name: 'ProductRecommendPage',
       component: () => import('@/pages/ProductRecommendPage.vue'),
     },
-    ...authRoutes,
     ...inquiryRoutes,
+    ...authRoutes,
   ],
 });
 

@@ -32,12 +32,15 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import userAssetApi from '@/api/userAssetApi';
+import assetApi from '@/api/assetApi';
 
-// Props 정의 (필요한 경우)
-// const props = defineProps({
-//   userId: String
-// })
+// Props로 userId 받기 (부모 컴포넌트에서 전달)
+const props = defineProps({
+  userId: {
+    type: String,
+    required: true,
+  },
+});
 
 // Emits 정의
 const emit = defineEmits(['asset-lookup']);
@@ -49,9 +52,6 @@ const monthlyIncome = ref(0);
 const averageGoalRate = ref(0);
 const loading = ref(false);
 const error = ref(null);
-
-// 현재 사용자 ID (로그인 시스템 구현 후 동적으로 변경)
-const currentUserId = ref('550e8400-e29b-41d4-a716-446655440002');
 
 // Computed 속성
 const formattedAverageGoalRate = computed(() => {
@@ -67,7 +67,7 @@ const fetchUserAssetData = async () => {
   error.value = null;
 
   try {
-    const data = await userAssetApi.getUserAssetSummary(currentUserId.value);
+    const data = await assetApi.getUserAssetSummary(props.userId);
     console.log('Fetched User Asset Data:', data);
 
     // 데이터 할당

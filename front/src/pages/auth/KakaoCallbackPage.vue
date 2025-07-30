@@ -8,33 +8,36 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { userAuthStore } from '@/stores/auth';
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { userAuthStore } from '@/stores/auth'
 
-const router = useRouter();
-const auth = userAuthStore();
+const router = useRouter()
+const auth = userAuthStore()
 
 onMounted(async () => {
   try {
     // URL에서 인증 코드 추출
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
+    const urlParams = new URLSearchParams(window.location.search)
+    const code = urlParams.get('code')
 
     if (!code) {
-      console.error('인증 코드가 없습니다.');
-      router.push('/auth/login');
-      return;
+      console.error('인증 코드가 없습니다.')
+      router.push('/auth/login')
+      return
     }
 
     // 백엔드로 인증 코드 전송하여 사용자 정보 받기
     // 직접 백엔드 URL 사용
-    const response = await fetch(`http://localhost:8080/api/auth/kakao/callback?code=${code}`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
+    const response = await fetch(
+      `http://localhost:8080/api/auth/kakao/callback?code=${code}`,
+      {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
       },
-    });
+    )
 
     // 프록시를 사용하는 경우 (현재 작동하지 않음)
     // const response = await fetch(`/api/auth/kakao/callback?code=${code}`, {
@@ -45,29 +48,29 @@ onMounted(async () => {
     // })
 
     if (response.ok) {
-      const result = await response.json();
-      console.log('카카오 로그인 성공:', result);
+      const result = await response.json()
+      console.log('카카오 로그인 성공:', result)
 
       // 로그인 성공 시 사용자 정보 저장
       auth.login({
         email: result.user?.email || 'kakao_user',
         userId: result.user?.userId || '',
         token: result.token,
-      });
+      })
 
       // 홈으로 이동
-      router.push('/');
+      router.push('/')
     } else {
-      console.error('카카오 로그인 실패');
-      alert('카카오 로그인에 실패했습니다.');
-      router.push('/auth/login');
+      console.error('카카오 로그인 실패')
+      alert('카카오 로그인에 실패했습니다.')
+      router.push('/auth/login')
     }
   } catch (error) {
-    console.error('카카오 로그인 처리 중 오류:', error);
-    alert('카카오 로그인 처리 중 오류가 발생했습니다.');
-    router.push('/auth/login');
+    console.error('카카오 로그인 처리 중 오류:', error)
+    alert('카카오 로그인 처리 중 오류가 발생했습니다.')
+    router.push('/auth/login')
   }
-});
+})
 </script>
 
 <style scoped>

@@ -33,9 +33,6 @@ const handleMenuClick = (menuType) => {
   if (menuType === '로그아웃') {
     authStore.logout();
   }
-  if (menuType === '문의하기') {
-    router.push({ name: 'inquiryList' }); // ← 여기에 해당 이름 맞게 설정
-  }
   // 부모 컴포넌트로 메뉴 클릭 이벤트 전달
   emit('menu-click', menuType);
 

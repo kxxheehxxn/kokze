@@ -48,7 +48,10 @@ const scrollToTop = () => {
       </div>
 
       <!-- 2. 광고 + (퀴즈/공지사항) (중간) -->
-      <div class="middle-section" :class="{ 'no-asset-section': !isUserLoggedIn }">
+      <div
+        class="middle-section"
+        :class="{ 'no-asset-section': !isUserLoggedIn }"
+      >
         <div class="ad-component">
           <AdComponent />
         </div>

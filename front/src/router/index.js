@@ -74,6 +74,11 @@ const router = createRouter({
       name: 'TaxPage.vue',
       component: () => import('@/pages/tax/TaxPage.vue'),
     },
+    {
+      path: '/product',
+      name: 'ProductRecommendPage',
+      component: () => import('@/pages/ProductRecommendPage.vue'),
+    },
     ...authRoutes,
     ...inquiryRoutes,
   ],

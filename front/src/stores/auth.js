@@ -45,7 +45,7 @@ export const userAuthStore = defineStore('auth', () => {
             userId: response.data.user.userId || '',
             userName: response.data.user.name,
             email: response.data.user.email,
-            role: 'USER',
+            role: response.data.user.role,
           };
         } else {
           throw new Error(response.data.message || '로그인에 실패했습니다.');

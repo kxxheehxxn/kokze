@@ -24,7 +24,7 @@ const submit = async () => {
 };
 // 👉 권한 확인
 onMounted(() => {
-  if (auth.role !== 'ADMIN') {
+  if (auth.role.toLowerCase() !== 'admin') {
     alert('권한이 없습니다.');
     router.replace('/'); // 또는 router.push('/') 등 원하는 경로로
     return;

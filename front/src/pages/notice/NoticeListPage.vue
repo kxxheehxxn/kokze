@@ -10,7 +10,7 @@ const route = useRoute();
 const router = useRouter();
 const page = ref({});
 const notices = computed(() => page.value.list);
-const isAdmin = computed(() => auth.role === 'ADMIN');
+const isAdmin = computed(() => auth.role.toLowerCase() === 'admin');
 const pageRequest = reactive({
   page: parseInt(route.query.page ?? 1),
   amount: parseInt(route.query.amount ?? 10),
@@ -58,9 +58,6 @@ const load = async (query) => {
   try {
     page.value = await api.getList(query);
     console.log(page.value);
-    console.log('AdminID: ', auth.userId);
-    console.log('Name: ', auth.userName);
-    console.log('ROLE: ', auth.role);
   } catch {}
 };
 load(pageRequest);

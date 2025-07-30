@@ -36,13 +36,6 @@ const submit = async () => {
     query: route.query,
   });
 };
-const reset = () => {
-  article.noticeId = orgArticle.value.noticeId;
-  article.userId = orgArticle.value.userId;
-  article.title = orgArticle.value.title;
-  article.content = orgArticle.value.content;
-  console.log(article);
-};
 const load = async () => {
   console.log('로드할 noticeId:', noticeId);
 
@@ -78,7 +71,7 @@ const load = async () => {
 };
 // 👉 권한 확인
 onMounted(() => {
-  if (auth.role !== 'ADMIN') {
+  if (auth.role.toLowerCase() !== 'admin') {
     alert('권한이 없습니다.');
     router.replace('/');
     return;

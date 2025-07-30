@@ -9,7 +9,7 @@ const route = useRoute();
 const router = useRouter();
 const noticeId = route.params.no;
 const article = ref({});
-const isAdmin = computed(() => auth.role === 'ADMIN');
+const isAdmin = computed(() => auth.role.toLowerCase() === 'admin');
 const back = () => {
   router.push({ name: 'noticeList', query: route.query });
 };

@@ -10,7 +10,7 @@ const router = useRouter();
 const infoId = route.params.no;
 const article = ref({});
 const isEditingAnswer = ref(false);
-const isAdmin = computed(() => auth.role === 'ADMIN');
+const isAdmin = computed(() => auth.role.toLowerCase() === 'admin');
 const back = () => {
   router.push({ name: 'inquiryList', query: route.query });
 };
@@ -76,7 +76,6 @@ const remove = async () => {
   router.push({ name: 'inquiryList', query: route.query });
 };
 const load = async () => {
-  console.log('userName',auth.userName);
   article.value = await api.get(infoId);
   console.log('DETAIL', article.value);
 };

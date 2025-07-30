@@ -1,12 +1,16 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { userAuthStore } from '@/stores/auth';
+import axios from 'axios';
 
 const router = useRouter();
 
 const step = ref(0);
 const selectedList = ref([]); // 각 step의 선택 인덱스 기록
 const scores = ref({ fast: 0, slow: 0, high: 0, low: 0 });
+
+const authStore = userAuthStore();
 
 // 질문
 const questions = [
@@ -118,9 +122,58 @@ function onPrev() {
 }
 
 // 가입하기
-const onSubmit = () => {
-    console.log('회원가입 최종 MBTI:', mbtiResult.value);
-    router.push('/auth/login');
+const onSubmit = async () => {
+    try {
+        // MBTI 점수 저장
+        authStore.setUserInfo('mbti', mbtiResult.value);
+
+        // 👉 1. 최종 전송 데이터 확인 로그
+        console.log('최종 전송될 회원가입 데이터:', authStore.userInfo);
+
+        // 👉 2. 누락 필드 체크
+        const requiredFields = [
+            'name',
+            'email',
+            'password',
+            'phoneNum',
+            'birthDate',
+            'sex',
+            'salary',
+            'payAmount',
+            'mbti',
+        ];
+        const missing = requiredFields.filter(
+            (key) => !authStore.userInfo[key]
+        );
+        if (missing.length > 0) {
+            alert(`다음 항목이 누락되었습니다: ${missing.join(', ')}`);
+            return;
+        }
+
+        // 👉 3. 실제 회원가입 API 호출
+        const response = await axios.post(
+            'http://localhost:8080/api/auth/signup',
+            authStore.userInfo
+        );
+
+        // if (response.data.success) {
+        //     alert('회원가입이 완료되었습니다!');
+        //     authStore.resetUserInfo(); // 상태 초기화
+        //     router.push('/auth/login');
+        // } else {
+        //     alert('회원가입 실패: ' + response.data.message);
+        // }
+        if (response.status === 200) {
+            alert('회원가입이 완료되었습니다!');
+            authStore.resetUserInfo();
+            router.push('/auth/login');
+        } else {
+            alert('회원가입 실패: 서버 응답 코드 ' + response.status);
+        }
+    } catch (error) {
+        console.error('회원가입 중 오류:', error);
+        alert('회원가입 중 오류가 발생했습니다.');
+    }
 };
 </script>
 

@@ -1,9 +1,12 @@
 <script setup>
 import { reactive, ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { userAuthStore } from '@/stores/auth';
 import PrivacyPolicyModal from '@/components/PrivacyPolicyModal.vue';
 
 const router = useRouter();
+const authStore = userAuthStore();
 
 // // 실제 사용
 // const userInfo = reactive({
@@ -26,14 +29,14 @@ const router = useRouter();
 
 // 테스트 용
 const userInfo = reactive({
-    name: '홍길동',
-    gender: 'M',
-    birth: '1995-01-01',
+    name: '홍길순',
+    gender: 'female',
+    birth: '2000-01-01',
     phone1: '010',
-    phone2: '1234',
-    phone3: '5678',
-    emailId: 'testuser',
-    emailDomain: 'gmail.com',
+    phone2: '0032',
+    phone3: '0201',
+    emailId: 'testuser2000',
+    emailDomain: 'naver.com',
     emailCode: '123456',
     password: 'Test@1234',
     passwordConfirm: 'Test@1234',
@@ -51,14 +54,38 @@ const passwordError = ref('');
 const isPolicyModalOpen = ref(false);
 
 // 이메일 인증
-const sendEmailVerification = () => {
-    if (!userInfo.emailId || !userInfo.emailDomain) {
+const sendEmailVerification = async () => {
+    const fullEmail = `${userInfo.emailId}@${userInfo.emailDomain}`;
+
+    // 이메일 형식 유효성 검사 (정규식 사용)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(fullEmail)) {
         emailSentError.value = '이메일을 정확히 입력해주세요.';
+        emailSent.value = false;
         return;
     }
 
-    emailSent.value = true;
-    emailSentError.value = ''; // 오류 메시지 초기화
+    try {
+        const res = await axios.get(`/api/auth/signup/check/${fullEmail}`);
+        console.log(res.data);
+
+        if (res.data === true) {
+            // 이미 존재하는 이메일
+            emailSentError.value = '이미 존재하는 이메일입니다.';
+            emailSent.value = false;
+        } else {
+            // 사용 가능한 이메일
+            emailSentError.value = ''; // 오류 메시지 초기화
+            emailSent.value = true;
+
+            // 실제 인증번호 발송 로직 여기에 추가 (선택)
+            // await axios.post('/api/auth/signup/send-code', { email: fullEmail });
+        }
+    } catch (err) {
+        console.error('이메일 중복 확인 실패', err);
+        emailSentError.value = '서버 오류가 발생했습니다.';
+        emailSent.value = false;
+    }
 };
 
 // 이메일 인증번호 검사
@@ -158,7 +185,23 @@ const isFormValid = computed(() => {
 // 다음 페이지
 const goNext = () => {
     if (!isFormValid.value) return;
-    router.push('/signup/step2'); // 다음 단계로 라우팅
+
+    // userInfo를 Pinia 스토어에 저장
+    authStore.setUserInfo('name', userInfo.name);
+    authStore.setUserInfo('sex', userInfo.gender);
+    authStore.setUserInfo('birthDate', userInfo.birth);
+    authStore.setUserInfo(
+        'phoneNum',
+        `${userInfo.phone1}-${userInfo.phone2}-${userInfo.phone3}`
+    );
+    authStore.setUserInfo(
+        'email',
+        `${userInfo.emailId}@${userInfo.emailDomain}`
+    );
+    authStore.setUserInfo('password', userInfo.password);
+
+    // 다음 단계로 이동
+    router.push('/signup/step2');
 };
 </script>
 
@@ -196,7 +239,7 @@ const goNext = () => {
                     <label>
                         <input
                             type="radio"
-                            value="M"
+                            value="male"
                             v-model="userInfo.gender"
                         />
                         남성</label
@@ -204,7 +247,7 @@ const goNext = () => {
                     <label>
                         <input
                             type="radio"
-                            value="F"
+                            value="female"
                             v-model="userInfo.gender"
                         />
                         여성</label
@@ -237,6 +280,7 @@ const goNext = () => {
                     <span>@</span>
                     <select v-model="userInfo.emailDomain">
                         <option value="">선택</option>
+                        <option value="example.com">example.com</option>
                         <option value="gmail.com">gmail.com</option>
                         <option value="naver.com">naver.com</option>
                         <option value="daum.net">daum.net</option>

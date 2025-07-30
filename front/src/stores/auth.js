@@ -29,8 +29,11 @@ export const userAuthStore = defineStore('auth', () => {
                 };
             } else {
                 // 일반 로그인의 경우 UserController 사용
-                const response = await axios.post('http://localhost:8080/api/auth/login', member);
-                
+                const response = await axios.post(
+                    'http://localhost:8080/api/auth/login',
+                    member
+                );
+
                 if (response.data && response.data.success) {
                     state.value.token = response.data.token;
                     state.value.user = {
@@ -38,7 +41,9 @@ export const userAuthStore = defineStore('auth', () => {
                         roles: ['USER'],
                     };
                 } else {
-                    throw new Error(response.data.message || '로그인에 실패했습니다.');
+                    throw new Error(
+                        response.data.message || '로그인에 실패했습니다.'
+                    );
                 }
             }
 
@@ -66,6 +71,38 @@ export const userAuthStore = defineStore('auth', () => {
         }
     };
 
+    // 회원가입용 상태
+    const initialUserInfo = {
+        name: '',
+        email: '',
+        password: '',
+        phoneNum: '',
+        birthDate: '',
+        sex: '',
+        salary: 0,
+        payAmount: 0,
+        mbti: '',
+    };
+
+    const userInfo = reactive({ ...initialUserInfo });
+
+    // 회원가입 - 단일 항목
+    const setUserInfo = (key, value) => {
+        if (key in userInfo) {
+            userInfo[key] = value;
+        }
+    };
+
+    // 회원가입 - 전체 업데이트
+    const setAllUserInfo = (newData) => {
+        Object.assign(userInfo, newData);
+    };
+
+    // 회원가입 후 초기화
+    const resetUserInfo = () => {
+        Object.assign(userInfo, initialUserInfo);
+    };
+
     load();
 
     return {
@@ -75,5 +112,11 @@ export const userAuthStore = defineStore('auth', () => {
         login,
         logout,
         getToken,
+
+        // 회원가입 관련
+        userInfo,
+        setUserInfo,
+        setAllUserInfo,
+        resetUserInfo,
     };
 });

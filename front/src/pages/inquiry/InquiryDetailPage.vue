@@ -4,6 +4,7 @@ import api from '@/api/inquiryApi';
 import { ref, computed } from 'vue';
 import moment from 'moment';
 import { userAuthStore } from '@/stores/auth';
+const isLoading = ref(false);
 const auth = userAuthStore();
 const route = useRoute();
 const router = useRouter();
@@ -26,18 +27,22 @@ const updateAnswer = async () => {
   }
 
   if (!confirm('답변을 수정할까요?')) return;
-
   const updatedFields = {
+    title: article.value.title,
     infoId: article.value.infoId,
     userId: article.value.userId,
     answeredContent: article.value.answeredContent,
   };
 
-  await api.updateAnswer(updatedFields);
-  isEditingAnswer.value = false;
-
-  // 새로고침 또는 데이터 재요청
-  await load();
+  try {
+    await api.updateAnswer(updatedFields);
+    isEditingAnswer.value = false;
+    alert('답변이 성공적으로 수정되었습니다.');
+    await load(); // Reload data after successful update
+  } catch (error) {
+    console.error('답변 수정 중 오류 발생:', error);
+    alert('답변 수정 중 오류가 발생했습니다.');
+  }
 };
 const update = () => {
   router.push({
@@ -49,26 +54,40 @@ const update = () => {
 const submit = async () => {
   if (!confirm('답변을 등록할까요?')) return;
 
+  if (!article.value.answeredContent || !article.value.answeredContent.trim()) {
+    alert('답변 내용을 입력해주세요.');
+    return;
+  }
+  isLoading.value = true;
+
   const updatedFields = {
+    title: article.value.title,
     infoId: article.value.infoId,
     userId: article.value.userId,
+    isAnswered: article.value.isAnswered,
     answeredContent: article.value.answeredContent,
   };
 
   console.log(updatedFields); // undefined 방지
 
-  await api.updateAnswer(updatedFields);
+  try {
+    await api.updateAnswer(updatedFields);
+    alert('답변이 성공적으로 등록되었습니다.'); // Success feedback
 
-  // 페이지 이동 후 새로고침
-  router
-    .push({
+    // 페이지 이동 후 새로고침 대신, 직접 데이터 로드 또는 필요한 상태 업데이트
+    router.push({
       name: 'inquiryDetail',
       params: { no: article.value.infoId },
       query: route.query,
-    })
-    .then(() => {
-      window.location.reload();
     });
+    // Note: window.location.reload() can be heavy. Consider re-fetching data with `load()`
+    await load();
+  } catch (error) {
+    console.error('답변 등록 중 오류 발생:', error);
+    alert('답변 등록 중 오류가 발생했습니다.'); // Error feedback
+  } finally {
+    isLoading.value = false;
+  }
 };
 const remove = async () => {
   if (!confirm('삭제할까요?')) return;
@@ -118,7 +137,7 @@ load();
                   <button
                     class="btn ms-3 answer"
                     type="submit"
-                    :disabled="!article.answeredContent"
+                    :disabled="!article.answeredContent || isLoading"
                   >
                     입력
                   </button>
@@ -173,6 +192,12 @@ load();
           </div>
         </template>
       </div>
+    </div>
+  </div>
+  <div v-if="isLoading" class="callback-container">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>이메일 전송 중...</p>
     </div>
   </div>
 </template>
@@ -244,5 +269,48 @@ hr {
 }
 .answer-content {
   font-size: 14px;
+}
+.callback-container {
+  position: fixed; /* Covers the entire viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
+  display: flex;
+  flex-direction: column; /* Stack spinner and text vertically */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensures it's on top of everything */
+  color: white; /* Text color for the message */
+}
+
+.loading-spinner {
+  text-align: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3573ee;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+.loading-spinner p {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

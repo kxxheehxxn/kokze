@@ -24,12 +24,12 @@ const handleGoalManagement = () => {
 
 <style scoped>
 .home-to-goal-card {
-  background-color: #ffffff;
+  background-color: #3573ee;
   border-radius: 20px;
   padding: 24px;
   width: 100%;
   height: 100%;
-  color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -47,7 +47,7 @@ const handleGoalManagement = () => {
   font-size: 20px;
   font-weight: 700;
   margin: 0;
-  color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
 }
 
 .card-content {

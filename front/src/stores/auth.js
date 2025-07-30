@@ -43,7 +43,7 @@ export const userAuthStore = defineStore('auth', () => {
           state.value.token = response.data.token;
           state.value.user = {
             userId: response.data.user.userId || '',
-            userName: response.data.user.username,
+            userName: response.data.user.name,
             email: response.data.user.email,
             role: 'USER',
           };
@@ -80,11 +80,11 @@ export const userAuthStore = defineStore('auth', () => {
 
   return {
     state,
+    email,
     userId,
     userName,
-    email,
-    isLogin,
     role,
+    isLogin,
     login,
     logout,
     getToken,

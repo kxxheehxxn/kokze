@@ -58,6 +58,8 @@ const load = async (query) => {
   try {
     page.value = await api.getList(query);
     console.log(page.value);
+    console.log('AdminID: ', auth.userId);
+    console.log('Name: ', auth.userName);
     console.log('ROLE: ', auth.role);
   } catch {}
 };

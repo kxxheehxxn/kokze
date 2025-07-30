@@ -127,6 +127,9 @@ const onSubmit = async () => {
         // MBTI 점수 저장
         authStore.setUserInfo('mbti', mbtiResult.value);
 
+        // 로컬인지 카카오인지
+        authStore.setUserInfo('kakao', authStore.isKakao);
+
         // 👉 1. 최종 전송 데이터 확인 로그
         console.log('최종 전송될 회원가입 데이터:', authStore.userInfo);
 
@@ -134,7 +137,6 @@ const onSubmit = async () => {
         const requiredFields = [
             'name',
             'email',
-            'password',
             'phoneNum',
             'birthDate',
             'sex',
@@ -142,9 +144,17 @@ const onSubmit = async () => {
             'payAmount',
             'mbti',
         ];
+
+        // 누락 필드 검사 (isKakao일 땐 password 무시)
         const missing = requiredFields.filter(
             (key) => !authStore.userInfo[key]
         );
+
+        // password는 로컬인 경우에만 검사
+        if (!authStore.isKakao && !(authStore.userInfo.password.length > 0)) {
+            missing.push('password');
+        }
+
         if (missing.length > 0) {
             alert(`다음 항목이 누락되었습니다: ${missing.join(', ')}`);
             return;
@@ -155,14 +165,6 @@ const onSubmit = async () => {
             'http://localhost:8080/api/auth/signup',
             authStore.userInfo
         );
-
-        // if (response.data.success) {
-        //     alert('회원가입이 완료되었습니다!');
-        //     authStore.resetUserInfo(); // 상태 초기화
-        //     router.push('/auth/login');
-        // } else {
-        //     alert('회원가입 실패: ' + response.data.message);
-        // }
         if (response.status === 200) {
             alert('회원가입이 완료되었습니다!');
             authStore.resetUserInfo();

@@ -6,16 +6,31 @@ const initState = {
     token: '', // 접근 토큰(JWT)
     user: {
         email: '', // email
-        roles: [], // 권한 목록
+        roles: '', // 권한
     },
 };
 
 export const userAuthStore = defineStore('auth', () => {
     const state = ref({ ...initState });
 
-    // 로그인 여부 파악
+    // 회원가입 정보 관리
+    const initialUserInfo = {
+        name: '',
+        email: '',
+        password: '',
+        phoneNum: '',
+        birthDate: '',
+        sex: '',
+        salary: 0,
+        payAmount: 0,
+        mbti: '',
+        kakao: false,
+    };
+
     const isLogin = computed(() => !!state.value.user.email); // 로그인 여부
-    const email = computed(() => state.value.user.email); // 로그인 사용자 email
+    const email = computed(() => state.value.user.email); // 로그인 사용자 이메일
+    const userInfo = reactive({ ...initialUserInfo });
+    const isKakao = ref(false); // 로컬/카카오 구분
 
     // 로그인
     const login = async (member) => {
@@ -25,10 +40,10 @@ export const userAuthStore = defineStore('auth', () => {
                 state.value.token = member.token;
                 state.value.user = {
                     email: member.email,
-                    roles: ['USER'],
+                    roles: 'USER',
                 };
             } else {
-                // 일반 로그인의 경우 UserController 사용
+                // 로컬 로그인
                 const response = await axios.post(
                     'http://localhost:8080/api/auth/login',
                     member
@@ -38,7 +53,7 @@ export const userAuthStore = defineStore('auth', () => {
                     state.value.token = response.data.token;
                     state.value.user = {
                         email: response.data.user.email,
-                        roles: ['USER'],
+                        roles: 'USER',
                     };
                 } else {
                     throw new Error(
@@ -47,6 +62,7 @@ export const userAuthStore = defineStore('auth', () => {
                 }
             }
 
+            // 상태 저장
             localStorage.setItem('auth', JSON.stringify(state.value));
         } catch (error) {
             console.error('로그인 실패:', error);
@@ -60,9 +76,10 @@ export const userAuthStore = defineStore('auth', () => {
         state.value = { ...initState };
     };
 
+    // 토큰 반환
     const getToken = () => state.value.token;
 
-    // 새로고침 후 상태 복원
+    // 새로고침 시 상태 복원
     const load = () => {
         const auth = localStorage.getItem('auth');
         if (auth != null) {
@@ -70,21 +87,6 @@ export const userAuthStore = defineStore('auth', () => {
             console.log('복원 : ', state.value);
         }
     };
-
-    // 회원가입용 상태
-    const initialUserInfo = {
-        name: '',
-        email: '',
-        password: '',
-        phoneNum: '',
-        birthDate: '',
-        sex: '',
-        salary: 0,
-        payAmount: 0,
-        mbti: '',
-    };
-
-    const userInfo = reactive({ ...initialUserInfo });
 
     // 회원가입 - 단일 항목
     const setUserInfo = (key, value) => {
@@ -101,11 +103,14 @@ export const userAuthStore = defineStore('auth', () => {
     // 회원가입 후 초기화
     const resetUserInfo = () => {
         Object.assign(userInfo, initialUserInfo);
+        isKakao.value = false;
     };
 
+    // 실행 시 로컬스토리지에서 복원
     load();
 
     return {
+        // 로그인 관련
         state,
         email,
         isLogin,
@@ -118,5 +123,8 @@ export const userAuthStore = defineStore('auth', () => {
         setUserInfo,
         setAllUserInfo,
         resetUserInfo,
+
+        // 카카오
+        isKakao,
     };
 });

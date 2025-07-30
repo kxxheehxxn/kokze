@@ -7,7 +7,11 @@
         class="navbar-item"
         :class="{ active: item.route === currentRoute }"
       >
-        <router-link :to="item.route" class="navbar-link" @click="selectItem(item.name)">
+        <router-link
+          :to="item.route"
+          class="navbar-link"
+          @click="selectItem(item.name)"
+        >
           {{ item.name }}
         </router-link>
       </li>
@@ -30,7 +34,7 @@ const currentRoute = computed(() => route.path);
 // 로그인 상태에 따라 달라지는 내비게이션 아이템 정의
 const defaultNavItems = [
   { name: '세금 관리', route: '/tax-management' },
-  { name: '금융 상품 추천', route: '/financial-products' },
+  { name: '금융 상품 추천', route: '/product' },
   { name: '목표', route: '/goals' },
   { name: '용어 설명', route: '/terms' },
 ];

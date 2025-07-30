@@ -35,10 +35,7 @@ export const userAuthStore = defineStore('auth', () => {
         };
       } else {
         // 일반 로그인의 경우 UserController 사용
-        const response = await axios.post(
-          'http://localhost:8080/api/auth/login',
-          member
-        );
+        const response = await axios.post('http://localhost:8080/api/auth/login', member);
         if (response.data && response.data.success) {
           state.value.token = response.data.token;
           state.value.user = {

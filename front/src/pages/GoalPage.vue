@@ -45,9 +45,9 @@
 </template>
 
 <script>
-import GoalCard from '@/components/GoalCard.vue';
-import GoalAddCard from '@/components/GoalAddCard.vue';
-import PastGoalSidebar from '@/components/PastGoalSidebar.vue';
+import GoalCard from '@/components/GoalCard.vue'
+import GoalAddCard from '@/components/GoalAddCard.vue'
+import PastGoalSidebar from '@/components/PastGoalSidebar.vue'
 
 export default {
   name: 'GoalPage',
@@ -89,14 +89,14 @@ export default {
       ],
       maxGoals: 5,
       showSidebar: false,
-    };
+    }
   },
   computed: {
     emptySlots() {
-      return this.maxGoals - this.goals.length;
+      return this.maxGoals - this.goals.length
     },
   },
-};
+}
 </script>
 
 <style scoped>

@@ -3,21 +3,33 @@
     <h2 class="title">비밀번호 수정</h2>
     <form class="pw-form" @submit.prevent="onSubmit">
       <div class="form-group">
+        <label class="label">현재 비밀번호</label>
+        <input
+          v-model="currentPassword"
+          type="password"
+          class="input"
+          placeholder="현재 비밀번호를 입력하세요."
+        />
+      </div>
+      <div class="form-group">
         <label class="label">새 비밀번호</label>
         <input
           v-model="password"
           type="password"
           class="input"
-          placeholder="비밀번호를 입력하세요."
+          placeholder="새 비밀번호를 입력하세요."
         />
+        <div v-if="password && !passwordStrength.valid" class="error-msg">
+          {{ passwordStrength.message }}
+        </div>
       </div>
       <div class="form-group">
-        <label class="label">비밀번호 확인</label>
+        <label class="label">새 비밀번호 확인</label>
         <input
           v-model="passwordCheck"
           type="password"
           class="input"
-          placeholder="비밀번호를 입력하세요."
+          placeholder="새 비밀번호를 다시 입력하세요."
         />
         <div
           v-if="passwordCheck && password !== passwordCheck"
@@ -30,10 +42,11 @@
         <button type="button" class="cancel-btn" @click="onCancel">
           취소하기
         </button>
-        <button type="submit" class="submit-btn" :disabled="!canSubmit">
-          수정
+        <button type="submit" class="submit-btn" :disabled="!canSubmit || loading">
+          {{ loading ? '수정 중...' : '수정' }}
         </button>
       </div>
+      <div v-if="error" class="error-msg">{{ error }}</div>
     </form>
   </UserCardLayout>
 </template>
@@ -42,9 +55,13 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import UserCardLayout from '@/components/UserCardLayout.vue'
+import { updatePassword } from '@/api/userApi'
 
+const currentPassword = ref('')
 const password = ref('')
 const passwordCheck = ref('')
+const loading = ref(false)
+const error = ref('')
 const router = useRouter()
 
 const passwordStrength = computed(() => {
@@ -55,17 +72,18 @@ const passwordStrength = computed(() => {
   const hasUpper = /[A-Z]/.test(pwd)
   const hasLower = /[a-z]/.test(pwd)
   const hasNumber = /\d/.test(pwd)
-  const hasSpecial = /[!@#$%^&*]/.test(pwd)
+  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd)
 
-  const valid = hasLength && hasUpper && hasLower && hasNumber
+  const valid = hasLength && hasUpper && hasLower && hasNumber && hasSpecial
   return {
     valid,
-    message: valid ? '' : '8자 이상, 대소문자, 숫자 포함 필요',
+    message: valid ? '' : '8자 이상, 대소문자, 숫자, 특수문자 포함 필요',
   }
 })
 
 const canSubmit = computed(
   () =>
+    currentPassword.value &&
     password.value &&
     passwordStrength.value.valid &&
     password.value === passwordCheck.value,
@@ -74,20 +92,26 @@ const canSubmit = computed(
 function onCancel() {
   router.back()
 }
-function onSubmit() {
+async function onSubmit() {
   if (!canSubmit.value) return
-  // 실제 비밀번호 변경 API 연동 필요
-  alert('비밀번호가 변경되었습니다!')
-  router.back()
-
-  // // Add proper API call with error handling
-  // try {
-  //   // await updatePassword(password.value)
-  //   // Use toast notification instead of alert
-  //   // router.back()
-  // } catch (error) {
-  //   // Handle API errors appropriately
-  // }
+  
+  loading.value = true
+  error.value = ''
+  
+  try {
+    const result = await updatePassword(currentPassword.value, password.value)
+    if (result.success) {
+      alert('비밀번호가 성공적으로 변경되었습니다!')
+      router.push('/userpage')
+    } else {
+      error.value = '비밀번호 변경에 실패했습니다: ' + (result.message || '알 수 없는 오류')
+    }
+  } catch (error) {
+    error.value = '비밀번호 변경 중 오류가 발생했습니다. 다시 시도해주세요.'
+    console.error('비밀번호 변경 실패:', error)
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 

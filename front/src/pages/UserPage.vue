@@ -1,9 +1,19 @@
 <template>
   <div class="user-page">
-    <div class="user-card">
-      <div class="user-mbti">{{ user.mbti }}</div>
+    <div v-if="loading" class="loading">
+      <div class="loading-spinner"></div>
+      <p>사용자 정보를 불러오는 중...</p>
+    </div>
+    
+    <div v-else-if="error" class="error">
+      <p>{{ error }}</p>
+      <button @click="loadUserData" class="retry-btn">다시 시도</button>
+    </div>
+    
+    <div v-else class="user-card">
+      <div class="user-mbti">{{ user.mbti || '미입력' }}</div>
       <div class="user-name">
-        {{ user.name }} 님
+        {{ user.name || '사용자' }} 님
         <span class="user-point">{{ point.toLocaleString() }} P</span>
       </div>
       <ul class="user-menu">
@@ -12,6 +22,9 @@
         <li @click="goTo('/user/password')">비밀번호 수정</li>
         <li @click="goTo('/user/withdraw')">회원 탈퇴</li>
       </ul>
+      <div v-if="user.user_id" class="user-id">
+        사용자 ID: {{ user.user_id }}
+      </div>
     </div>
   </div>
 </template>
@@ -23,6 +36,8 @@ import { getUserInfo, getUserPoints } from '@/api/userApi';
 
 const user = ref({ name: '', mbti: '', user_id: null });
 const point = ref(0);
+const loading = ref(true);
+const error = ref(null);
 const router = useRouter();
 
 function goTo(path) {
@@ -32,15 +47,27 @@ function goTo(path) {
   });
 }
 
-onMounted(async () => {
+async function loadUserData() {
+  loading.value = true;
+  error.value = null;
+  
   try {
     const [userInfo, userPoints] = await Promise.all([getUserInfo(), getUserPoints()]);
     user.value = userInfo;
     point.value = userPoints;
-  } catch (error) {
-    console.error('Failed to load user data:', error);
-    // Handle error appropriately
+  } catch (err) {
+    console.error('Failed to load user data:', err);
+    error.value = '사용자 정보를 불러올 수 없습니다. 다시 시도해주세요.';
+    // 에러 발생 시 기본값 설정
+    user.value = { name: '사용자', mbti: '미입력', user_id: null };
+    point.value = 0;
+  } finally {
+    loading.value = false;
   }
+}
+
+onMounted(() => {
+  loadUserData();
 });
 </script>
 
@@ -53,6 +80,54 @@ onMounted(async () => {
   align-items: center;
   justify-content: flex-start;
 }
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: #666;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #189eff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: #e74c3c;
+}
+
+.retry-btn {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background: #189eff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.retry-btn:hover {
+  background: #147acc;
+}
+
 .user-card {
   background: #fff;
   border-radius: 24px;
@@ -109,5 +184,15 @@ onMounted(async () => {
 }
 .user-menu li:last-child {
   color: #bdbdbd;
+}
+
+.user-id {
+  font-size: 14px;
+  color: #888;
+  text-align: center;
+  margin-top: 16px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 8px;
 }
 </style>

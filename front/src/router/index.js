@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../pages/HomePage.vue';
 import inquiryRoutes from './inquiry';
+import noticeRoutes from './notice';
 import authRoutes from './auth';
 
 const router = createRouter({
@@ -74,8 +75,14 @@ const router = createRouter({
       name: 'TaxPage.vue',
       component: () => import('@/pages/tax/TaxPage.vue'),
     },
+    {
+      path: '/product',
+      name: 'ProductRecommendPage',
+      component: () => import('@/pages/ProductRecommendPage.vue'),
+    },
     ...authRoutes,
     ...inquiryRoutes,
+    ...noticeRoutes,
   ],
 });
 

@@ -1,49 +1,112 @@
 <script setup>
 import api from '@/api/inquiryApi';
-import { computed, ref, reactive } from 'vue';
+import { reactive, computed, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
+
 const auth = userAuthStore();
+
 const router = useRouter();
 const route = useRoute();
-const orgArticle = ref({});
+
+const MAX_TITLE_LENGTH = 500;
+const MAX_CONTENT_LENGTH = 1000;
+
 const infoId = route.params.no;
-const disableSubmit = computed(() => !article.title);
-const back = () => {
-  router.push({ name: 'inquiryList', query: route.query });
-};
-const article = reactive({});
+
+const orgArticle = ref({});
+
+const article = reactive({
+  infoId: infoId,
+  userId: '',
+  userName: '',
+  title: '',
+  content: '',
+  isAnswered: false,
+});
+
+const disableSubmit = computed(() => {
+  return !article.title || !article.content;
+});
+
 const submit = async () => {
-  if (!confirm('수정할까요?')) return;
+  if (!confirm('문의사항을 수정하시겠습니까?')) {
+    return;
+  }
 
-  const updatedFields = {};
-  updatedFields.infoId = article.infoId;
-  updatedFields.userId = article.userId;
-  updatedFields.title = article.title;
-  updatedFields.content = article.content;
-  console.log(updatedFields);
-  await api.update(updatedFields);
+  const updatedFields = {
+    infoId: article.infoId,
+    userId: article.userId,
+    title: article.title,
+    content: article.content,
+  };
+  console.log('수정 제출 데이터:', updatedFields);
 
-  router.push({
+  try {
+    await api.update(updatedFields);
+
+    router.replace({
+      name: 'inquiryDetail',
+      params: { no: article.infoId },
+      query: route.query,
+    });
+  } catch (e) {
+    console.error('문의사항 수정 실패:', e);
+    alert('문의사항 수정에 실패했습니다. 다시 시도해주세요.');
+  }
+};
+
+const load = async () => {
+  console.log('--- 게시글 로드 시작 ---');
+  console.log('로드할 infoId:', infoId);
+
+  if (!infoId) {
+    console.error('유효하지 않은 infoId:', infoId);
+    alert('유효하지 않은 게시글 ID입니다.');
+    router.replace('/inquiry/list');
+    return;
+  }
+
+  try {
+    const data = await api.get(infoId);
+    console.log('API 응답 데이터:', data);
+
+    if (!data || !data.infoId) {
+      throw new Error(
+        'API 응답 데이터가 유효하지 않거나 게시글을 찾을 수 없습니다.'
+      );
+    }
+
+    orgArticle.value = { ...data };
+    article.infoId = orgArticle.value.infoId;
+    article.userId = orgArticle.value.userId;
+    article.userName = orgArticle.value.userName;
+    article.title = orgArticle.value.title;
+    article.content = orgArticle.value.content;
+
+    console.log('게시글 로드 완료:', article);
+  } catch (e) {
+    console.error('게시글 로드 중 오류 발생:', e);
+    alert('게시글을 불러오는 데 실패했습니다.');
+    router.replace('/inquiry/list');
+  } finally {
+    console.log('--- 게시글 로드 종료 ---');
+  }
+};
+
+const back = () => {
+  router.replace({
     name: 'inquiryDetail',
-    params: { no: article.infoId },
+    params: { no: article.infoId || infoId },
     query: route.query,
   });
 };
-const reset = () => {
-  article.infoId = orgArticle.value.infoId;
-  article.userId = orgArticle.value.userId;
-  article.title = orgArticle.value.title;
-  article.content = orgArticle.value.content;
-  console.log(article);
-};
-const load = async () => {
-  const data = await api.get(infoId);
-  orgArticle.value = { ...data };
-  reset();
-};
-load();
+
+onMounted(() => {
+  load();
+});
 </script>
+
 <template>
   <div class="custom-box-wrapper">
     <div class="custom-box p-5">
@@ -58,7 +121,11 @@ load();
                 class="form-control title-input"
                 id="title"
                 v-model="article.title"
+                :maxlength="MAX_TITLE_LENGTH"
               />
+              <span class="char-count"
+                >{{ article.title.length }} / {{ MAX_TITLE_LENGTH }}</span
+              >
             </div>
           </div>
           <hr />
@@ -70,20 +137,31 @@ load();
                 id="content"
                 v-model="article.content"
                 rows="10"
+                :maxlength="MAX_CONTENT_LENGTH"
               ></textarea>
+              <span class="char-count textarea-count"
+                >{{ article.content.length }} / {{ MAX_CONTENT_LENGTH }}</span
+              >
             </div>
           </div>
           <div class="mt-5 text-center">
-            <button type="submit" class="btn create" :disabled="disableSubmit">
+            <button
+              type="submit"
+              class="btn fw-bold create"
+              :disabled="disableSubmit"
+            >
               확인
             </button>
-            <button class="btn ms-3 back" @click="back">취소</button>
+            <button type="button" class="btn ms-3 fw-bold back" @click="back">
+              취소
+            </button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </template>
+
 <style scoped>
 .custom-box-wrapper {
   display: flex;
@@ -126,19 +204,23 @@ load();
   align-items: center;
   padding: 0 15px;
   box-sizing: border-box;
+  position: relative;
 }
 .title-input {
   flex: 1;
-  height: 70%; /* 적당히 세로 크기 맞춤 */
+  height: 100%;
   border: none;
   outline: none;
   font-size: 13px;
   border-radius: 20px;
+  background: transparent;
+  padding-right: 60px;
 }
 .form-label {
   margin: 0 15px 0 10px;
   width: 40px;
   font-weight: bold;
+  flex-shrink: 0;
 }
 .title-box {
   margin: 40px 0 23px 0;
@@ -149,8 +231,8 @@ load();
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 15px;
   box-sizing: border-box;
+  position: relative;
 }
-
 .textarea-input {
   width: 100%;
   height: 250px;
@@ -159,5 +241,24 @@ load();
   resize: none;
   font-size: 13px;
   background: transparent;
+  padding-bottom: 20px;
+}
+.char-count {
+  position: absolute;
+  right: 15px;
+  font-size: 12px;
+  color: #888;
+}
+.title-container .char-count {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.textarea-container .char-count.textarea-count {
+  bottom: 8px;
+  right: 15px;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 </style>

@@ -1,5 +1,6 @@
 <script setup>
 import { userAuthStore } from '@/stores/auth.js';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 // Pinia store 사용
 const authStore = userAuthStore();
@@ -16,8 +17,8 @@ const props = defineProps({
 const emit = defineEmits(['close', 'menu-click']);
 
 // 로그인 상태는 store에서 가져오기
-const isLoggedIn = authStore.isLogin;
-const userEmail = authStore.email;
+const isLoggedIn = computed(() => authStore.isLogin);
+const userEmail = computed(() => authStore.email);
 
 // 사이드바 닫기
 const closeSidebar = () => {
@@ -31,9 +32,8 @@ const handleMenuClick = (menuType) => {
   // 로그아웃 처리
   if (menuType === '로그아웃') {
     authStore.logout();
-  }
-  if (menuType === '문의하기') {
-    router.push({ name: 'inquiryList' }); // ← 여기에 해당 이름 맞게 설정
+    router.push('/'); // 로그아웃 후 홈으로 이동
+    console.log('로그아웃 완료');
   }
   // 부모 컴포넌트로 메뉴 클릭 이벤트 전달
   emit('menu-click', menuType);
@@ -54,27 +54,11 @@ const handleMenuClick = (menuType) => {
 
       <!-- 햄버거 메뉴 항목들 -->
       <div class="hamburgerbar-menu">
-        <div
-          class="hamburgerbar-menu-item"
-          @click="handleMenuClick('공지사항')"
-        >
-          공지사항
-        </div>
-        <div
-          class="hamburgerbar-menu-item"
-          @click="handleMenuClick('문의하기')"
-        >
-          문의하기
-        </div>
+        <div class="hamburgerbar-menu-item" @click="handleMenuClick('공지사항')">공지사항</div>
+        <div class="hamburgerbar-menu-item" @click="handleMenuClick('문의하기')">문의하기</div>
 
         <!-- 로그인된 사용자만 보이는 메뉴 -->
-        <div
-          v-if="isLoggedIn"
-          class="hamburgerbar-menu-item"
-          @click="handleMenuClick('로그아웃')"
-        >
-          로그아웃
-        </div>
+        <div v-if="isLoggedIn" class="hamburgerbar-menu-item" @click="handleMenuClick('로그아웃')">로그아웃</div>
       </div>
     </div>
   </div>

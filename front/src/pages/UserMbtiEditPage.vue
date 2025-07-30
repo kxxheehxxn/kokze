@@ -31,7 +31,8 @@
       <div class="mbti-type">{{ mbtiResult }}</div>
       <div class="mbti-desc">{{ mbtiDesc }}</div>
       <div class="button-row">
-        <button class="submit-btn" @click="onRetry">다시하기</button>
+        <button class="cancel-btn" @click="onRetry">다시하기</button>
+        <button class="submit-btn" @click="saveMbtiResult">저장하기</button>
       </div>
     </template>
   </UserCardLayout>
@@ -41,6 +42,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import UserCardLayout from '@/components/UserCardLayout.vue'
+import { updateMbti } from '@/api/userApi'
 
 const userName = '김콕재' // 실제 사용자 이름 연동 시 수정
 
@@ -141,6 +143,22 @@ const mbtiDesc = computed(() => {
       return ''
   }
 })
+
+// MBTI 결과 저장
+async function saveMbtiResult() {
+  try {
+    const result = await updateMbti(mbtiResult.value)
+    if (result.success) {
+      alert('MBTI가 성공적으로 저장되었습니다!')
+      router.push('/userpage')
+    } else {
+      alert('MBTI 저장에 실패했습니다: ' + (result.message || '알 수 없는 오류'))
+    }
+  } catch (error) {
+    alert('MBTI 저장 중 오류가 발생했습니다. 다시 시도해주세요.')
+    console.error('MBTI 저장 실패:', error)
+  }
+}
 </script>
 
 <style scoped>

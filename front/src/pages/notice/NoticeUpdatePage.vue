@@ -1,58 +1,89 @@
 <script setup>
-import api from '@/api/inquiryApi';
-import { reactive, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { userAuthStore } from '@/stores/auth'; // 사용자 인증 정보를 가져오는 스토어
+import api from '@/api/noticeApi';
+import { computed, ref, reactive, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { userAuthStore } from '@/stores/auth';
 
-const auth = userAuthStore(); // 인증 스토어 인스턴스
-
-const router = useRouter();
-
-// 최대 길이 정의 (DB VARCHAR 길이에 맞춰 설정)
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
 
-// 입력 필드 데이터 정의
-const article = reactive({
-  // 실제 로그인된 사용자 ID를 auth 스토어에서 가져옴
-  userId: auth.userId,
-  userName: auth.userName, // auth.userName이 없을 경우 기본값 설정
-  title: '',
-  content: '',
-  isAnswered: false, // 작성 시에는 항상 false로 시작
-});
+const auth = userAuthStore();
+const router = useRouter();
+const route = useRoute();
 
-// 제출 버튼 활성화/비활성화 조건 (유효성 검사 통과 시에만 활성화)
-const disableSubmit = computed(() => {
-  // 제목과 내용이 모두 채워져 있어야 함
-  return !article.title || !article.content;
-});
+const orgArticle = ref({});
+const noticeId = route.params.no;
+const article = reactive({});
 
-// 게시글 생성 함수 (submit)
+const disableSubmit = computed(() => !article.title);
+
+const back = () => {
+  router.back();
+};
 const submit = async () => {
-  if (!confirm('문의사항을 등록하시겠습니까?')) {
+  if (!confirm('수정할까요?')) return;
+
+  const updatedFields = {};
+  updatedFields.noticeId = article.noticeId;
+  updatedFields.title = article.title;
+  updatedFields.content = article.content;
+  console.log(updatedFields);
+  await api.update(updatedFields);
+
+  router.replace({
+    name: 'noticeDetail',
+    params: { no: article.noticeId },
+    query: route.query,
+  });
+};
+const load = async () => {
+  console.log('로드할 noticeId:', noticeId);
+
+  if (!noticeId) {
+    console.error('유효하지 않은 noticeId:', noticeId);
+    alert('유효하지 않은 공지사항 ID입니다.');
+    router.replace('/notice/list');
     return;
   }
 
   try {
-    await api.create(article);
-    router.push('/inquiry/list'); // 목록 페이지로 이동 - 히스토리 스택을 교체하여 뒤로가기 방지
+    const data = await api.get(noticeId);
+    console.log('API 응답 데이터:', data);
+
+    if (!data || !data.noticeId) {
+      throw new Error(
+        'API 응답 데이터가 유효하지 않거나 게시글을 찾을 수 없습니다.'
+      );
+    }
+    orgArticle.value = { ...data };
+    article.noticeId = orgArticle.value.noticeId;
+    article.userId = orgArticle.value.userId;
+    article.title = orgArticle.value.title;
+    article.content = orgArticle.value.content;
+    console.log('공지사항 로드 완료:', article);
   } catch (e) {
-    console.error('문의사항 등록 실패:', e);
-    alert('문의사항 등록에 실패했습니다. 다시 시도해주세요.');
+    console.error('공지사항 로드 중 오류 발생:', e);
+    alert('공지사항을 불러오는 데 실패했습니다.');
+    router.replace('/notice/list');
+  } finally {
+    console.log('--- 공지사항 로드 종료 ---');
   }
 };
-
-const back = () => {
-  router.back(); // 목록 페이지로 이동
-};
+// 👉 권한 확인
+onMounted(() => {
+  if (auth.role.toLowerCase() !== 'admin') {
+    alert('권한이 없습니다.');
+    router.replace('/');
+    return;
+  }
+});
+load();
 </script>
-
 <template>
   <div class="custom-box-wrapper">
     <div class="custom-box p-5">
       <div class="m-2">
-        <h4 class="fw-bold">문의사항 작성</h4>
+        <h4 class="fw-bold">공지사항 수정</h4>
         <form @submit.prevent="submit">
           <div class="d-flex align-items-center title-box">
             <label for="title" class="form-label ms-2">제목</label>
@@ -104,6 +135,7 @@ const back = () => {
 </template>
 
 <style scoped>
+/* inquiryCreate.vue 에서 가져온 스타일을 그대로 유지합니다 */
 .custom-box-wrapper {
   display: flex;
   justify-content: center;
@@ -124,6 +156,7 @@ const back = () => {
   border-radius: 20px;
   text-align: center;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
 }
 .create {
   background-color: #3573ee;
@@ -133,7 +166,7 @@ const back = () => {
   color: #666666;
 }
 #content {
-  min-height: 200px; /* textarea-input의 height가 덮어씌움 */
+  min-height: 200px;
 }
 .title-container {
   height: 37px;
@@ -144,7 +177,7 @@ const back = () => {
   align-items: center;
   padding: 0 15px;
   box-sizing: border-box;
-  position: relative; /* 글자 수 표시를 위해 추가 */
+  position: relative;
 }
 .title-input {
   flex: 1;
@@ -153,14 +186,14 @@ const back = () => {
   outline: none;
   font-size: 13px;
   border-radius: 20px;
-  background: transparent; /* 부모 배경색 보이도록 투명 설정 */
-  padding-right: 60px; /* 글자 수 표시 공간 확보 */
+  background: transparent;
+  padding-right: 60px;
 }
 .form-label {
   margin: 0 15px 0 10px;
   width: 40px;
   font-weight: bold;
-  flex-shrink: 0; /* 레이블이 줄어들지 않도록 함 */
+  flex-shrink: 0;
 }
 .title-box {
   margin: 40px 0 23px 0;
@@ -171,20 +204,18 @@ const back = () => {
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 15px;
   box-sizing: border-box;
-  position: relative; /* 글자 수 표시를 위해 추가 */
+  position: relative;
 }
 .textarea-input {
   width: 100%;
-  height: 250px; /* 고정 높이 */
+  height: 250px;
   border: none;
   outline: none;
   resize: none;
   font-size: 13px;
   background: transparent;
-  padding-bottom: 20px; /* 글자 수 표시 공간 확보 */
+  padding-bottom: 20px;
 }
-
-/* ⭐ 새로 추가된 글자 수 표시 스타일 ⭐ */
 .char-count {
   position: absolute;
   right: 15px;
@@ -195,11 +226,10 @@ const back = () => {
   top: 50%;
   transform: translateY(-50%);
 }
-.textarea-container .textarea-count {
-  bottom: 8px; /* 아래쪽으로 이동 */
+.textarea-container .char-count.textarea-count {
+  bottom: 8px;
   right: 15px;
 }
-/* 버튼 비활성화 시 스타일 */
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;

@@ -58,6 +58,7 @@ onMounted(async () => {
                 email: result.user.email,
                 token: result.token,
                 userId: result.user.userId,
+                userName: result.user.username,
             });
 
             router.push('/'); // 홈으로 이동

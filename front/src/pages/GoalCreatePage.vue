@@ -28,6 +28,13 @@
       <p class="helper-text">{{ formattedAmount }}원</p>
     </div>
 
+    <!-- 입금 날짜 -->
+    <div class="form-group">
+      <label>입금 날짜 (매월 몇 일)</label>
+      <input type="number" v-model="depositDate" min="1" max="28" />
+      <p class="helper-text">1~28 사이의 숫자 입력</p>
+    </div>
+
     <!-- 금융 상품 연결 -->
     <div class="form-group">
       <label>금융 상품 연결하기</label>
@@ -63,9 +70,10 @@
     />
   </div>
 </template>
-
 <script>
 import ProductModal from '@/components/ProductModal.vue';
+import { createGoal } from '@/api/goalApi';
+import { userAuthStore } from '@/stores/auth';
 
 export default {
   name: 'GoalCreatePage',
@@ -78,12 +86,10 @@ export default {
       startDate: '',
       endDate: '',
       targetAmount: 0,
+      depositDate: 1,
       showProductModal: false,
       selectedAccount: null,
-      accounts: [
-        { accountId: 1, bankName: '우리', accountNum: '1234-****-5678' },
-        { accountId: 2, bankName: '카카오뱅크', accountNum: '3333-12-4567890' },
-      ],
+      accounts: [], // ✅ 서버에서 불러올 수도 있음
     };
   },
   computed: {
@@ -95,8 +101,40 @@ export default {
     onCancel() {
       this.$router.back();
     },
-    onSubmit() {
-      alert('목표가 추가되었습니다!');
+    async onSubmit() {
+      const auth = userAuthStore();
+      const userId = auth.state.user.userId;
+      const token = auth.getToken();
+
+      // 검증
+      if (
+        !this.goalName ||
+        !this.startDate ||
+        !this.endDate ||
+        !this.targetAmount
+      ) {
+        alert('모든 필드를 입력해주세요.');
+        return;
+      }
+
+      const requestBody = {
+        goal_name: this.goalName,
+        target_amount: this.targetAmount,
+        save_amount: 0,
+        start_date: this.startDate,
+        end_date: this.endDate,
+        deposit_date: this.depositDate,
+        account_id: this.selectedAccount?.accountId || null,
+      };
+
+      try {
+        await createGoal(userId, requestBody, token);
+        alert('목표가 성공적으로 등록되었습니다!');
+        this.$router.push('/goals');
+      } catch (error) {
+        console.error('❌ 목표 등록 실패:', error);
+        alert('등록에 실패했습니다.');
+      }
     },
     handleProductConnect(accountId) {
       this.selectedAccount = this.accounts.find(

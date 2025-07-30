@@ -28,6 +28,13 @@
       <p class="helper-text">{{ formattedAmount }}원</p>
     </div>
 
+    <!-- 입금 날짜 -->
+    <div class="form-group">
+      <label>입금 날짜 (매월 몇 일)</label>
+      <input type="number" v-model="goal.depositDate" min="1" max="28" />
+      <p class="helper-text">1~28 사이의 숫자 입력</p>
+    </div>
+
     <!-- 금융 상품 연결 -->
     <div class="form-group">
       <label>금융 상품 연결하기</label>
@@ -52,7 +59,6 @@
       <button class="btn submit" @click="submitEdit">목표 수정하기</button>
     </div>
 
-    <!-- 금융 상품 연동 모달 -->
     <ProductModal
       v-if="showProductModal"
       :accounts="accounts"
@@ -63,15 +69,13 @@
 </template>
 
 <script>
-import axios from 'axios';
 import ProductModal from '@/components/ProductModal.vue';
+import { getGoalById, updateGoal } from '@/api/goalApi';
+import { userAuthStore } from '@/stores/auth';
 
 export default {
   name: 'GoalEditPage',
-  components: {
-    ProductModal,
-  },
-  props: ['goalId'],
+  components: { ProductModal },
   data() {
     return {
       goal: {
@@ -79,13 +83,11 @@ export default {
         startDate: '',
         endDate: '',
         amount: 0,
+        depositDate: 1,
       },
-      showProductModal: false,
       selectedAccount: null,
-      accounts: [
-        { accountId: 1, bankName: '우리', accountNum: '1234-****-5678' },
-        { accountId: 2, bankName: '카카오뱅크', accountNum: '3333-12-4567890' },
-      ],
+      showProductModal: false,
+      accounts: [],
     };
   },
   computed: {
@@ -97,29 +99,62 @@ export default {
     this.fetchGoalDetail();
   },
   methods: {
+    formatDate(date) {
+      if (!date) return '';
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
     async fetchGoalDetail() {
+      const goalId = this.$route.params.goalId;
+      const token = userAuthStore().getToken();
+
       try {
-        const res = await axios.get(`/api/goals/${this.goalId}`);
+        const res = await getGoalById(goalId, token);
         const data = res.data;
-        this.goal.title = data.goalName;
-        this.goal.startDate = data.startDate;
-        this.goal.endDate = data.endDate;
-        this.goal.amount = data.targetAmount;
+
+        this.goal.title = data.goal_name;
+        this.goal.startDate = data.start_date;
+        this.goal.endDate = data.end_date;
+        this.goal.amount = data.target_amount;
+        this.goal.depositDate = data.deposit_date;
+
+        if (data.linked_accounts?.length > 0) {
+          const acc = data.linked_accounts[0];
+          this.selectedAccount = {
+            accountId: acc.account_id,
+            bankName: acc.bank_name,
+            accountNum: acc.account_num,
+          };
+        }
       } catch (err) {
         alert('목표 정보를 불러오지 못했습니다.');
       }
     },
     async submitEdit() {
+      const goalId = this.$route.params.goalId;
+      const token = userAuthStore().getToken();
+
       try {
-        await axios.put(`/api/goals/${this.goalId}`, {
-          goal_name: this.goal.title,
-          start_date: this.goal.startDate,
-          end_date: this.goal.endDate,
-          target_amount: this.goal.amount,
-        });
+        await updateGoal(
+          goalId,
+          {
+            goal_name: this.goal.title,
+            start_date: this.formatDate(this.goal.startDate),
+            end_date: this.formatDate(this.goal.endDate),
+            target_amount: this.goal.amount,
+            deposit_date: this.goal.depositDate,
+          },
+          token
+        );
+
+        alert('목표가 수정되었습니다!');
         this.$router.push('/goals');
       } catch (err) {
         alert('목표 수정 실패');
+        console.error(err);
       }
     },
     goBack() {

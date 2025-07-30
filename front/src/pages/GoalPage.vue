@@ -11,9 +11,9 @@
       <div class="average-progress">
         <span>목표 평균 달성률</span>
         <div class="progress-bar">
-          <div class="progress" :style="{ width: '16%' }"></div>
+          <div class="progress" :style="{ width: averageProgress + '%' }"></div>
         </div>
-        <span class="percent">16%</span>
+        <span class="percent">{{ averageProgress }}%</span>
       </div>
 
       <div class="goal-grid">
@@ -37,7 +37,6 @@
       </div>
     </section>
 
-    <!-- ✅ 트랜지션으로 감싸기 -->
     <transition name="sidebar-fade">
       <PastGoalSidebar v-if="showSidebar" @close="showSidebar = false" />
     </transition>
@@ -45,9 +44,11 @@
 </template>
 
 <script>
-import GoalCard from '@/components/GoalCard.vue'
-import GoalAddCard from '@/components/GoalAddCard.vue'
-import PastGoalSidebar from '@/components/PastGoalSidebar.vue'
+import { fetchGoals } from '@/api/goalApi';
+import { userAuthStore } from '@/stores/auth';
+import GoalCard from '@/components/GoalCard.vue';
+import GoalAddCard from '@/components/GoalAddCard.vue';
+import PastGoalSidebar from '@/components/PastGoalSidebar.vue';
 
 export default {
   name: 'GoalPage',
@@ -58,48 +59,64 @@ export default {
   },
   data() {
     return {
-      goals: [
-        {
-          id: 1,
-          title: '노후준비',
-          period1: '2025.07.15 ~',
-          period2: '2100.01.01 (약 75년)',
-          amount: '100억 원',
-          progress: 9,
-          product: '(적금) 매달 5일 20만원',
-        },
-        {
-          id: 2,
-          title: '내 집 마련',
-          period1: '2025.07.15 ~',
-          period2: '2100.01.01 (약 75년)',
-          amount: '100억 원',
-          progress: 21,
-          product: '(예금) 200만원',
-        },
-        {
-          id: 3,
-          title: '대출 갚기',
-          period1: '2025.07.15 ~',
-          period2: '2100.01.01 (약 75년)',
-          amount: '10억 원',
-          progress: 18,
-          product: '(펀드) 뭐가 될지 몰라',
-        },
-      ],
+      goals: [],
       maxGoals: 5,
       showSidebar: false,
-    }
+    };
   },
   computed: {
     emptySlots() {
-      return this.maxGoals - this.goals.length
+      return this.maxGoals - this.goals.length;
+    },
+    averageProgress() {
+      if (!this.goals.length) return 0;
+      const total = this.goals.reduce((sum, g) => sum + g.progress, 0);
+      return Math.floor(total / this.goals.length);
     },
   },
-}
+  created() {
+    this.fetchGoals();
+  },
+  methods: {
+    async fetchGoals() {
+      const auth = userAuthStore();
+      const userId = auth.state.user.userId;
+      const token = auth.getToken();
+
+      try {
+        const response = await fetchGoals(userId, token);
+
+        if (!Array.isArray(response.data)) {
+          console.error('🚨 응답이 배열이 아닙니다:', response.data);
+          return;
+        }
+
+        this.goals = response.data.map((goal) => ({
+          id: goal.goal_id,
+          title: goal.goal_name,
+          amount: `${goal.target_amount.toLocaleString()} 원`,
+          progress: this.calculateProgress(
+            goal.save_amount,
+            goal.target_amount
+          ),
+          product: '-',
+          period1: goal.start_date ?? '',
+          period2: goal.end_date ?? '',
+        }));
+      } catch (error) {
+        console.error('❌ 목표 불러오기 실패:', error);
+      }
+    },
+    calculateProgress(saved, target) {
+      if (!saved || !target) return 0;
+      return Math.floor((saved / target) * 100);
+    },
+  },
+};
 </script>
 
 <style scoped>
+/* 동일한 스타일 유지 */
 .goal-page {
   padding: 2rem;
   font-family: 'Noto Sans KR', sans-serif;
@@ -166,8 +183,6 @@ export default {
   color: #111;
   box-shadow: 0 0 6px rgba(0, 120, 255, 0.15);
 }
-
-/* ✅ 애니메이션 정의 */
 .sidebar-fade-enter-active,
 .sidebar-fade-leave-active {
   transition: all 0.2s ease;

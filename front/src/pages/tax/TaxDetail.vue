@@ -35,35 +35,37 @@ import MedicalDetail from './details/MEdicalDetail.vue'
 import InsuranceDetail from './details/InsuranceDetail.vue'
 import PensionDetail from './details/PensionDetail.vue'
 import DebitCardDetail from './details/DebitCardDetail.vue'
+import SavingDetail from './details/SavingDetail.vue'
+import RentDetail from './details/RentDetail.vue'
+import HouseSavingDetail from './details/HouseSavingDetail.vue'
 import FunVentureDetail from './details/FunVentureDetail.vue'
 import DonationDetail from './details/DonationDetail.vue'
-import OverIncomeDetail from './details/OverIncomeDetail.vue' 
-import HealthInsuranceDetail from './details/HealthInsuranceDetail.vue' 
-import NationalPensionDetail from './details/NationalPensionDetail.vue' 
-import CashReceiptDetail from './details/CashReceiptDetail.vue' 
-import HousingSavingDetail from './details/HousingSavingDetail.vue'
-import EducationDetail from './details/EducationDetail.vue'
-import CreditCardDetail from './details/CreditCardDetail.vue'
-import HousingDetail from './details/HousingDetail.vue'
+import OverIncomeDetail from './details/OverIncomeDetail.vue'
+import HealthInsuranceDetail from './details/HealthInsuranceDetail.vue'
+import NationalPensionDetail from './details/NationalPensionDetail.vue'
+import CashReceiptDetail from './details/CashReceiptDetail.vue'
+
 
 export default {
   name: 'TaxPage',
   components: {
-    CreditCardDetail,
     DefaultInfo,
     MedicalDetail,
     InsuranceDetail,
     PensionDetail,
+
+    CashDetail,
     DebitCardDetail,
-    HousingDetail,
-    HousingSavingDetail,
-    EducationDetail,
+
+    SavingDetail,
+    RentDetail,
+    HouseSavingDetail,
     FunVentureDetail,
     DonationDetail,
-    OverIncomeDetail, // components에 추가
-    HealthInsuranceDetail, // components에 추가
-    NationalPensionDetail, // components에 추가
-    CashReceiptDetail // components에 추가
+    OverIncomeDetail,
+    HealthInsuranceDetail,
+    NationalPensionDetail,
+    CashReceiptDetail
   },
   data() {
     return {
@@ -101,18 +103,18 @@ export default {
         '기부금'
       ],
       componentMap: {
-        '소득기준 초과 부양가족': 'OverIncomeDetail', // OverIncomeDetail 사용
-        '건강/고용보험': 'HealthInsuranceDetail', // HealthInsuranceDetail 사용
-        '국민연금': 'NationalPensionDetail', // NationalPensionDetail 사용
+        '소득기준 초과 부양가족': 'OverIncomeDetail',
+        '건강/고용보험': 'HealthInsuranceDetail',
+        '국민연금': 'NationalPensionDetail',
         '보험료': 'InsuranceDetail',
         '의료비': 'MedicalDetail',
-        '교육비': 'EducationDetail', 
-        '신용카드': 'CreditCardDetail', // taxdetail.vue와 동일하게 DebitCardDetail 사용
+        '교육비': 'HousingDetail',
+        '신용카드': 'DebitCardDetail',
         '직불카드 등': 'DebitCardDetail',
-        '현금영수증': 'CashReceiptDetail', // CashReceiptDetail 사용
+        '현금영수증': 'CashReceiptDetail',
         '개인연금저축/연금계좌': 'PensionDetail',
-        '주택자금/월세액': 'HousingDetail', // taxdetail.vue와 동일하게 HousingSavingDetail 사용
-        '주택마련저축': 'HousingSavingDetail', // taxdetail.vue와 동일하게 HousingSavingDetail 사용
+        '주택자금/월세액': 'HousingSavingDetail',
+        '주택마련저축': 'HousingSavingDetail',
         '장기집합투자증권저축/벤처기업투자신탁': 'FunVentureDetail',
         '기부금': 'DonationDetail'
       }
@@ -120,10 +122,7 @@ export default {
   },
   computed: {
     detailComponentName() {
-      // 컴포넌트 맵에서 현재 선택된 항목에 해당하는 컴포넌트 이름을 찾습니다.
       const componentName = this.componentMap[this.selected];
-      // 해당 컴포넌트가 존재하면 반환하고, 없으면 DefaultInfo를 반환합니다.
-      // this.$options.components는 등록된 모든 컴포넌트를 포함합니다.
       return componentName ? this.$options.components[componentName] : 'DefaultInfo';
     }
   },

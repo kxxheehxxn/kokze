@@ -6,7 +6,7 @@
       </div>
     </div>
 
-    <div class="legend-container">
+    <div class="legend-container" v-if="hasAssetData">
       <div
         class="legend-item"
         v-for="(item, index) in assetData"
@@ -27,6 +27,16 @@
         </div>
       </div>
     </div>
+
+    <!-- 데이터가 없을 때 메시지 표시 -->
+    <div class="empty-state" v-if="!hasAssetData && !loading">
+      <p class="empty-message">등록된 자산이 없습니다</p>
+    </div>
+
+    <!-- 로딩 상태 -->
+    <div class="loading-state" v-if="loading">
+      <p class="loading-message">자산 정보를 불러오는 중...</p>
+    </div>
   </div>
 </template>
 
@@ -34,46 +44,82 @@
 import { ref, computed, onMounted } from 'vue';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'vue-chartjs';
+import assetApi from '@/api/assetApi';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+// Props로 userId 받기 (부모 컴포넌트에서 전달)
+const props = defineProps({
+  userId: {
+    type: String,
+    required: true,
+  },
+});
 
 const hoveredIndex = ref(null);
 const loading = ref(false);
 const error = ref(null);
 
-const defaultAssetData = ref([
-  { type: '현금', amount: 2082970, color: '#A3E4E0' },
-  { type: '투자금', amount: 1402300, color: '#F4C790' },
-  { type: '적금', amount: 750000, color: '#D8B4FE' },
-  { type: '예금', amount: 1500000, color: '#C7F5A3' },
-]);
+// 계좌 타입별 색상 매핑 (그룹화된 타입 기준)
+const accountTypeColors = {
+  적금: '#A3E4E0',
+  예금: '#87CEEB',
+  청약: '#FFB6C1',
+  펀드: '#DDA0DD',
+  주식: '#F0E68C',
+  채권: '#98FB98',
+  기타: '#D3D3D3',
+};
 
+// API에서 가져온 실제 자산 데이터만 사용
 const apiAssetData = ref([]);
 
+// 자산 데이터가 있는지 확인
+const hasAssetData = computed(() => {
+  return apiAssetData.value.length > 0;
+});
+
 const totalAssets = computed(() => {
-  const dataToUse = apiAssetData.value.length > 0 ? apiAssetData.value : defaultAssetData.value;
-  return dataToUse.reduce((sum, asset) => sum + asset.amount, 0);
+  if (!hasAssetData.value) return 0;
+  return apiAssetData.value.reduce((sum, asset) => sum + asset.amount, 0);
 });
 
 const assetData = computed(() => {
-  const dataToUse = apiAssetData.value.length > 0 ? apiAssetData.value : defaultAssetData.value;
-  return dataToUse.map((item) => ({
+  if (!hasAssetData.value) return [];
+  return apiAssetData.value.map((item) => ({
     ...item,
     percentage: totalAssets.value > 0 ? (item.amount / totalAssets.value) * 100 : 0,
   }));
 });
 
-const chartData = computed(() => ({
-  labels: assetData.value.map((item) => item.type),
-  datasets: [
-    {
-      data: assetData.value.map((item) => item.amount),
-      backgroundColor: assetData.value.map((item) => item.color),
-      borderColor: assetData.value.map((item) => item.color),
-      borderWidth: 2,
-    },
-  ],
-}));
+const chartData = computed(() => {
+  if (!hasAssetData.value) {
+    // 데이터가 없을 때 회색 원형 차트
+    return {
+      labels: ['자산 없음'],
+      datasets: [
+        {
+          data: [1], // 임의의 값 1을 사용하여 전체 원을 그림
+          backgroundColor: ['#E5E5E5'],
+          borderColor: ['#E5E5E5'],
+          borderWidth: 2,
+        },
+      ],
+    };
+  }
+
+  return {
+    labels: assetData.value.map((item) => item.type),
+    datasets: [
+      {
+        data: assetData.value.map((item) => item.amount),
+        backgroundColor: assetData.value.map((item) => item.color),
+        borderColor: assetData.value.map((item) => item.color),
+        borderWidth: 2,
+      },
+    ],
+  };
+});
 
 const chartOptions = computed(() => ({
   responsive: true,
@@ -84,7 +130,7 @@ const chartOptions = computed(() => ({
       display: false,
     },
     tooltip: {
-      enabled: true,
+      enabled: hasAssetData.value, // 데이터가 없을 때는 툴팁 비활성화
       backgroundColor: 'rgba(0, 0, 0, 0.8)',
       titleColor: '#ffffff',
       bodyColor: '#ffffff',
@@ -94,10 +140,12 @@ const chartOptions = computed(() => ({
       displayColors: true,
       callbacks: {
         label: function (context) {
+          if (!hasAssetData.value) return '';
           const label = context.label || '';
           const value = formatCurrency(context.parsed);
           const percentage = assetData.value[context.dataIndex].percentage.toFixed(1);
-          return `${label}: ${value} (${percentage}%)`;
+          const accountCount = assetData.value[context.dataIndex].accountCount;
+          return [`${label}: ${value} (${percentage}%)`, `계좌 수: ${accountCount}개`];
         },
       },
     },
@@ -127,29 +175,93 @@ const chartPlugins = [
       ctx.font = `bold ${fontSize}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#333';
+      ctx.fillStyle = hasAssetData.value ? '#333' : '#999'; // 데이터가 없을 때 회색 텍스트
 
       const centerX = width / 2;
       const centerY = height / 2;
 
-      ctx.fillText('총 자산', centerX, centerY - fontSize / 2);
-      ctx.font = `bold ${fontSize * 0.8}px Arial`;
-      ctx.fillText(formatCurrency(totalAssets.value).replace(' 원', '원'), centerX, centerY + fontSize / 2);
+      if (hasAssetData.value) {
+        ctx.fillText('총 자산', centerX, centerY - fontSize / 2);
+        ctx.font = `bold ${fontSize * 0.8}px Arial`;
+        ctx.fillText(formatCurrency(totalAssets.value).replace(' 원', '원'), centerX, centerY + fontSize / 2);
+      } else {
+        ctx.fillText('자산 없음', centerX, centerY);
+      }
 
       ctx.save();
     },
   },
 ];
 
+// 계좌 타입을 그룹화하는 함수
+const getGroupedAccountType = (accountType) => {
+  if (accountType.includes('적금')) {
+    return '적금';
+  } else if (accountType.includes('예금')) {
+    return '예금';
+  } else if (accountType.includes('청약')) {
+    return '청약';
+  } else if (accountType.includes('펀드')) {
+    return '펀드';
+  } else if (accountType.includes('주식')) {
+    return '주식';
+  } else if (accountType.includes('채권')) {
+    return '채권';
+  } else {
+    return accountType; // 기타 타입은 그대로 유지
+  }
+};
+
+// 백엔드에서 계좌 데이터를 가져와서 accountType별로 그룹화
 const fetchUserAssetChart = async () => {
   loading.value = true;
   error.value = null;
 
   try {
-    console.log('자산 차트 데이터 로드 완료 (샘플 데이터)');
+    console.log('사용자 계좌 데이터 조회 시작:', props.userId);
+
+    // 백엔드 API 호출
+    const accounts = await assetApi.getUserBankAccounts(props.userId);
+    console.log('받은 계좌 데이터:', accounts);
+
+    if (accounts && accounts.length > 0) {
+      // accountType별로 그룹화하고 합계 계산
+      const groupedData = accounts.reduce((acc, account) => {
+        const originalType = account.accountType;
+        const groupedType = getGroupedAccountType(originalType); // 그룹화된 타입 사용
+        const amount = parseInt(account.balance) || 0;
+
+        if (!acc[groupedType]) {
+          acc[groupedType] = {
+            type: groupedType,
+            amount: 0,
+            accountCount: 0,
+            color: accountTypeColors[groupedType] || '#D3D3D3', // 정의되지 않은 타입은 회색
+            originalTypes: new Set(), // 원본 타입들을 추적
+          };
+        }
+
+        acc[groupedType].amount += amount;
+        acc[groupedType].accountCount += 1;
+        acc[groupedType].originalTypes.add(originalType); // 원본 타입 추가
+
+        return acc;
+      }, {});
+
+      // 객체를 배열로 변환하고 originalTypes는 제거
+      apiAssetData.value = Object.values(groupedData).map((item) => {
+        const { originalTypes, ...rest } = item;
+        return rest;
+      });
+      console.log('그룹화된 자산 데이터:', apiAssetData.value);
+    } else {
+      console.log('계좌 데이터가 없음');
+      apiAssetData.value = []; // 빈 배열로 설정
+    }
   } catch (err) {
-    console.error('Failed to fetch user asset chart data:', err);
+    console.error('계좌 데이터 조회 실패:', err);
     error.value = '자산 차트 정보를 불러오는 데 실패했습니다.';
+    apiAssetData.value = []; // 에러 시에도 빈 배열로 설정
   } finally {
     loading.value = false;
   }
@@ -209,7 +321,6 @@ onMounted(() => {
   display: flex;
   flex-wrap: wrap;
   justify-content: center; /* 가로 중앙 정렬 */
-  /* gap: 30px 20px; 이 부분의 gap을 조정 */
   gap: 16px; /* 모든 방향으로 동일한 간격 */
   margin-bottom: 32px;
   margin-top: 48px;
@@ -226,8 +337,6 @@ onMounted(() => {
   transition: background-color 0.2s ease;
   cursor: pointer;
   box-sizing: border-box;
-  /* flex: 1 1 calc(50% - 10px); -> flex-basis로 유연하게 */
-  /* max-width: calc(50% - 10px); -> max-width를 더 유연하게 조정 */
   flex-basis: calc(50% - 8px); /* 2개씩 배치 (gap 16px의 절반인 8px을 뺌) */
   max-width: calc(50% - 8px);
   min-width: 140px; /* 최소 너비를 약간 줄임 */
@@ -288,6 +397,32 @@ onMounted(() => {
   font-size: 16px; /* 폰트 크기 조정 */
   text-align: right;
   white-space: nowrap;
+}
+
+/* 빈 상태 스타일 */
+.empty-state {
+  margin-top: 20px;
+  margin-bottom: 32px;
+}
+
+.empty-message {
+  color: #999;
+  font-size: 16px;
+  text-align: center;
+  margin: 0;
+}
+
+/* 로딩 상태 스타일 */
+.loading-state {
+  margin-top: 20px;
+  margin-bottom: 32px;
+}
+
+.loading-message {
+  color: #666;
+  font-size: 16px;
+  text-align: center;
+  margin: 0;
 }
 
 /* 1024px 미만 화면에서 .asset-amount 숨기기 */

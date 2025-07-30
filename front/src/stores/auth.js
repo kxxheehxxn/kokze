@@ -7,17 +7,17 @@ const initState = {
   user: {
     userId: '', // 사용자 ID
     email: '', // email
-    roles: [], // 권한 목록
+    role: '', // 권한 목록
   },
 }
-
 export const userAuthStore = defineStore('auth', () => {
   const state = ref({ ...initState })
 
   // 로그인 여부 파악
   const isLogin = computed(() => !!state.value.user.email) // 로그인 여부
+  const userId = computed(() => state.value.user.userId) // 로그인 사용자 email
   const email = computed(() => state.value.user.email) // 로그인 사용자 email
-  const userId = computed(() => state.value.user.userId) // 로그인 사용자 ID
+  const role = computed(() => state.value.user.role) // 로그인 사용자 role
 
   // 로그인
   const login = async member => {
@@ -28,7 +28,7 @@ export const userAuthStore = defineStore('auth', () => {
         state.value.user = {
           userId: member.userId || '',
           email: member.email,
-          roles: ['USER'],
+          role: 'USER',
         }
       } else {
         // 일반 로그인의 경우 UserController 사용
@@ -42,7 +42,7 @@ export const userAuthStore = defineStore('auth', () => {
           state.value.user = {
             userId: response.data.user.userId || '',
             email: response.data.user.email,
-            roles: ['USER'],
+            role: 'USER',
           }
         } else {
           throw new Error(response.data.message || '로그인에 실패했습니다.')
@@ -77,9 +77,10 @@ export const userAuthStore = defineStore('auth', () => {
 
   return {
     state,
-    email,
     userId,
+    email,
     isLogin,
+    role,
     login,
     logout,
     getToken,

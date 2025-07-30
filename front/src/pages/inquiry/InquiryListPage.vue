@@ -158,7 +158,7 @@ onMounted(async () => {
               <template
                 v-if="faqInquiries.some((faq) => faq.infoId === inquiry.infoId)"
               >
-                FAQ
+                HOT
               </template>
               <template v-else>
                 {{

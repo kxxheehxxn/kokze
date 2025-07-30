@@ -61,8 +61,11 @@
       <label for="agree">안내 사항을 모두 확인하였으며, 이에 동의합니다.</label>
     </div>
     <div class="button-row">
-      <button class="submit-btn" :disabled="!agree" @click="onWithdraw">확인</button>
+      <button class="submit-btn" :disabled="!agree || loading" @click="onWithdraw">
+        {{ loading ? '처리 중...' : '확인' }}
+      </button>
     </div>
+    <div v-if="error" class="error-msg">{{ error }}</div>
   </UserCardLayout>
 </template>
 
@@ -71,16 +74,35 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import UserCardLayout from '@/components/UserCardLayout.vue'
 import { userAuthStore } from '@/stores/auth.js'
+import { withdrawUser } from '@/api/userApi'
 
 const agree = ref(false)
+const loading = ref(false)
+const error = ref('')
 const router = useRouter()
 const auth = userAuthStore()
-function onWithdraw() {
+
+async function onWithdraw() {
   if (!agree.value) return
-  // 실제 탈퇴 처리 로직
-  auth.logout()
-  alert('탈퇴가 처리되었습니다.')
-  router.push('/')
+  
+  loading.value = true
+  error.value = ''
+  
+  try {
+    const result = await withdrawUser()
+    if (result.success) {
+      alert('탈퇴가 처리되었습니다.')
+      auth.logout()
+      router.push('/')
+    } else {
+      error.value = '회원 탈퇴 처리에 실패했습니다: ' + (result.message || '알 수 없는 오류')
+    }
+  } catch (error) {
+    error.value = '회원 탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.'
+    console.error('회원 탈퇴 실패:', error)
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -155,5 +177,11 @@ th {
   background: #f3bcbc;
   color: #fff;
   cursor: not-allowed;
+}
+.error-msg {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 12px;
+  text-align: center;
 }
 </style> 

@@ -1,125 +1,217 @@
 <template>
-  <div class="goal-page">
-    <section class="goal-summary">
-      <div class="header-row">
-        <h2>전체 목표 관리</h2>
-        <button class="past-goal-button">지난 목표 리스트</button>
+  <UserCardLayout>
+    <h2 class="title">자산정보 수정</h2>
+    <form class="asset-form" @submit.prevent="onSubmit">
+      <div class="form-group">
+        <label class="label">월급(수입)</label>
+        <input
+          v-model.number="salary"
+          type="number"
+          min="0"
+          class="input"
+          placeholder="월급을 입력하세요."
+        />
+        <span class="unit">원</span>
       </div>
-
-      <div class="average-progress">
-        <span>목표 평균 달성률</span>
-        <div class="progress-bar">
-          <div class="progress" :style="{ width: '16%' }"></div>
-        </div>
-        <span class="percent">16%</span>
+      <div class="form-group">
+        <label class="label">월 지출비</label>
+        <input
+          v-model.number="payAmount"
+          type="number"
+          min="0"
+          class="input"
+          placeholder="월 지출비를 입력하세요."
+        />
+        <span class="unit">원</span>
       </div>
-
-      <div class="goal-grid">
-        <GoalCard v-for="goal in goals" :key="goal.id" :goal="goal" />
-        <GoalAddCard v-for="n in emptySlots" :key="'add-' + n" />
+      <div class="button-row">
+        <button type="button" class="cancel-btn" @click="onCancel">취소</button>
+        <button type="submit" class="submit-btn" :disabled="loading">수정</button>
       </div>
-    </section>
-  </div>
+      <div v-if="error" class="error-msg">{{ error }}</div>
+      <div v-if="success" class="success-msg">자산 정보가 성공적으로 수정되었습니다.</div>
+    </form>
+  </UserCardLayout>
 </template>
 
-<script>
-import GoalCard from '@/components/GoalCard.vue';
-import GoalAddCard from '@/components/GoalAddCard.vue';
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { getUserInfo, updateUserProfile, createTestUser } from '@/api/userApi';
+import UserCardLayout from '@/components/UserCardLayout.vue';
 
-export default {
-  name: 'GoalPage',
-  components: {
-    GoalCard,
-    GoalAddCard,
-  },
-  data() {
-    return {
-      goals: [
-        {
-          id: 1,
-          title: '노후준비',
-          period: '2025.07.15 ~ 2100.01.01 (약 75년)',
-          amount: '100억 원',
-          progress: 9,
-          product: '(적금) 매달 5일 20만원',
-        },
-        {
-          id: 2,
-          title: '내 집 마련',
-          period: '2025.07.15 ~ 2100.01.01 (약 75년)',
-          amount: '100억 원',
-          progress: 21,
-          product: '(예금) 200만원',
-        },
-        {
-          id: 3,
-          title: '대출 갚기',
-          period: '2025.07.15 ~ 2100.01.01 (약 75년)',
-          amount: '10억 원',
-          progress: 18,
-          product: '(펀드) 뭐가 될지 몰라',
-        },
-      ],
-      maxGoals: 5,
-    };
-  },
-  computed: {
-    emptySlots() {
-      return this.maxGoals - this.goals.length;
-    },
-  },
-};
+const salary = ref(0);
+const payAmount = ref(0);
+const loading = ref(false);
+const error = ref(null);
+const success = ref(false);
+const router = useRouter();
+
+async function loadUserAsset() {
+  error.value = null;
+  try {
+    const user = await getUserInfo();
+    salary.value = user.salary || 0;
+    payAmount.value = user.payAmount || 0;
+  } catch (e) {
+    error.value = '사용자 정보를 불러올 수 없습니다.';
+    console.log('사용자 정보 로드 실패:', e);
+    
+    // 개발 중에만 테스트용 사용자 생성 시도
+    try {
+      console.log('🔄 테스트용 사용자 생성 시도...');
+      await createTestUser();
+      console.log('✅ 테스트용 사용자 생성 완료');
+      
+      // 다시 사용자 정보 로드 시도
+      const user = await getUserInfo();
+      salary.value = user.salary || 0;
+      payAmount.value = user.payAmount || 0;
+      error.value = null;
+    } catch (testError) {
+      console.log('❌ 테스트용 사용자 생성 실패:', testError);
+      error.value = '테스트용 사용자 생성에도 실패했습니다.';
+    }
+  }
+}
+
+onMounted(() => {
+  loadUserAsset();
+});
+
+async function onSubmit() {
+  if (salary.value === null || payAmount.value === null) {
+    error.value = '모든 필드를 입력해주세요.';
+    return;
+  }
+  
+  loading.value = true;
+  error.value = null;
+  success.value = false;
+  try {
+    const result = await updateUserProfile({ salary: salary.value, payAmount: payAmount.value });
+    if (result.success) {
+      success.value = true;
+      setTimeout(() => {
+        router.push('/userpage');
+      }, 1200);
+    } else {
+      error.value = '자산 정보 수정에 실패했습니다: ' + (result.message || '알 수 없는 오류');
+    }
+  } catch (e) {
+    error.value = '자산 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.';
+    console.error('자산 정보 수정 실패:', e);
+  } finally {
+    loading.value = false;
+  }
+}
+
+function onCancel() {
+  router.back();
+}
 </script>
 
 <style scoped>
-.goal-page {
-  padding: 2rem;
-  font-family: 'Noto Sans KR', sans-serif;
+.title {
+  background-color: #fff;
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0 auto 32px auto;
+  text-align: center;
+  width: 100%;
 }
-.goal-summary {
-  background: #fff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+.asset-form {
+  background-color: #fff;
+  width: 100%;
 }
-.header-row {
+.form-group {
+  background-color: #fff;
+  margin-bottom: 32px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
 }
-.past-goal-button {
-  background: #666;
-  color: #fff;
+.label {
+  background-color: #fff;
+  display: block;
+  color: #888;
+  font-size: 20px;
+  margin-bottom: 0;
+  margin-left: 8px;
+  width: 120px;
+  text-align: left;
+}
+.input {
+  flex: 1;
   border: none;
-  border-radius: 16px;
-  padding: 0.3rem 1rem;
-  font-size: 0.85rem;
+  border-radius: 24px;
+  background: #f6f6f6;
+  box-shadow: 0 2px 8px 0 #e5e7eb inset;
+  font-size: 20px;
+  padding: 12px 24px;
+  outline: none;
+  margin: 0 8px 0 0;
+  min-width: 0;
+}
+.unit {
+  color: #888;
+  font-size: 18px;
+  margin-left: 4px;
+}
+.button-row {
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 32px;
+  width: 100%;
+}
+.cancel-btn,
+.submit-btn {
+  width: 180px;
+  height: 48px;
+  border-radius: 18px;
+  font-size: 18px;
+  font-weight: 500;
+  border: none;
   cursor: pointer;
 }
-.average-progress {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+.cancel-btn {
+  background: #fafbfc;
+  color: #222;
+  border: 1.5px solid #e5e7eb;
 }
-.progress-bar {
-  flex: 1;
-  height: 16px;
-  background: #eee;
-  border-radius: 8px;
-  overflow: hidden;
+.submit-btn {
+  background: #2573ee;
+  color: #fff;
+  border: none;
 }
-.progress {
-  height: 100%;
-  background: linear-gradient(90deg, red, orange, green);
+.submit-btn:disabled {
+  background: #b3d0fa;
+  cursor: not-allowed;
 }
-.percent {
-  font-weight: bold;
+.error-msg {
+  color: #e74c3c;
+  font-size: 16px;
+  margin-top: 8px;
+  margin-left: 8px;
 }
-.goal-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
+.success-msg {
+  color: #2573ee;
+  font-size: 16px;
+  margin-top: 8px;
+  margin-left: 8px;
 }
+
+/* Chrome, Safari, Edge, Opera - number input spin button 제거 */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox - number input spin button 제거 */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 </style>

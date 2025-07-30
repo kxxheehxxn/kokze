@@ -76,8 +76,6 @@ onMounted(() => {
     router.replace('/');
     return;
   }
-
-  load(); // 권한이 있을 경우에만 데이터 로드
 });
 load();
 </script>

@@ -161,7 +161,12 @@ load();
         <button class="btn delete" @click="remove" v-if="isAdmin">
           문의 삭제
         </button>
-        <template v-if="!article.isAnswered && !isAdmin && auth.userId == article.userId"" class="w-100 text-end">
+        <template
+          v-if="
+            !article.isAnswered && !isAdmin && auth.userId == article.userId
+          "
+          class="w-100 text-end"
+        >
           <div class="ms-auto">
             <button class="btn edit" @click="update">수정</button>
             <button class="btn delete" @click="remove">삭제</button>

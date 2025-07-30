@@ -12,7 +12,7 @@ const back = () => {
   router.back();
 };
 const article = reactive({
-  adminId: auth.userId || '3e7db2f4-66d7-11f0-8ab4-8cb0e9d84583', // 임시 운영자 adminId
+  adminId: auth.userId,
   title: '',
   content: '',
 });

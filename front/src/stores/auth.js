@@ -39,12 +39,11 @@ export const userAuthStore = defineStore('auth', () => {
           'http://localhost:8080/api/auth/login',
           member
         );
-
         if (response.data && response.data.success) {
           state.value.token = response.data.token;
           state.value.user = {
             userId: response.data.user.userId || '',
-            userName: response.data.user.userName,
+            userName: response.data.user.username,
             email: response.data.user.email,
             role: 'USER',
           };

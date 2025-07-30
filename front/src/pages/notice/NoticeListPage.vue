@@ -79,7 +79,13 @@ load(pageRequest);
           <i class="search-icon fa-solid fa-magnifying-glass" @click="search" />
         </div>
       </div>
-      <div v-for="notice in notices" :key="notice.noticeId">
+      <!-- 공지사항 없을 때 메시지 -->
+      <div v-if="notices.length === 0" class="text-center text-muted py-5">
+        공지사항이 없습니다.
+      </div>
+
+      <!-- 공지사항 리스트 -->
+      <div v-else v-for="notice in notices" :key="notice.noticeId">
         <div class="my-3 ms-2">
           <router-link
             class="ellipsis-title link-reset mt-4"

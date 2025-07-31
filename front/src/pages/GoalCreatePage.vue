@@ -45,12 +45,13 @@
       <div class="product-card" v-if="selectedAccount">
         <span class="product-icon">💳</span>
         <div class="product-text">
-          {{ selectedAccount.bankName }} - {{ selectedAccount.accountNum }}
+          {{ selectedAccount.bank_name }} - {{ selectedAccount.account_num }}
         </div>
+
         <button class="remove-btn" @click="selectedAccount = null">－</button>
       </div>
 
-      <div class="product-placeholder" v-else @click="showProductModal = true">
+      <div class="product-placeholder" v-else @click="fetchAccounts">
         <span>＋</span>
       </div>
     </div>
@@ -61,7 +62,6 @@
       <button class="btn submit" @click="onSubmit">목표 추가하기</button>
     </div>
 
-    <!-- 모달 -->
     <ProductModal
       v-if="showProductModal"
       :accounts="accounts"
@@ -71,8 +71,12 @@
   </div>
 </template>
 <script>
+import {
+  getAccountsByUserId,
+  createGoal,
+  linkAccountToGoal,
+} from '@/api/goalApi';
 import ProductModal from '@/components/ProductModal.vue';
-import { createGoal } from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth';
 
 export default {
@@ -106,7 +110,7 @@ export default {
       const userId = auth.state.user.userId;
       const token = auth.getToken();
 
-      // 검증
+      // 필드 검증
       if (
         !this.goalName ||
         !this.startDate ||
@@ -124,21 +128,47 @@ export default {
         start_date: this.startDate,
         end_date: this.endDate,
         deposit_date: this.depositDate,
-        account_id: this.selectedAccount?.accountId || null,
       };
 
       try {
-        await createGoal(userId, requestBody, token);
-        alert('목표가 성공적으로 등록되었습니다!');
+        // 1. 목표 생성 후 goal_id 수신
+        const res = await createGoal(userId, requestBody, token);
+        const goalId = res.data.goal_id;
+
+        // 2. 계좌 선택 시 연동
+        if (this.selectedAccount) {
+          await linkAccountToGoal(
+            goalId,
+            this.selectedAccount.account_id,
+            token
+          );
+          alert('목표와 계좌가 성공적으로 연동되었습니다!');
+        } else {
+          alert('목표가 성공적으로 등록되었습니다!');
+        }
+
         this.$router.push('/goals');
       } catch (error) {
-        console.error('❌ 목표 등록 실패:', error);
+        console.error('❌ 등록 실패:', error);
         alert('등록에 실패했습니다.');
+      }
+    },
+    async fetchAccounts() {
+      const auth = userAuthStore();
+      const userId = auth.state.user.userId;
+      const token = auth.getToken();
+
+      try {
+        const res = await getAccountsByUserId(userId, token);
+        this.accounts = res.data;
+        this.showProductModal = true;
+      } catch (err) {
+        alert('계좌를 불러오지 못했습니다.');
       }
     },
     handleProductConnect(accountId) {
       this.selectedAccount = this.accounts.find(
-        (a) => a.accountId === accountId
+        (a) => a.account_id === accountId
       );
       this.showProductModal = false;
     },

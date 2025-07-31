@@ -16,6 +16,7 @@
         <span>~</span>
         <input type="date" v-model="goal.endDate" />
       </div>
+      <p class="helper-text">입력하지 않을 시 기존 날짜로 설정됩니다.</p>
     </div>
 
     <!-- 목표 금액 -->
@@ -43,12 +44,12 @@
       <div class="product-card" v-if="selectedAccount">
         <span class="product-icon">💳</span>
         <div class="product-text">
-          {{ selectedAccount.bankName }} - {{ selectedAccount.accountNum }}
+          {{ selectedAccount.bank_name }} - {{ selectedAccount.account_num }}
         </div>
         <button class="remove-btn" @click="selectedAccount = null">－</button>
       </div>
 
-      <div class="product-placeholder" v-else @click="showProductModal = true">
+      <div class="product-placeholder" v-else @click="fetchAccounts">
         <span>＋</span>
       </div>
     </div>
@@ -67,10 +68,15 @@
     />
   </div>
 </template>
-
 <script>
 import ProductModal from '@/components/ProductModal.vue';
-import { getGoalById, updateGoal } from '@/api/goalApi';
+import {
+  getGoalById,
+  updateGoal,
+  getAccountsByUserId,
+  linkAccountToGoal,
+  unlinkAccount,
+} from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth';
 
 export default {
@@ -86,6 +92,7 @@ export default {
         depositDate: 1,
       },
       selectedAccount: null,
+      prevAccountId: null, // ✅ 기존 계좌 ID 저장
       showProductModal: false,
       accounts: [],
     };
@@ -124,13 +131,27 @@ export default {
         if (data.linked_accounts?.length > 0) {
           const acc = data.linked_accounts[0];
           this.selectedAccount = {
-            accountId: acc.account_id,
-            bankName: acc.bank_name,
-            accountNum: acc.account_num,
+            account_id: acc.account_id,
+            bank_name: acc.bank_name,
+            account_num: acc.account_num,
           };
+          this.prevAccountId = acc.account_id; // ✅ 기존 계좌 ID 저장
         }
       } catch (err) {
         alert('목표 정보를 불러오지 못했습니다.');
+      }
+    },
+    async fetchAccounts() {
+      const auth = userAuthStore();
+      const userId = auth.state.user.userId;
+      const token = auth.getToken();
+
+      try {
+        const res = await getAccountsByUserId(userId, token);
+        this.accounts = res.data;
+        this.showProductModal = true;
+      } catch (err) {
+        alert('계좌를 불러오지 못했습니다.');
       }
     },
     async submitEdit() {
@@ -138,6 +159,7 @@ export default {
       const token = userAuthStore().getToken();
 
       try {
+        // 1. 목표 정보 수정
         await updateGoal(
           goalId,
           {
@@ -150,7 +172,22 @@ export default {
           token
         );
 
-        alert('목표가 수정되었습니다!');
+        // 2. 계좌 연동/해제 로직
+        const selectedId = this.selectedAccount?.account_id;
+
+        if (selectedId !== this.prevAccountId) {
+          // 2-1. 기존 계좌가 있었다면 해제
+          if (this.prevAccountId) {
+            await unlinkAccount(this.prevAccountId, token);
+          }
+
+          // 2-2. 새 계좌가 선택된 경우 연동
+          if (selectedId) {
+            await linkAccountToGoal(goalId, selectedId, token);
+          }
+        }
+
+        alert('목표가 성공적으로 수정되었습니다!');
         this.$router.push('/goals');
       } catch (err) {
         alert('목표 수정 실패');
@@ -162,7 +199,7 @@ export default {
     },
     handleProductConnect(accountId) {
       this.selectedAccount = this.accounts.find(
-        (a) => a.accountId === accountId
+        (a) => a.account_id === accountId
       );
       this.showProductModal = false;
     },

@@ -1,4 +1,3 @@
-// src/api/goalApi.js
 import axios from 'axios';
 
 // 목표 전체 조회
@@ -39,6 +38,7 @@ export const getGoalById = (goalId, token) => {
   });
 };
 
+//금융상품 추천
 export const getRecommendedProducts = (goalId, token) => {
   return axios.get(`/api/goal/${goalId}/recommend-products`, {
     headers: {
@@ -50,6 +50,33 @@ export const getRecommendedProducts = (goalId, token) => {
 // 목표 수정
 export const updateGoal = (goalId, goalData, token) => {
   return axios.put(`/api/goal/${goalId}`, goalData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+//사용자 보유 계좌 목록 조회
+export const getAccountsByUserId = (userId, token) => {
+  return axios.get(`/api/goal/accounts/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+//목표에 계좌 연동
+export function linkAccountToGoal(goalId, accountId, token) {
+  return axios.post(
+    `/api/goal/${goalId}/link-account`,
+    { accountId },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+}
+
+//목표에 계좌 연동 해지
+export const unlinkAccount = (accountId, token) => {
+  return axios.delete(`/api/goal/unlink/${accountId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

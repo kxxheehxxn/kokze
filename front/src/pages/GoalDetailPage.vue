@@ -1,6 +1,6 @@
 <template>
   <div class="goal-detail-page">
-    <router-link to="/goal" class="back-link">← 목표로 돌아가기</router-link>
+    <router-link to="/goals" class="back-link">← 목표로 돌아가기</router-link>
 
     <!-- 목표 타이틀 및 달성률 -->
     <section class="summary-card">
@@ -22,7 +22,18 @@
           <strong>목표 금액:</strong> {{ goal.savedAmount.toLocaleString() }} 원
           / {{ goal.totalAmount.toLocaleString() }} 원
         </p>
-        <p><strong>연결된 금융 상품:</strong> {{ goal.product || '-' }}</p>
+        <p>
+          <strong>입금 날짜:{{ goal.depositDate }}</strong>
+        </p>
+        {{}}
+        <p>
+          <strong>연결된 금융 상품:</strong>
+          <span v-if="goal.linked_accounts.length > 0">
+            {{ goal.linked_accounts[0].bank_name }} -
+            {{ goal.linked_accounts[0].account_num }}
+          </span>
+          <span v-else>-</span>
+        </p>
       </div>
 
       <div class="button-row">
@@ -83,7 +94,9 @@ export default {
         period2: '',
         savedAmount: 0,
         totalAmount: 0,
+        depositDate: '',
         product: '',
+        linked_accounts: [], // ✅ 추가
       },
       recommended: [],
       userName: '김콕재',
@@ -110,6 +123,8 @@ export default {
         period2: data.end_date,
         savedAmount: data.current_amount,
         totalAmount: data.target_amount,
+        depositDate: data.deposit_date,
+        linked_accounts: data.linked_accounts || [],
         product: data.linked_accounts?.[0]?.product_name || '-',
       };
 

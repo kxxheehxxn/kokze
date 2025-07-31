@@ -2,37 +2,33 @@
   <div class="modal-overlay" @click.self="$emit('close')">
     <div class="modal-content">
       <h3>📂 금융상품 연동</h3>
-      
-      <!-- 은행 선택 섹션 -->
-      <div class="bank-selection">
-        <label>은행 선택</label>
-        <BankListComponent @bank-selected="onBankSelected" />
-      </div>
-
-      <!-- 계좌 선택 섹션 -->
-      <div v-if="selectedBank" class="account-selection">
-        <label>연동할 계좌 선택</label>
-        <select v-model="selectedAccountId">
-          <option
-            v-for="account in accounts"
-            :key="account.accountId"
-            :value="account.accountId"
-          >
-            {{ account.bankName }} - {{ account.accountNum }}
-          </option>
-        </select>
-      </div>
+      <label>연동할 계좌 선택</label>
+      <select v-model="selectedAccountId">
+        <option
+          v-for="account in accounts"
+          :key="account.account_id"
+          :value="account.account_id"
+        >
+          {{ account.bank_name }} - {{ account.account_num }}
+        </option>
+      </select>
 
       <div class="btn-row">
         <button class="btn cancel" @click="$emit('close')">취소</button>
-        <button class="btn confirm" @click="onConnect" :disabled="!selectedAccountId">연동</button>
+        <button
+          class="btn confirm"
+          @click="onConnect"
+          :disabled="!selectedAccountId"
+        >
+          연동
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import BankListComponent from './BankListComponent.vue';
+import BankListComponent from './BankListComponent.vue'
 
 export default {
   name: 'ProductModal',
@@ -46,22 +42,22 @@ export default {
     return {
       selectedAccountId: null,
       selectedBank: null,
-    };
+    }
   },
   methods: {
     onBankSelected(bank) {
-      this.selectedBank = bank;
-      console.log('선택된 은행:', bank);
+      this.selectedBank = bank
+      console.log('선택된 은행:', bank)
     },
     onConnect() {
       if (!this.selectedAccountId) {
-        alert('계좌를 선택하세요!');
-        return;
+        alert('계좌를 선택하세요!')
+        return
       }
-      this.$emit('connect', this.selectedAccountId);
+      this.$emit('connect', this.selectedAccountId)
     },
   },
-};
+}
 </script>
 
 <style scoped>

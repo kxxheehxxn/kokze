@@ -124,6 +124,7 @@ export const userAuthStore = defineStore('auth', () => {
     // 로그인 관련
     state,
     email,
+    userId,
     isLogin,
     login,
     logout,

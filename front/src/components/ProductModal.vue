@@ -6,10 +6,10 @@
       <select v-model="selectedAccountId">
         <option
           v-for="account in accounts"
-          :key="account.accountId"
-          :value="account.accountId"
+          :key="account.account_id"
+          :value="account.account_id"
         >
-          {{ account.bankName }} - {{ account.accountNum }}
+          {{ account.bank_name }} - {{ account.account_num }}
         </option>
       </select>
 

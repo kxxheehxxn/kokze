@@ -9,6 +9,7 @@ const route = useRoute();
 // 헤더/풋터가 없어야 하는 페이지 목록
 const pagesWithoutHeaderFooter = [
     '/auth/login',
+    '/signup/step1',
     '/signup/step1/local',
     '/signup/step1/kakao',
     '/signup/step2',

@@ -10,15 +10,8 @@ import { userAuthStore } from '@/stores/auth';
 // 현재 사용자 ID (실제로는 로그인한 사용자 정보에서 가져와야 함)
 const auth = userAuthStore();
 
-// 사용자가 로그인했는지 확인 (디버깅 추가)
+// 사용자가 로그인했는지 확인
 const isUserLoggedIn = computed(() => {
-  console.log('=== 로그인 상태 디버깅 ===');
-  console.log('auth.state:', auth.state);
-  console.log('auth.email:', auth.email);
-  console.log('auth.userId:', auth.userId);
-  console.log('auth.isLogin:', auth.isLogin);
-  console.log('========================');
-
   return auth.isLogin; // auth store의 isLogin computed 속성 사용
 });
 

@@ -73,14 +73,44 @@ const filteredHistory = computed(() => {
 });
 
 const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  if (!dateString) {
+    return '날짜 없음';
+  }
+  
+  try {
+    let date;
+    
+    if (Array.isArray(dateString)) {
+      if (dateString.length >= 5) {
+        const [year, month, day, hour, minute] = dateString;
+        date = new Date(year, month - 1, day, hour, minute); 
+      } else {
+        return '날짜 오류';
+      }
+    } else if (typeof dateString === 'string') {
+      if (dateString.includes('T')) {
+        date = new Date(dateString);
+      } else {
+        date = new Date(dateString);
+      }
+    } else {
+      date = new Date(dateString);
+    }
+    
+    if (isNaN(date.getTime())) {
+      return '날짜 오류';
+    }
+    
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (error) {
+    return '날짜 오류';
+  }
 };
 
 const loadPointHistory = async () => {
@@ -99,9 +129,11 @@ const loadPointHistory = async () => {
 
     if (historyData.success) {
       history.value = historyData.history;
+    } else {
+      console.error('포인트 내역 조회 실패:', historyData);
     }
   } catch (err) {
-    console.error('Failed to load point history:', err);
+    console.error('포인트 내역 로딩 실패:', err);
     error.value = '포인트 내역을 불러올 수 없습니다. 다시 시도해주세요.';
   } finally {
     loading.value = false;
@@ -109,7 +141,6 @@ const loadPointHistory = async () => {
 };
 
 const filterHistory = () => {
-  // 필터링은 computed 속성에서 자동으로 처리됨
 };
 
 onMounted(() => {

@@ -4,6 +4,9 @@ import AssetChartComponent from '@/components/homePage/AssetChartComponent.vue';
 import AdComponent from '@/components/homePage/ADComponent.vue';
 import QuizComponent from '@/components/homePage/QuizComponent.vue';
 import NoticeSummaryComponent from '@/components/homePage/NoticeSummaryComponent.vue';
+import HomeToTax from '@/components/homePage/HomeToTaxComponent.vue';
+import HomeToProduct from '@/components/homePage/HomeToProductComponent.vue';
+import HomeToGoal from '@/components/homePage/HomeToGoalComponent.vue';
 import { ref, computed } from 'vue';
 import { userAuthStore } from '@/stores/auth';
 
@@ -41,7 +44,10 @@ const scrollToTop = () => {
       </div>
 
       <!-- 2. 광고 + (퀴즈/공지사항) (중간) -->
-      <div class="middle-section" :class="{ 'no-asset-section': !isUserLoggedIn }">
+      <div
+        class="middle-section"
+        :class="{ 'no-asset-section': !isUserLoggedIn }"
+      >
         <div class="ad-component">
           <AdComponent />
         </div>
@@ -56,13 +62,22 @@ const scrollToTop = () => {
       </div>
 
       <!-- 3. 서비스 소개 타이틀 -->
-      <div class="service-title-section">서비스 소개 타이틀</div>
+      <div class="service-title-section">
+        <div class="service-title">신뢰와 믿음의 자산관리 “콕재”</div>
+        <div class="service-content">MZ세대의 절세 전략과 목표 실현을 위한 스마트 자산관리</div>
+      </div>
 
       <!-- 4. 하단 3개 컴포넌트 (세금 관리, 금융 상품 추천, 목표) -->
       <div class="bottom-navigation-section">
-        <div class="nav-card">세금 관리 컴포넌트</div>
-        <div class="nav-card">금융 상품 추천 컴포넌트</div>
-        <div class="nav-card">목표 컴포넌트</div>
+        <div class="nav-card">
+          <HomeToTax />
+        </div>
+        <div class="nav-card">
+          <HomeToProduct />
+        </div>
+        <div class="nav-card">
+          <HomeToGoal />
+        </div>
       </div>
     </div>
 
@@ -193,23 +208,33 @@ const scrollToTop = () => {
 /* ===== 3. 서비스 소개 타이틀 ===== */
 .service-title-section {
   height: 80px;
-  background-color: #d1d5db;
-  border-radius: 16px;
+  background-color: #fbfbfb;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   color: #374151;
-  border: 2px dashed #9ca3af;
-  font-size: 18px;
+  font-size: 28px;
   width: 100%;
   margin-top: 100px; /* 상단 여백 */
   max-width: none;
+  flex-direction: column; /* 세로 정렬 */
+}
+
+.service-title {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.service-content {
+  font-size: 16px;
+  margin-top: 15px;
 }
 
 /* ===== 4. 하단 네비게이션 카드 ===== */
 .bottom-navigation-section {
   display: grid;
+  padding-bottom: 80px;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   width: 100%;
@@ -218,17 +243,15 @@ const scrollToTop = () => {
 }
 
 .nav-card {
-  height: 180px;
-  background-color: #d1d5db;
-  border-radius: 16px;
+  height: 250px;
+  background-color: transparent;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   color: #374151;
-  border: 2px dashed #9ca3af;
   text-align: center;
-  padding: 20px;
   font-size: 14px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
@@ -306,7 +329,7 @@ const scrollToTop = () => {
   }
 
   .nav-card {
-    height: 160px;
+    height: 250px;
     padding: 15px;
   }
 
@@ -380,7 +403,15 @@ const scrollToTop = () => {
   /* 서비스 타이틀 */
   .service-title-section {
     height: 70px;
-    font-size: 16px;
+  }
+
+  .service-title {
+    font-size: 24px;
+  }
+
+  .service-content {
+    font-size: 14px;
+    margin-top: 10px;
   }
 
   /* 네비게이션 카드 - 모든 화면에서 가로 3개 유지 */
@@ -390,7 +421,7 @@ const scrollToTop = () => {
   }
 
   .nav-card {
-    height: 120px;
+    height: 220px;
     font-size: 12px;
     padding: 12px;
     border-radius: 12px;
@@ -455,8 +486,17 @@ const scrollToTop = () => {
     font-size: 14px;
   }
 
+  .service-title {
+    font-size: 20px;
+  }
+
+  .service-content {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+
   .nav-card {
-    height: 100px;
+    height: 160px;
     font-size: 11px;
     padding: 8px;
     border-radius: 10px;

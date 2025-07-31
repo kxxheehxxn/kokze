@@ -1,8 +1,10 @@
 <script setup>
 import { reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { userAuthStore } from '@/stores/auth';
 
 const router = useRouter();
+const authStore = userAuthStore();
 
 const assetInfo = reactive({
     monthlyIncomeRaw: '',
@@ -81,12 +83,14 @@ const isFormValid = computed(
 const goNext = () => {
     if (!isFormValid.value) return;
 
-    const data = {
-        income: Number(assetInfo.monthlyIncomeRaw),
-        expense: Number(assetInfo.monthlyExpenseRaw),
-    };
+    const income = Number(assetInfo.monthlyIncomeRaw);
+    const expense = Number(assetInfo.monthlyExpenseRaw);
 
-    console.log('제출 데이터:', data);
+    // Pinia에 저장
+    authStore.setUserInfo('salary', income);
+    authStore.setUserInfo('payAmount', expense);
+
+    // 다음 단계로 이동
     router.push('/signup/step3');
 };
 </script>

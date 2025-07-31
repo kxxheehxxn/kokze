@@ -1,9 +1,12 @@
 <script setup>
 import { reactive, ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { userAuthStore } from '@/stores/auth';
 import PrivacyPolicyModal from '@/components/PrivacyPolicyModal.vue';
 
 const router = useRouter();
+const authStore = userAuthStore();
 
 // // 실제 사용
 // const userInfo = reactive({
@@ -20,7 +23,7 @@ const router = useRouter();
 
 // 테스트 용
 const userInfo = reactive({
-    gender: 'F',
+    gender: 'female',
     birth: '1992-07-15',
     phone1: '010',
     phone2: '9876',
@@ -82,7 +85,17 @@ const isFormValid = computed(() => {
 // 다음 페이지
 const goNext = () => {
     if (!isFormValid.value) return;
-    router.push('/signup/step2'); // 다음 단계로 라우팅
+
+    // userInfo를 Pinia 스토어에 저장
+    authStore.setUserInfo('sex', userInfo.gender);
+    authStore.setUserInfo('birthDate', userInfo.birth);
+    authStore.setUserInfo(
+        'phoneNum',
+        `${userInfo.phone1}-${userInfo.phone2}-${userInfo.phone3}`
+    );
+
+    // 다음 단계로 이동
+    router.push('/signup/step2');
 };
 </script>
 
@@ -112,7 +125,7 @@ const goNext = () => {
                     <label>
                         <input
                             type="radio"
-                            value="M"
+                            value="male"
                             v-model="userInfo.gender"
                         />
                         남성</label
@@ -120,7 +133,7 @@ const goNext = () => {
                     <label>
                         <input
                             type="radio"
-                            value="F"
+                            value="female"
                             v-model="userInfo.gender"
                         />
                         여성</label

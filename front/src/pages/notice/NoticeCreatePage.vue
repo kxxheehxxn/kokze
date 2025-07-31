@@ -1,58 +1,41 @@
 <script setup>
-import api from '@/api/inquiryApi';
-import { reactive, computed } from 'vue';
+import api from '@/api/noticeApi';
+import { computed, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { userAuthStore } from '@/stores/auth'; // 사용자 인증 정보를 가져오는 스토어
-
-const auth = userAuthStore(); // 인증 스토어 인스턴스
-
+import { userAuthStore } from '@/stores/auth';
+const auth = userAuthStore();
 const router = useRouter();
-
-// 최대 길이 정의 (DB VARCHAR 길이에 맞춰 설정)
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
-
-// 입력 필드 데이터 정의
+const back = () => {
+  console.log('취소 버튼 클릭됨');
+  router.back();
+};
 const article = reactive({
-  // 실제 로그인된 사용자 ID를 auth 스토어에서 가져옴
-  userId: auth.userId,
-  userName: auth.userName, // auth.userName이 없을 경우 기본값 설정
+  adminId: auth.userId,
   title: '',
   content: '',
-  isAnswered: false, // 작성 시에는 항상 false로 시작
 });
-
-// 제출 버튼 활성화/비활성화 조건 (유효성 검사 통과 시에만 활성화)
-const disableSubmit = computed(() => {
-  // 제목과 내용이 모두 채워져 있어야 함
-  return !article.title || !article.content;
-});
-
-// 게시글 생성 함수 (submit)
+const disableSubmit = computed(() => !article.title);
 const submit = async () => {
-  if (!confirm('문의사항을 등록하시겠습니까?')) {
+  if (!confirm('등록할까요?')) return;
+  await api.create(article);
+  router.push('/notice/list');
+};
+// 👉 권한 확인
+onMounted(() => {
+  if (auth.role.toLowerCase() !== 'admin') {
+    alert('권한이 없습니다.');
+    router.replace('/'); // 또는 router.push('/') 등 원하는 경로로
     return;
   }
-
-  try {
-    await api.create(article);
-    router.push('/inquiry/list'); // 목록 페이지로 이동 - 히스토리 스택을 교체하여 뒤로가기 방지
-  } catch (e) {
-    console.error('문의사항 등록 실패:', e);
-    alert('문의사항 등록에 실패했습니다. 다시 시도해주세요.');
-  }
-};
-
-const back = () => {
-  router.back(); // 목록 페이지로 이동
-};
+});
 </script>
-
 <template>
   <div class="custom-box-wrapper">
     <div class="custom-box p-5">
       <div class="m-2">
-        <h4 class="fw-bold">문의사항 작성</h4>
+        <h4 class="fw-bold">공지사항 작성</h4>
         <form @submit.prevent="submit">
           <div class="d-flex align-items-center title-box">
             <label for="title" class="form-label ms-2">제목</label>
@@ -102,7 +85,6 @@ const back = () => {
     </div>
   </div>
 </template>
-
 <style scoped>
 .custom-box-wrapper {
   display: flex;

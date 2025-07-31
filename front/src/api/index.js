@@ -15,12 +15,16 @@ const refreshToken = async () => {
         if (auth) {
             const authData = JSON.parse(auth);
             if (authData.token) {
-                const response = await axios.post('http://localhost:8080/api/auth/refresh-token', {}, {
-                    headers: {
-                        'Authorization': `Bearer ${authData.token}`
+                const response = await axios.post(
+                    'http://localhost:8080/api/auth/refresh-token',
+                    {},
+                    {
+                        headers: {
+                            Authorization: `Bearer ${authData.token}`,
+                        },
                     }
-                });
-                
+                );
+
                 if (response.data.success) {
                     // 새로운 토큰으로 업데이트
                     authData.token = response.data.token;
@@ -60,13 +64,17 @@ instance.interceptors.response.use(
     },
     async (error) => {
         const originalRequest = error.config;
-        
-        if (error.response && error.response.status === 401 && !originalRequest._retry) {
+
+        if (
+            error.response &&
+            error.response.status === 401 &&
+            !originalRequest._retry
+        ) {
             originalRequest._retry = true;
-            
+
             // 토큰 갱신 시도
             const newToken = await refreshToken();
-            
+
             if (newToken) {
                 // 새로운 토큰으로 재요청
                 originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -77,7 +85,7 @@ instance.interceptors.response.use(
                 window.location.href = '/auth/login';
             }
         }
-        
+
         return Promise.reject(error);
     }
 );

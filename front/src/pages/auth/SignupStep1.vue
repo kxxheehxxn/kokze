@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, computed, watch } from 'vue';
+import { reactive, ref, computed, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { userAuthStore } from '@/stores/auth';
@@ -8,42 +8,35 @@ import PrivacyPolicyModal from '@/components/PrivacyPolicyModal.vue';
 const router = useRouter();
 const authStore = userAuthStore();
 
-// // 실제 사용
-// const userInfo = reactive({
-//     name: '',
-//     gender: '',
-//     birth: '',
-//     phone1: '',
-//     phone2: '',
-//     phone3: '',
-//     emailId: '',
-//     emailDomain: '',
-//     emailCode: '',
-//     password: '',
-//     passwordConfirm: '',
-//     agreed: false,
-//     agreeSub0: false,
-//     agreeSub1: false,
-//     agreeSub2: false,
-// });
+const isKakao = computed(() => authStore.isKakao);
 
-// 테스트 용
+// 실제 사용
 const userInfo = reactive({
-    name: '홍길순',
-    gender: 'female',
-    birth: '2000-01-01',
-    phone1: '010',
-    phone2: '0032',
-    phone3: '0201',
-    emailId: 'testuser2000',
-    emailDomain: 'naver.com',
-    emailCode: '123456',
-    password: 'Test@1234',
-    passwordConfirm: 'Test@1234',
-    agreed: true,
-    agreeSub0: true,
-    agreeSub1: true,
-    agreeSub2: true,
+    name: '',
+    gender: '',
+    birth: '',
+    phone1: '',
+    phone2: '',
+    phone3: '',
+    emailId: '',
+    emailDomain: '',
+    emailCode: '',
+    password: '',
+    passwordConfirm: '',
+    agreed: false,
+    agreeSub0: false,
+    agreeSub1: false,
+    agreeSub2: false,
+});
+
+// 카카오 로그인인 경우 이름, 이메일 미리 설정
+onMounted(() => {
+    if (isKakao.value) {
+        const emailParts = authStore.userInfo.email.split('@');
+        userInfo.emailId = emailParts[0];
+        userInfo.emailDomain = emailParts[1];
+        userInfo.name = authStore.userInfo.name;
+    }
 });
 
 const emailSent = ref(false);
@@ -67,8 +60,6 @@ const sendEmailVerification = async () => {
 
     try {
         const res = await axios.get(`/api/auth/signup/check/${fullEmail}`);
-        console.log(res.data);
-
         if (res.data === true) {
             // 이미 존재하는 이메일
             emailSentError.value = '이미 존재하는 이메일입니다.';
@@ -163,23 +154,30 @@ const handlePolicyAgree = (agreeData) => {
     isPolicyModalOpen.value = false;
 };
 
-//
+// 유효성 검사
 const isFormValid = computed(() => {
-    return (
+    const requiredFields =
         userInfo.name &&
         userInfo.gender &&
         userInfo.birth &&
         userInfo.phone1 &&
         userInfo.phone2 &&
         userInfo.phone3 &&
-        userInfo.emailId &&
-        userInfo.emailDomain &&
-        userInfo.password &&
-        userInfo.passwordConfirm &&
-        userInfo.agreed &&
-        emailVerified.value &&
-        userInfo.password === userInfo.passwordConfirm
-    );
+        userInfo.agreed;
+
+    if (isKakao.value) {
+        return requiredFields;
+    } else {
+        return (
+            requiredFields &&
+            userInfo.emailId &&
+            userInfo.emailDomain &&
+            userInfo.password &&
+            userInfo.passwordConfirm &&
+            emailVerified.value &&
+            userInfo.password === userInfo.passwordConfirm
+        );
+    }
 });
 
 // 다음 페이지
@@ -198,7 +196,10 @@ const goNext = () => {
         'email',
         `${userInfo.emailId}@${userInfo.emailDomain}`
     );
-    authStore.setUserInfo('password', userInfo.password);
+
+    if (!isKakao.value) {
+        authStore.setUserInfo('password', userInfo.password);
+    }
 
     // 다음 단계로 이동
     router.push('/signup/step2');
@@ -230,6 +231,8 @@ const goNext = () => {
                 <input
                     v-model="userInfo.name"
                     placeholder="이름을 입력하세요"
+                    :readonly="isKakao"
+                    :class="{ 'readonly-input': isKakao }"
                 />
             </div>
 
@@ -276,16 +279,30 @@ const goNext = () => {
             <div class="form-group">
                 <label>이메일</label>
                 <div class="email-group">
-                    <input v-model="userInfo.emailId" />
+                    <input
+                        v-model="userInfo.emailId"
+                        :readonly="isKakao"
+                        :class="{ 'readonly-input': isKakao }"
+                    />
                     <span>@</span>
-                    <select v-model="userInfo.emailDomain">
+                    <select
+                        v-model="userInfo.emailDomain"
+                        :disabled="isKakao"
+                        :class="{ 'readonly-input': isKakao }"
+                    >
                         <option value="">선택</option>
                         <option value="example.com">example.com</option>
                         <option value="gmail.com">gmail.com</option>
                         <option value="naver.com">naver.com</option>
                         <option value="daum.net">daum.net</option>
                     </select>
-                    <button @click="sendEmailVerification">인증</button>
+                    <button
+                        @click="sendEmailVerification"
+                        :disabled="isKakao"
+                        :class="{ 'readonly-button': isKakao }"
+                    >
+                        인증
+                    </button>
                 </div>
                 <p v-if="emailSent" class="hint">
                     이메일로 인증번호가 전송되었습니다.
@@ -298,8 +315,18 @@ const goNext = () => {
             <div class="form-group">
                 <label>인증번호</label>
                 <div class="auth-group">
-                    <input v-model="userInfo.emailCode" />
-                    <button @click="confirmEmailCode">확인</button>
+                    <input
+                        v-model="userInfo.emailCode"
+                        :readonly="isKakao"
+                        :class="{ 'readonly-input': isKakao }"
+                    />
+                    <button
+                        @click="confirmEmailCode"
+                        :disabled="isKakao"
+                        :class="{ 'readonly-button': isKakao }"
+                    >
+                        확인
+                    </button>
                 </div>
                 <p v-if="emailVerified" class="success">이메일 인증 완료</p>
                 <p v-else-if="emailVerifiedError" class="error">
@@ -313,6 +340,8 @@ const goNext = () => {
                     type="password"
                     v-model="userInfo.password"
                     placeholder="비밀번호 입력"
+                    :readonly="isKakao"
+                    :class="{ 'readonly-input': isKakao }"
                 />
                 <ul class="password-rules">
                     <li :class="passwordConditions.length ? 'success' : 'hint'">
@@ -348,6 +377,8 @@ const goNext = () => {
                     type="password"
                     v-model="userInfo.passwordConfirm"
                     placeholder="비밀번호 재입력"
+                    :readonly="isKakao"
+                    :class="{ 'readonly-input': isKakao }"
                 />
                 <p class="success" v-if="passwordSuccess">
                     비밀번호가 일치합니다.
@@ -548,6 +579,17 @@ const goNext = () => {
 .phone-group select,
 .email-group select {
     min-width: 100px;
+}
+
+.readonly-input {
+    background-color: #f2f2f2;
+}
+
+.readonly-button {
+    background-color: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+    border: none;
 }
 
 /* 인증/확인 버튼 */

@@ -1,8 +1,7 @@
 import { userAuthStore } from '@/stores/auth'; // 로그인했는지 확인하는 용도
 
-// isAuthenticated 라우터 가드 정의
-const isAuthenticated = (next) => {
-  const authStore = userAuthStore(); // 가드 함수 내에서 스토어 인스턴스 가져오기
+const isAuthenticated = (to, from, next) => {
+  const authStore = userAuthStore();
 
   if (authStore.isLogin) {
     next(); // 로그인되어 있으면 다음으로 진행

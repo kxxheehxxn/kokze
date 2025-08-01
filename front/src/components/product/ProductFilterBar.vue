@@ -5,19 +5,23 @@ import PeriodFilter from './filter/PeriodFilter.vue';
 import TypeFilter from './filter/TypeFilter.vue';
 import ConditionFilter from './filter/ConditionFilter.vue';
 
-// 필터 토글
-const activeFilter = ref(null);
+const props = defineProps({
+    filters: Object,
+});
+const emit = defineEmits(['update:filters']); // 외부로 emit
 
-// 모든 필터 상태를 하나의 객체로 관리
-const filters = ref({
-    banks: [],
-    period: 0,
-    amount: '',
-    type: [],
-    conditions: [],
+// 내부 편의를 위해 로컬에서 조작하듯 사용 (shallow copy)
+const localFilters = computed({
+    get: () => props.filters,
+    set: (val) => emit('update:filters', { ...val }),
 });
 
-// 라벨 변환 함수
+const activeFilter = computed({
+    get: () => props.filters.__active || null,
+    set: (val) => emit('update:filters', { ...props.filters, __active: val }),
+});
+
+// 기간 표시 변환
 const periodMap = {
     6: '6개월',
     12: '12개월',
@@ -46,7 +50,7 @@ function formatKoreanCurrency(num) {
 
 // 선택된 필터를 chip으로 변환
 const chips = computed(() => {
-    const { banks, period, amount, type, conditions } = filters.value;
+    const { banks, period, amount, type, conditions } = props.filters;
 
     return [
         ...banks,
@@ -59,48 +63,32 @@ const chips = computed(() => {
 
 // chip 제거
 function removeChip(chip) {
-    // 은행
-    filters.value.banks = filters.value.banks.filter((b) => b !== chip);
+    const updated = { ...props.filters };
 
-    // 기간
+    updated.banks = updated.banks.filter((b) => b !== chip);
+
     const periodKey = Object.entries(periodMap).find(
         ([, label]) => label === chip
     )?.[0];
-    if (periodKey) {
-        filters.value.period = 0;
+    if (periodKey) updated.period = 0;
+
+    if (chip === formatKoreanCurrency(Number(updated.amount))) {
+        updated.amount = '';
     }
 
-    // 금액
-    if (chip === formatKoreanCurrency(Number(filters.value.amount))) {
-        filters.value.amount = '';
-    }
+    updated.type = updated.type.filter((t) => t !== chip);
+    updated.conditions = updated.conditions.filter((c) => c !== chip);
 
-    // 유형
-    filters.value.type = filters.value.type.filter((t) => t !== chip);
-
-    // 조건
-    filters.value.conditions = filters.value.conditions.filter(
-        (c) => c !== chip
-    );
+    emit('update:filters', updated);
 }
-
-// 외부로 emit
-const emit = defineEmits(['update:filters']);
-watch(
-    filters,
-    () => {
-        emit('update:filters', { ...filters.value });
-    },
-    { deep: true }
-);
 </script>
 
 <template>
     <div class="filter-bar-wrapper">
         <!-- 은행 필터 -->
-        <BankFilter v-model="filters.banks" />
+        <BankFilter v-model="localFilters.banks" />
 
-        <!-- 세부 필터 토글 -->
+        <!-- 필터 토글 버튼 -->
         <div class="filter-toggle-row">
             <button
                 @click="
@@ -141,21 +129,21 @@ watch(
         <div class="filter-row">
             <div v-if="activeFilter === 'period'" class="dropdown-panel">
                 <PeriodFilter
-                    v-model:period="filters.period"
-                    v-model:amount="filters.amount"
+                    v-model:period="localFilters.period"
+                    v-model:amount="localFilters.amount"
                 />
             </div>
             <div v-if="activeFilter === 'type'" class="dropdown-panel">
-                <TypeFilter v-model="filters.type" />
+                <TypeFilter v-model="localFilters.type" />
             </div>
             <div v-if="activeFilter === 'condition'" class="dropdown-panel">
-                <ConditionFilter v-model="filters.conditions" />
+                <ConditionFilter v-model="localFilters.conditions" />
             </div>
         </div>
 
         <hr />
 
-        <!-- 선택된 필터 태그 -->
+        <!-- 필터 chips -->
         <div class="chips">
             <span class="chip" v-for="(chip, idx) in chips" :key="idx">
                 {{ chip }}

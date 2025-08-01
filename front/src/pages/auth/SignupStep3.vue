@@ -161,10 +161,11 @@ const onSubmit = async () => {
         }
 
         // 👉 3. 실제 회원가입 API 호출
-        const response = await axios.post(
-            'http://localhost:8080/api/auth/signup',
-            authStore.userInfo
-        );
+        const apiUrl = authStore.isKakao 
+            ? 'http://localhost:8080/api/auth/signup/kakao'
+            : 'http://localhost:8080/api/auth/signup';
+            
+        const response = await axios.post(apiUrl, authStore.userInfo);
         if (response.status === 200) {
             alert('회원가입이 완료되었습니다!');
             authStore.resetUserInfo();

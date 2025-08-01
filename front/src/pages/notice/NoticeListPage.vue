@@ -9,10 +9,9 @@ const auth = userAuthStore();
 const route = useRoute();
 const router = useRouter();
 const page = ref({});
-const notices = computed(() => page.value.list);
-const isAdmin = computed(() => {
-  return auth && auth.role && auth.role.toLowerCase() === 'admin';
-});
+const notices = computed(() => page.value?.list || []);
+const isAdmin = computed(() => auth.role?.toLowerCase() === 'admin');
+const totalCount = computed(() => page.value?.totalCount || 0);
 const pageRequest = reactive({
   page: parseInt(route.query.page ?? 1),
   amount: parseInt(route.query.amount ?? 10),
@@ -28,8 +27,15 @@ const search = async () => {
     };
     page.value = await api.getSearchList(params);
     console.log('검색 결과:', page.value);
-  } catch (e) {
-    console.error('검색 실패:', e);
+  } catch (error) {
+    console.error('검색 실패:', error);
+    page.value = {
+      totalCount: 0,
+      totalPage: 0,
+      list: [],
+      amount: 10,
+      pageNum: 1,
+    };
   }
 };
 //페이지네이션 - 페이지 변경
@@ -60,7 +66,16 @@ const load = async (query) => {
   try {
     page.value = await api.getList(query);
     console.log(page.value);
-  } catch {}
+  } catch (error) {
+    console.error('공지사항 목록 로드 실패:', error);
+    page.value = {
+      totalCount: 0,
+      totalPage: 0,
+      list: [],
+      amount: 10,
+      pageNum: 1,
+    };
+  }
 };
 load(pageRequest);
 </script>
@@ -81,7 +96,10 @@ load(pageRequest);
         </div>
       </div>
       <!-- 공지사항 없을 때 메시지 -->
-      <div v-if="notices.length === 0" class="text-center text-muted py-5">
+      <div
+        v-if="!notices || notices.length === 0"
+        class="text-center text-muted py-5"
+      >
         공지사항이 없습니다.
       </div>
 
@@ -101,9 +119,9 @@ load(pageRequest);
         <hr />
       </div>
       <div>
-        <div class="flex-grow-1 text-center">
+        <div class="flex-grow-1 text-center" v-if="totalCount > 0">
           <vue-awesome-paginate
-            :total-items="page.totalCount"
+            :total-items="totalCount"
             :items-per-page="pageRequest.amount"
             :max-pages-shown="5"
             :show-ending-buttons="true"

@@ -1,8 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../pages/HomePage.vue';
-import inquiryRoutes from './inquiry';
-import noticeRoutes from './notice';
-import authRoutes from './auth';
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../pages/HomePage.vue'
+import inquiryRoutes from './inquiry'
+import noticeRoutes from './notice'
+import authRoutes from './auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +21,11 @@ const router = createRouter({
       path: '/userpage',
       name: 'UserPage',
       component: () => import('@/pages/UserPage.vue'),
+    },
+    {
+      path: '/points',
+      name: 'PointPage',
+      component: () => import('@/pages/PointPage.vue'),
     },
     {
       path: '/user/asset',
@@ -80,10 +85,10 @@ const router = createRouter({
       name: 'ProductRecommendPage',
       component: () => import('@/pages/ProductRecommendPage.vue'),
     },
-    ...authRoutes,
     ...inquiryRoutes,
+    ...authRoutes,
     ...noticeRoutes,
   ],
-});
+})
 
-export default router;
+export default router

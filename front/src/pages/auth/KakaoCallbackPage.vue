@@ -65,14 +65,16 @@ onMounted(async () => {
         } else if (response.status === 401) {
             // ✅ 회원가입이 필요한 경우
             console.log('카카오 유저 미가입 상태, 회원가입 진행');
+            console.log('백엔드에서 받은 사용자 정보:', result);
 
+            // 백엔드에서 받은 회원가입 정보 사용
             auth.setAllUserInfo({
                 name: result.name || '카카오 사용자',
                 email: result.email || '',
             });
             auth.isKakao = true;
 
-            router.push('/signup/step1');
+                                    router.push('/signup/step1');
         } else {
             // ❌ 예외
             console.error('카카오 로그인 실패:', result);

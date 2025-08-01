@@ -21,18 +21,28 @@ const authStore = userAuthStore();
 //     agreeSub2: false,
 // });
 
-// 테스트 용
+// 실제 카카오 사용자 정보 사용
 const userInfo = reactive({
-    gender: 'female',
-    birth: '1992-07-15',
-    phone1: '010',
-    phone2: '9876',
-    phone3: '4321',
-    agreed: true,
-    agreeSub0: true,
-    agreeSub1: true,
-    agreeSub2: true,
+    gender: '',
+    birth: '',
+    phone1: '',
+    phone2: '',
+    phone3: '',
+    agreed: false,
+    agreeSub0: false,
+    agreeSub1: false,
+    agreeSub2: false,
 });
+
+// 카카오 사용자 정보
+const kakaoUserInfo = computed(() => {
+    return {
+        name: authStore.userInfo.name || '카카오 사용자',
+        email: authStore.userInfo.email || ''
+    };
+});
+
+
 
 const isPolicyModalOpen = ref(false);
 
@@ -118,6 +128,27 @@ const goNext = () => {
             <hr />
 
             <div class="title">개인정보 입력</div>
+
+            <!-- 카카오 사용자 정보 (읽기 전용) -->
+            <div class="form-group">
+                <label>이름 (카카오 계정)</label>
+                <input 
+                    type="text" 
+                    :value="kakaoUserInfo.name" 
+                    disabled 
+                    class="disabled-input"
+                />
+            </div>
+
+            <div class="form-group">
+                <label>이메일 (카카오 계정)</label>
+                <input 
+                    type="email" 
+                    :value="kakaoUserInfo.email" 
+                    disabled 
+                    class="disabled-input"
+                />
+            </div>
 
             <div class="form-group">
                 <label>성별</label>
@@ -323,6 +354,12 @@ const goNext = () => {
     font-size: 16px;
     width: 100%;
     font-family: inherit;
+}
+
+.disabled-input {
+    background-color: #f5f5f5;
+    color: #666;
+    cursor: not-allowed;
 }
 
 /* 성별 선택 */

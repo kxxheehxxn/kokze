@@ -1,7 +1,6 @@
 import { userAuthStore } from '@/stores/auth'; // 로그인했는지 확인하는 용도
 
-// isAuthenticated 라우터 가드 정의
-const isAuthenticated = (next) => {
+const isAuthenticated = (to, from, next) => {
   const authStore = userAuthStore();
 
   if (authStore.isLogin) {

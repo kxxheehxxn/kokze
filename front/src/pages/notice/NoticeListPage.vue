@@ -10,7 +10,9 @@ const route = useRoute();
 const router = useRouter();
 const page = ref({});
 const notices = computed(() => page.value.list);
-const isAdmin = computed(() => auth.role.toLowerCase() === 'admin');
+const isAdmin = computed(() => {
+  return auth && auth.role && auth.role.toLowerCase() === 'admin';
+});
 const pageRequest = reactive({
   page: parseInt(route.query.page ?? 1),
   amount: parseInt(route.query.amount ?? 10),

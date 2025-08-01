@@ -14,7 +14,7 @@
       <div class="user-mbti">{{ user.mbti || '미입력' }}</div>
       <div class="user-name">
         {{ user.name || '사용자' }} 님
-        <span class="user-point">{{ point.toLocaleString() }} P</span>
+        <span class="user-point" @click="goTo('/points')">{{ point.toLocaleString() }} P</span>
       </div>
       <ul class="user-menu">
         <li @click="goTo('/user/asset')">자산 정보 수정</li>
@@ -142,6 +142,7 @@ onMounted(() => {
   flex-direction: column;
   align-items: flex-start;
 }
+
 .user-mbti {
   background-color: #fff;
   color: #222;
@@ -150,6 +151,7 @@ onMounted(() => {
   font-weight: 400;
   text-align: left;
 }
+
 .user-name {
   background-color: #fff;
   font-size: 48px;
@@ -159,6 +161,7 @@ onMounted(() => {
   align-items: center;
   gap: 18px;
 }
+
 .user-point {
   background: #f6f6f6;
   color: #888;
@@ -167,7 +170,15 @@ onMounted(() => {
   font-size: 28px;
   font-weight: 500;
   margin-left: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
+
+.user-point:hover {
+  background: #e8f0ff;
+  color: #189eff;
+}
+
 .user-menu {
   background-color: #fff;
   list-style: none;
@@ -176,12 +187,14 @@ onMounted(() => {
   color: #222;
   font-size: 24px;
 }
+
 .user-menu li {
   background-color: #fff;
   margin-bottom: 32px;
   cursor: pointer;
   font-weight: 400;
 }
+
 .user-menu li:last-child {
   color: #bdbdbd;
 }

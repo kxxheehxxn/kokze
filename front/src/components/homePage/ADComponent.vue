@@ -51,7 +51,7 @@ const goToDetail = () => {
 <style scoped>
 .ad-card {
   background: #ffffff;
-  border-radius: 0 20px 20px 0; /* 오른쪽만 둥근 모서리 */
+  border-radius: 20px;
   padding: 48px 48px 0px 48px;
   width: 100%; /* 부모의 너비를 꽉 채우도록 설정 */
   /* max-width는 제거하거나, 특정 최대 너비가 필요하다면 설정 */

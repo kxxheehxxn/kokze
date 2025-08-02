@@ -17,13 +17,13 @@
 const props = defineProps({
   categories: Array,
   modelValue: String,
-})
-const emit = defineEmits(['update:modelValue'])
+});
+const emit = defineEmits(['update:modelValue']);
 </script>
 
 <style scoped>
 .terms-sidebar {
-  min-width: 140px;
+  min-width: 200px;
   background: #fff;
   border-radius: 0 18px 18px 0;
   box-shadow: 0 2px 8px 0 #e5e7eb;

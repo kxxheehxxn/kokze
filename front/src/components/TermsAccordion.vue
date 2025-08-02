@@ -24,7 +24,7 @@ const props = defineProps({
 const openedId = ref(null)
 function toggle(id) {
   openedId.value = openedId.value === id ? null : id
-}
+} 
 </script>
 
 <style scoped>

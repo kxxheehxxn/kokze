@@ -11,7 +11,6 @@
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
-import axios from 'axios';
 
 const router = useRouter();
 const auth = userAuthStore();
@@ -27,7 +26,7 @@ onMounted(async () => {
             router.push('/auth/login');
             return;
         }
-
+        
         // 백엔드로 인증 코드 전송하여 사용자 정보 받기
         // 직접 백엔드 URL 사용
         const response = await fetch(
@@ -51,30 +50,28 @@ onMounted(async () => {
         const result = await response.json();
 
         if (response.status === 200 && result.token && result.user) {
-            // ✅ 로그인 성공
-            console.log('카카오 로그인 성공:', result);
+            if (result.newUser === true) {
+                // ✅ 새로운 사용자 - 추가 정보 입력 필요
+                // 백엔드에서 받은 회원가입 정보 사용
+                auth.setAllUserInfo({
+                    name: result.user.username || '카카오 사용자',
+                    email: result.user.email || '',
+                });
+                auth.isKakao = true;
+                auth.setToken(result.token); // 임시 토큰 저장
 
-            auth.login({
-                email: result.user.email,
-                token: result.token,
-                userId: result.user.userId,
-                userName: result.user.username,
-            });
+                router.push('/signup/step1');
+            } else {
+                // ✅ 기존 사용자 로그인 성공
+                auth.login({
+                    email: result.user.email,
+                    token: result.token,
+                    userId: result.user.userId,
+                    userName: result.user.username,
+                });
 
-            router.push('/'); // 홈으로 이동
-        } else if (response.status === 401) {
-            // ✅ 회원가입이 필요한 경우
-            console.log('카카오 유저 미가입 상태, 회원가입 진행');
-            console.log('백엔드에서 받은 사용자 정보:', result);
-
-            // 백엔드에서 받은 회원가입 정보 사용
-            auth.setAllUserInfo({
-                name: result.name || '카카오 사용자',
-                email: result.email || '',
-            });
-            auth.isKakao = true;
-
-                                    router.push('/signup/step1');
+                router.push('/'); // 홈으로 이동
+            }
         } else {
             // ❌ 예외
             console.error('카카오 로그인 실패:', result);

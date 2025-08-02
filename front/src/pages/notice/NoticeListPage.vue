@@ -26,7 +26,6 @@ const search = async () => {
       amount: pageRequest.amount,
     };
     page.value = await api.getSearchList(params);
-    console.log('검색 결과:', page.value);
   } catch (error) {
     console.error('검색 실패:', error);
     page.value = { totalCount: 0, totalPage: 0, list: [], amount: 10, pageNum: 1 };
@@ -59,7 +58,6 @@ onMounted(async () => {
 const load = async (query) => {
   try {
     page.value = await api.getList(query);
-    console.log(page.value);
   } catch (error) {
     console.error('공지사항 목록 로드 실패:', error);
     page.value = { totalCount: 0, totalPage: 0, list: [], amount: 10, pageNum: 1 };

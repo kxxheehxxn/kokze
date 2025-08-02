@@ -27,7 +27,6 @@ const remove = async () => {
 };
 const load = async () => {
   article.value = await api.get(noticeId);
-  console.log('DETAIL', article.value);
 };
 load();
 </script>

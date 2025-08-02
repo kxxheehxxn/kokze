@@ -27,7 +27,6 @@ const submit = async () => {
   updatedFields.noticeId = article.noticeId;
   updatedFields.title = article.title;
   updatedFields.content = article.content;
-  console.log(updatedFields);
   await api.update(updatedFields);
 
   router.replace({
@@ -37,7 +36,6 @@ const submit = async () => {
   });
 };
 const load = async () => {
-  console.log('로드할 noticeId:', noticeId);
 
   if (!noticeId) {
     console.error('유효하지 않은 noticeId:', noticeId);
@@ -48,7 +46,6 @@ const load = async () => {
 
   try {
     const data = await api.get(noticeId);
-    console.log('API 응답 데이터:', data);
 
     if (!data || !data.noticeId) {
       throw new Error(
@@ -60,13 +57,10 @@ const load = async () => {
     article.userId = orgArticle.value.userId;
     article.title = orgArticle.value.title;
     article.content = orgArticle.value.content;
-    console.log('공지사항 로드 완료:', article);
   } catch (e) {
     console.error('공지사항 로드 중 오류 발생:', e);
     alert('공지사항을 불러오는 데 실패했습니다.');
     router.replace('/notice/list');
-  } finally {
-    console.log('--- 공지사항 로드 종료 ---');
   }
 };
 // 👉 권한 확인

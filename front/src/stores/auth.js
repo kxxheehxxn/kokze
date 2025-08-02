@@ -91,6 +91,12 @@ export const userAuthStore = defineStore('auth', () => {
 
   const getToken = () => state.value.token
 
+  // 토큰 설정
+  const setToken = (token) => {
+    state.value.token = token
+    localStorage.setItem('auth', JSON.stringify(state.value))
+  }
+
   // 새로고침 후 상태 복원
   const load = () => {
     const auth = localStorage.getItem('auth')
@@ -129,6 +135,7 @@ export const userAuthStore = defineStore('auth', () => {
     login,
     logout,
     getToken,
+    setToken,
 
     // 회원가입 관련
     userInfo,

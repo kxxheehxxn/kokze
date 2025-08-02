@@ -29,6 +29,20 @@ export async function sendVerificationCode(email) {
   }
 }
 
+// 회원가입용 인증번호 발송
+export async function sendSignupVerificationCode(email) {
+  try {
+    const response = await axios.post('/api/auth/signup/send-verification-code', {
+      email
+    })
+    
+    return response.data.success
+  } catch (error) {
+    console.error('회원가입 인증번호 발송 실패:', error)
+    throw error
+  }
+}
+
 // 인증번호 확인
 export async function verifyCode(inputCode, email) {
   try {
@@ -40,6 +54,21 @@ export async function verifyCode(inputCode, email) {
     return response.data.success
   } catch (error) {
     console.error('인증번호 확인 실패:', error)
+    return false
+  }
+}
+
+// 회원가입용 인증번호 확인
+export async function verifySignupCode(inputCode, email) {
+  try {
+    const response = await axios.post('/api/auth/signup/verify-code', {
+      code: inputCode,
+      email
+    })
+    
+    return response.data.success
+  } catch (error) {
+    console.error('회원가입 인증번호 확인 실패:', error)
     return false
   }
 }

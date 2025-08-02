@@ -43,15 +43,8 @@
 </template>
 
 <script setup>
-// export default {
-//   name: 'YouthLeapAccount',
-//   methods: {
-//     goToDetail() {
-//       console.log('자세히 알아보기 클릭');
-//     },
-//   },
 const goToDetail = () => {
-  console.log('자세히 알아보기 클릭');
+  // 자세히 알아보기 클릭 처리
 };
 </script>
 

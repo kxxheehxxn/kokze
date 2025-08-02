@@ -17,7 +17,6 @@ const router = useRouter();
 
 // 목표 페이지로 이동
 const handleGoalManagement = () => {
-  console.log('홈에서 목표화면으로 이동');
   router.push('/goals');
 };
 </script>

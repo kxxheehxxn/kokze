@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { userAuthStore } from '@/stores/auth'
 import PrivacyPolicyModal from '@/components/PrivacyPolicyModal.vue'
+import { sendSignupVerificationCode, verifySignupCode } from '@/api/passwordApi.js'
 
 const router = useRouter()
 const authStore = userAuthStore()
@@ -71,12 +72,20 @@ const sendEmailVerification = async () => {
       emailSentError.value = '이미 존재하는 이메일입니다.'
       emailSent.value = false
     } else {
-      // 사용 가능한 이메일
-      emailSentError.value = '' // 오류 메시지 초기화
-      emailSent.value = true
-
-      // 실제 인증번호 발송 로직 여기에 추가 (선택)
-      // await axios.post('/api/auth/signup/send-code', { email: fullEmail });
+      // 사용 가능한 이메일 - 실제 인증번호 발송
+      try {
+        const success = await sendSignupVerificationCode(fullEmail)
+        if (success) {
+          emailSentError.value = '' // 오류 메시지 초기화
+          emailSent.value = true
+        } else {
+          emailSentError.value = '인증번호 발송에 실패했습니다.'
+          emailSent.value = false
+        }
+      } catch (error) {
+        emailSentError.value = '인증번호 발송에 실패했습니다.'
+        emailSent.value = false
+      }
     }
   } catch (err) {
     console.error('이메일 중복 확인 실패', err)
@@ -86,11 +95,20 @@ const sendEmailVerification = async () => {
 }
 
 // 이메일 인증번호 검사
-const confirmEmailCode = () => {
-  emailVerified.value = userInfo.emailCode === '123456'
-  emailVerifiedError.value = emailVerified.value
-    ? ''
-    : '인증번호가 올바르지 않습니다.'
+const confirmEmailCode = async () => {
+  const fullEmail = `${userInfo.emailId}@${userInfo.emailDomain}`
+  
+  try {
+    const success = await verifySignupCode(userInfo.emailCode, fullEmail)
+    emailVerified.value = success
+    emailVerifiedError.value = success
+      ? ''
+      : '인증번호가 올바르지 않습니다.'
+  } catch (error) {
+    console.error('인증번호 확인 실패:', error)
+    emailVerified.value = false
+    emailVerifiedError.value = '인증번호 확인에 실패했습니다.'
+  }
 }
 
 // 비밀번호 조건 검사

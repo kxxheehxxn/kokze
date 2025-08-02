@@ -59,13 +59,10 @@ async function loadUserAsset() {
     payAmount.value = user.payAmount || 0
   } catch (e) {
     error.value = '사용자 정보를 불러올 수 없습니다.'
-    console.log('사용자 정보 로드 실패:', e)
 
     // 개발 중에만 테스트용 사용자 생성 시도
     try {
-      console.log('🔄 테스트용 사용자 생성 시도...')
       await createTestUser()
-      console.log('✅ 테스트용 사용자 생성 완료')
 
       // 다시 사용자 정보 로드 시도
       const user = await getUserInfo()
@@ -73,7 +70,6 @@ async function loadUserAsset() {
       payAmount.value = user.payAmount || 0
       error.value = null
     } catch (testError) {
-      console.log('❌ 테스트용 사용자 생성 실패:', testError)
       error.value = '테스트용 사용자 생성에도 실패했습니다.'
     }
   }

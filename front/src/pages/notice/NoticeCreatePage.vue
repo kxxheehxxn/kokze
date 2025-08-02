@@ -8,7 +8,6 @@ const router = useRouter();
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
 const back = () => {
-  console.log('취소 버튼 클릭됨');
   router.back();
 };
 const article = reactive({

@@ -11,50 +11,27 @@ const api = axios.create({
 // 요청 인터셉터: JWT 토큰 자동 추가
 api.interceptors.request.use(config => {
   const auth = localStorage.getItem('auth')
-  console.log('🔍 localStorage auth 데이터:', auth)
 
   if (auth) {
     try {
       const { token } = JSON.parse(auth)
-      console.log(
-        '🔐 파싱된 토큰:',
-        token ? token.substring(0, 50) + '...' : 'null',
-      )
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
-        console.log('✅ Authorization 헤더 설정됨')
-      } else {
-        console.log('⚠️ 토큰이 null입니다.')
       }
     } catch (error) {
-      console.log('❌ auth 데이터 파싱 실패:', error)
+      // auth 데이터 파싱 실패 시 무시
     }
-  } else {
-    console.log('⚠️ localStorage에 auth 정보가 없습니다.')
   }
-  console.log(
-    '📤 API 요청:',
-    config.method?.toUpperCase(),
-    config.url,
-    config.data,
-  )
-  console.log('📤 요청 헤더:', config.headers)
   return config
 })
 
 // 응답 인터셉터: 토큰 만료 시 처리
 api.interceptors.response.use(
   response => {
-    console.log('📥 API 응답 성공:', response.status, response.data)
     return response
   },
   error => {
-    console.log(
-      '❌ API 응답 실패:',
-      error.response?.status,
-      error.response?.data,
-    )
     if (error.response?.status === 401) {
       // 토큰 만료 시 로그인 페이지로 리다이렉트
       localStorage.removeItem('auth')
@@ -206,7 +183,6 @@ export async function createTestUser() {
     if (data.success) {
       // 생성된 토큰을 localStorage에 저장
       localStorage.setItem('auth', JSON.stringify({ token: data.token }))
-      console.log('✅ 테스트 사용자 생성 및 토큰 저장 완료')
     }
     return data
   } catch (error) {

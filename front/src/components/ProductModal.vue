@@ -47,7 +47,6 @@ export default {
   methods: {
     onBankSelected(bank) {
       this.selectedBank = bank
-      console.log('선택된 은행:', bank)
     },
     onConnect() {
       if (!this.selectedAccountId) {

@@ -1,12 +1,10 @@
 <template>
   <div class="tax-info">
-    <!-- 안내 제목 -->
     <h2 class="section-title">🐘 세금 정보 서비스</h2>
     <p class="section-desc">
       2024년 귀속 연말정산 PDF 자료를 기반으로, 항목별 작년 금액과 세금 관련 안내를 제공합니다.
     </p>
 
-    <!-- 안내 리스트 -->
     <ul class="info-list">
       <li>정보는 사용자가 홈택스 등에 제출한 자료를 바탕으로 하며, 실제와 다를 수 있습니다.</li>
       <li>금액·항목이 사실과 다를 경우 원천 기관(카드사·의료기관 등)에 확인하세요.</li>
@@ -14,17 +12,14 @@
       <li>최종 정산 결과는 반드시 사용자가 직접 확인해야 합니다.</li>
     </ul>
 
-    <!-- 버튼 -->
     <button class="info-button" @click="showModal = true">
       작년 연말정산 조회하기
     </button>
 
-    <!-- 모달 -->
     <div v-if="showModal" class="popup-overlay">
       <div class="popup-content agreement-popup">
         <button class="popup-close" @click="closePopup">✕</button>
 
-        <!-- 기본 동의 화면 -->
         <div v-if="step === 'agreement'">
           <h2 class="popup-title">개인(신용)정보 수집·이용 동의</h2>
           <p class="popup-desc">
@@ -32,7 +27,6 @@
             전자금융거래 서비스 제공·관리·개선 등을 목적으로 합니다.
           </p>
 
-          <!-- 연도 선택 -->
           <section class="popup-section year-section">
             <label class="popup-label">연도 :</label>
             <select v-model="selectedYear" class="popup-select">
@@ -41,7 +35,6 @@
             </select>
           </section>
 
-          <!-- 동의 여부 -->
           <section class="popup-section agree-section">
             <p>위 개인정보 수집·이용에 동의하십니까?</p>
             <div class="radio-group">
@@ -55,7 +48,6 @@
           </div>
         </div>
 
-        <!-- 인증 진행중 화면 -->
         <div v-else-if="step === 'verifying'" class="center-content">
           <p class="verify-text">🔐 인증중입니다...<br />인증이 완료되면 "인증완료" 버튼을 눌러주세요.</p>
           <div class="popup-actions">
@@ -64,7 +56,6 @@
           </div>
         </div>
 
-        <!-- 인증 완료 화면 -->
         <div v-else-if="step === 'completed'" class="center-content">
           <p class="verify-complete">✅ 인증이 완료되었습니다.</p>
           <div class="popup-actions">
@@ -82,7 +73,7 @@
     data() {
       return {
         showModal: false,
-        step: "agreement", // agreement → verifying → completed
+        step: "agreement",
         selectedYear: "",
         yearOptions: [2022, 2023, 2024],
         agree: ""
@@ -99,18 +90,10 @@
           return;
         }
 
-        // 동의 → 인증 진행 화면으로 전환
         this.step = "verifying";
-
-        // 여기서 인증 로직 실행 (카카오 인증 등)
-        
-        // setTimeout(() => {
-        //   // 예시: 인증 완료 시
-        //   this.step = "completed";
-        // }, 2000);
       },
       goToCompleted() {
-          this.step = 'completed'; // 인증완료 버튼 클릭 시 완료 화면
+          this.step = 'completed';
       },
       confirmVerification() {
         alert("인증이 완료되어 조회를 시작합니다.");
@@ -118,7 +101,7 @@
       },
       closePopup() {
         this.showModal = false;
-        this.step = "agreement"; // 초기화
+        this.step = "agreement";
       }
     }
   };
@@ -152,7 +135,6 @@
   margin-bottom: 16px;
 }
 
-/* 안내 버튼 */
 .info-button {
   width: 100%;
   padding: 12px;
@@ -168,7 +150,6 @@
   background-color: #2563eb;
 }
 
-/* 팝업 배경 */
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -181,7 +162,6 @@
   justify-content: center;
 }
 
-/* 팝업 본문 */
 .popup-content {
   background: white;
   width: 500px;
@@ -209,7 +189,6 @@
   color: #4b5563;
 }
 
-/* 연도 선택 중앙 정렬 */
 .year-section {
   display: flex;
   align-items: center;
@@ -226,7 +205,6 @@
   border: 1px solid #ccc;
 }
 
-/* 동의 여부 중앙정렬 */
 .agree-section {
   text-align: center;
   margin-top: 16px;
@@ -238,7 +216,6 @@
   margin-top: 8px;
 }
 
-/* 버튼 스타일 */
 .popup-actions {
   margin-top: 24px;
   text-align: center;
@@ -258,17 +235,17 @@
 
 .popup-close {
   position: absolute;
-  top: 12px;       /* 팝업 위쪽에서 12px */
-  right: 12px;     /* 팝업 오른쪽에서 12px */
+  top: 12px;
+  right: 12px;
   background: none;
   border: none;
   font-size: 20px;
   cursor: pointer;
-  color: #6b7280;  /* 회색 */
+  color: #6b7280;
 }
 
 .popup-close:hover {
-  color: #111827; /* 진한 회색으로 hover 효과 */
+  color: #111827;
 }
 .center-content {
   text-align: center;

@@ -8,7 +8,6 @@ const router = useRouter();
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
 const back = () => {
-  console.log('취소 버튼 클릭됨');
   router.back();
 };
 const article = reactive({
@@ -22,11 +21,11 @@ const submit = async () => {
   await api.create(article);
   router.push('/notice/list');
 };
-// 👉 권한 확인
+
 onMounted(() => {
   if (auth.role.toLowerCase() !== 'admin') {
     alert('권한이 없습니다.');
-    router.replace('/'); // 또는 router.push('/') 등 원하는 경로로
+    router.replace('/');
     return;
   }
 });

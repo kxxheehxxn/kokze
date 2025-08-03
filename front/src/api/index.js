@@ -1,14 +1,12 @@
 import axios from 'axios';
-// import { useAuthStore } from '@/stores/auth';
 import router from '@/router';
 
 const instance = axios.create({
     baseURL: 'http://localhost:8080',
     timeout: 10000,
-    withCredentials: false, // CORS 요청 시 credentials 포함
+    withCredentials: false,
 });
 
-// 토큰 갱신 함수
 const refreshToken = async () => {
     try {
         const auth = localStorage.getItem('auth');
@@ -26,7 +24,6 @@ const refreshToken = async () => {
                 );
 
                 if (response.data.success) {
-                    // 새로운 토큰으로 업데이트
                     authData.token = response.data.token;
                     localStorage.setItem('auth', JSON.stringify(authData));
                     return response.data.token;
@@ -40,7 +37,6 @@ const refreshToken = async () => {
     }
 };
 
-// 요청 인터셉터 - JWT 토큰 자동 추가
 instance.interceptors.request.use(
     (config) => {
         const auth = localStorage.getItem('auth');
@@ -57,7 +53,6 @@ instance.interceptors.request.use(
     }
 );
 
-// 응답 인터셉터 - 토큰 만료 처리 및 자동 갱신
 instance.interceptors.response.use(
     (response) => {
         return response;
@@ -72,15 +67,12 @@ instance.interceptors.response.use(
         ) {
             originalRequest._retry = true;
 
-            // 토큰 갱신 시도
             const newToken = await refreshToken();
 
             if (newToken) {
-                // 새로운 토큰으로 재요청
                 originalRequest.headers.Authorization = `Bearer ${newToken}`;
                 return instance(originalRequest);
             } else {
-                // 토큰 갱신 실패 시 로그아웃
                 localStorage.removeItem('auth');
                 window.location.href = '/auth/login';
             }

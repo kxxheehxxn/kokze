@@ -17,13 +17,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 const props = defineProps({
   terms: Array,
-});
-const openedId = ref(null);
+})
+const openedId = ref(null)
 function toggle(id) {
-  openedId.value = openedId.value === id ? null : id;
+  openedId.value = openedId.value === id ? null : id
 }
 </script>
 

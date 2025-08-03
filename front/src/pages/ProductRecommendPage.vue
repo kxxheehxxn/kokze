@@ -2,7 +2,6 @@
   <div class="product-recommend-page">
     <h2>금융 상품 추천</h2>
 
-    <!-- 🎯 캐러셀: 맞춤 상품 추천 영역 -->
     <div class="carousel-wrapper">
       <div
         class="carousel-item"
@@ -15,7 +14,6 @@
       </div>
     </div>
 
-    <!-- 📌 카테고리 필터 -->
     <div class="category-filter">
       <button
         v-for="(cat, index) in categories"
@@ -27,7 +25,6 @@
       </button>
     </div>
 
-    <!-- 🧾 필터 조합 박스 -->
     <div class="filter-box">
       <select v-model="selectedTerm">
         <option>기간 전체</option>
@@ -42,7 +39,6 @@
       </select>
     </div>
 
-    <!-- 📋 상품 리스트 -->
     <div class="product-list">
       <div class="product-item" v-for="item in filteredProducts" :key="item.id">
         <div class="product-bank">{{ item.bank }}</div>
@@ -51,7 +47,6 @@
       </div>
     </div>
 
-    <!-- 📄 페이지네이션 -->
     <div class="pagination">
       <button v-for="n in totalPages" :key="n" @click="currentPage = n">
         {{ n }}
@@ -95,30 +90,28 @@ export default {
       productList: [
         { id: 1, bank: 'NH', name: 'NH고정적금', maxRate: 2.8 },
         { id: 2, bank: 'NH', name: 'NH자유적금', maxRate: 2.6 },
-        // ...
       ],
       currentPage: 1,
       itemsPerPage: 5,
-    };
+    }
   },
   computed: {
     filteredProducts() {
-      // 필터 조건 적용
-      let filtered = this.productList;
+      let filtered = this.productList
 
       if (this.selectedCategory !== '전체') {
-        filtered = filtered.filter((p) => p.bank === this.selectedCategory);
+        filtered = filtered.filter(p => p.bank === this.selectedCategory)
       }
       return filtered.slice(
         (this.currentPage - 1) * this.itemsPerPage,
-        this.currentPage * this.itemsPerPage
-      );
+        this.currentPage * this.itemsPerPage,
+      )
     },
     totalPages() {
-      return Math.ceil(this.productList.length / this.itemsPerPage);
+      return Math.ceil(this.productList.length / this.itemsPerPage)
     },
   },
-};
+}
 </script>
 
 <style scoped>

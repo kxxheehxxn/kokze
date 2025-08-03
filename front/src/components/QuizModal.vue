@@ -151,7 +151,7 @@ const fetchQuiz = async () => {
   try {
     const quizData = await quizApi.getTodayQuiz(auth.userId);
     currentQuiz.value = quizData;
-    console.log('오늘의 퀴즈 로드 성공:', quizData);
+
   } catch (error) {
     // 이미 풀었다면 alreadySolved 상태로 표시
     if (error.message.includes('오늘은 이미 퀴즈를 풀었습니다')) {
@@ -218,7 +218,7 @@ const submitAnswer = async () => {
   try {
     const result = await quizApi.submitAnswer(auth.userId, currentQuiz.value.quiz_id, selectedAnswer.value);
 
-    console.log('퀴즈 제출 결과:', result);
+
 
     if (result.correct) {
       alert('정답입니다! 🎉');

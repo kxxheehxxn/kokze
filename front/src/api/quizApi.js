@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// API 베이스 URL 설정
 const API_BASE_URL = 'http://localhost:8080/api/quiz';
 
 export const quizApi = {
@@ -10,12 +9,11 @@ export const quizApi = {
         params: { userId },
       });
 
-      console.log('오늘의 퀴즈 조회 성공:', response.data);
+  
       return response.data;
     } catch (error) {
       console.error('오늘의 퀴즈 조회 실패:', error);
 
-      // 에러 상태별 처리
       if (error.response) {
         const status = error.response.status;
 
@@ -35,13 +33,6 @@ export const quizApi = {
     }
   },
 
-  /**
-   * 퀴즈 정답 제출
-   * @param {string} userId - 사용자 ID
-   * @param {number} quizId - 퀴즈 ID
-   * @param {string} userAnswer - 사용자 답안
-   * @returns {Promise<Object>} 정답 확인 결과
-   */
   async submitAnswer(userId, quizId, userAnswer) {
     try {
       const response = await axios.post(
@@ -55,12 +46,11 @@ export const quizApi = {
         }
       );
 
-      console.log('정답 제출 성공:', response.data);
+  
       return response.data;
     } catch (error) {
       console.error('정답 제출 실패:', error);
 
-      // 에러 상태별 처리
       if (error.response) {
         const status = error.response.status;
 

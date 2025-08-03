@@ -20,8 +20,6 @@ const closeHamburger = () => {
 
 // 햄버거버튼 메뉴 클릭 핸들러
 const handleHamburgerMenuClick = (menuType) => {
-  console.log(`햄버거 리스트에서 ${menuType} 클릭됨`);
-
   // 실제 구현 시 각 메뉴별 라우팅 처리
   switch (menuType) {
     case '공지사항':

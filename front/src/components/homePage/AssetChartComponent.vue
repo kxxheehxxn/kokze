@@ -218,11 +218,8 @@ const fetchUserAssetChart = async () => {
   error.value = null;
 
   try {
-    console.log('사용자 계좌 데이터 조회 시작:', props.userId);
-
     // 백엔드 API 호출
     const accounts = await assetApi.getUserBankAccounts(props.userId);
-    console.log('받은 계좌 데이터:', accounts);
 
     if (accounts && accounts.length > 0) {
       // accountType별로 그룹화하고 합계 계산
@@ -253,9 +250,7 @@ const fetchUserAssetChart = async () => {
         const { originalTypes, ...rest } = item;
         return rest;
       });
-      console.log('그룹화된 자산 데이터:', apiAssetData.value);
     } else {
-      console.log('계좌 데이터가 없음');
       apiAssetData.value = []; // 빈 배열로 설정
     }
   } catch (err) {

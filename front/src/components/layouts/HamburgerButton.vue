@@ -27,13 +27,10 @@ const closeSidebar = () => {
 
 // 메뉴 클릭 핸들러
 const handleMenuClick = (menuType) => {
-  console.log(`${menuType} 클릭됨`);
-
   // 로그아웃 처리
   if (menuType === '로그아웃') {
     authStore.logout();
     router.push('/'); // 로그아웃 후 홈으로 이동
-    console.log('로그아웃 완료');
   }
   // 부모 컴포넌트로 메뉴 클릭 이벤트 전달
   emit('menu-click', menuType);

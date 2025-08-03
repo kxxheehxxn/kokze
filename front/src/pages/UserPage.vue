@@ -43,7 +43,6 @@ const router = useRouter();
 function goTo(path) {
   router.push(path).catch((err) => {
     console.error('Navigation error:', err);
-    // TODO: optionally show a user-facing notification
   });
 }
 
@@ -58,7 +57,6 @@ async function loadUserData() {
   } catch (err) {
     console.error('Failed to load user data:', err);
     error.value = '사용자 정보를 불러올 수 없습니다. 다시 시도해주세요.';
-    // 에러 발생 시 기본값 설정
     user.value = { name: '사용자', mbti: '미입력', user_id: null };
     point.value = 0;
   } finally {

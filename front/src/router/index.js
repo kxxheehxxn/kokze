@@ -53,10 +53,10 @@ const router = createRouter({
       component: () => import('@/pages/GoalPage.vue'),
     },
     {
-      path: '/goals/:goalId', // 상세 페이지 경로
+      path: '/goals/:goalId',
       name: 'GoalDetailPage',
       component: () => import('@/pages/GoalDetailPage.vue'),
-      props: true, // goalId를 props로 전달
+      props: true,
     },
     {
       path: '/goals/create',
@@ -67,7 +67,7 @@ const router = createRouter({
       path: '/goal/edit/:goalId',
       name: 'GoalEditPage',
       component: () => import('@/pages/GoalEditPage.vue'),
-      props: true, // goalId param을 props로 전달
+      props: true,
     },
 
     {

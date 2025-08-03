@@ -19,7 +19,6 @@
       </div>
       <TermsAccordion :terms="filteredTerms" />
     </div>
-    <!-- ScrollToTop 버튼 -->
     <div class="scroll-top-btn" @click="scrollToTop">
       <div class="scroll-top-icon">
         <i class="fa-solid fa-chevron-up" style="color: #3573ee"></i>
@@ -37,24 +36,20 @@ import api from '@/api/termsApi.js';
 const categories = ref([]);
 const selectedCategory = ref('');
 const search = ref('');
-const appliedSearch = ref(''); // 실제로 적용된 검색어
+const appliedSearch = ref('');
 const terms = ref([]);
 
 onMounted(async () => {
   try {
-    // 1. API에서 모든 용어 데이터를 가져옵니다.
     const allTerms = await api.fetchTerms();
     terms.value = allTerms;
 
-    // 2. 가져온 데이터에서 고유한 카테고리 목록을 추출합니다.
     const uniqueCategories = [
       ...new Set(allTerms.map((term) => term.category)),
     ].sort();
 
-    // 3. 추출한 카테고리 목록을 ref 변수에 할당합니다.
     categories.value = uniqueCategories;
 
-    // 4. selectedCategory의 초기값이 없으면, 첫 번째 카테고리로 설정합니다.
     if (!selectedCategory.value && categories.value.length > 0) {
       selectedCategory.value = categories.value[0];
     }
@@ -72,20 +67,17 @@ const filteredTerms = computed(() =>
   )
 );
 
-// 검색 함수
 const handleSearch = () => {
   appliedSearch.value = search.value;
-  console.log('검색어:', search.value);
 };
 
-// 카테고리 변경 감지 및 검색어 초기화
 watch(selectedCategory, (newCategory, oldCategory) => {
   if (newCategory !== oldCategory && oldCategory !== '') {
-    // 카테고리가 변경되면 검색어 초기화
     search.value = '';
     appliedSearch.value = '';
   }
 });
+
 const scrollToTop = () => {
   window.scrollTo({
     top: 0,
@@ -143,7 +135,6 @@ const scrollToTop = () => {
 .search-icon:hover {
   color: #333;
 }
-/* ===== ScrollToTop 버튼 ===== */
 .scroll-top-btn {
   cursor: pointer;
   position: fixed;

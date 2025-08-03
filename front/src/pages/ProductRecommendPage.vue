@@ -90,7 +90,6 @@ export default {
       productList: [
         { id: 1, bank: 'NH', name: 'NH고정적금', maxRate: 2.8 },
         { id: 2, bank: 'NH', name: 'NH자유적금', maxRate: 2.6 },
-        // ...
       ],
       currentPage: 1,
       itemsPerPage: 5,

@@ -2,7 +2,6 @@
   <div class="goal-detail-page">
     <router-link to="/goals" class="back-link">← 목표로 돌아가기</router-link>
 
-    <!-- 목표 타이틀 및 달성률 -->
     <section class="summary-card">
       <div class="title-row">
         <h3>목표: {{ goal.title }} ({{ goal.progress }}%)</h3>
@@ -25,7 +24,6 @@
         <p>
           <strong>입금 날짜:{{ goal.depositDate }}</strong>
         </p>
-        {{}}
         <p>
           <strong>연결된 금융 상품:</strong>
           <span v-if="goal.linked_accounts.length > 0">
@@ -96,7 +94,7 @@ export default {
         totalAmount: 0,
         depositDate: '',
         product: '',
-        linked_accounts: [], // ✅ 추가
+        linked_accounts: [],
       },
       recommended: [],
       userName: '김콕재',
@@ -156,7 +154,6 @@ export default {
 </script>
 
 <style scoped>
-/* 그대로 유지 */
 .goal-detail-page {
   padding: 2rem;
 }

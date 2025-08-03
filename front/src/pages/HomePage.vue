@@ -16,15 +16,11 @@ const auth = userAuthStore();
 const router = useRouter();
 const showQuizModal = ref(false);
 
-// 사용자가 로그인했는지 확인
 const isUserLoggedIn = computed(() => {
-  return auth.isLogin; // auth store의 isLogin computed 속성 사용
+  return auth.isLogin;
 });
 
-// 퀴즈 모달 열기 함수
 const openQuizModal = () => {
-  console.log('퀴즈 모달 열기');
-
   if (auth.isLogin) {
     showQuizModal.value = true;
   } else {
@@ -32,25 +28,18 @@ const openQuizModal = () => {
   }
 };
 
-// 퀴즈 모달 닫기 함수
 const closeQuizModal = () => {
-  console.log('퀴즈 모달 닫기');
   showQuizModal.value = false;
 };
 
-// 로그인 알림 및 페이지 이동
 const showLoginAlert = () => {
   const result = confirm('이용하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?');
 
   if (result) {
-    console.log('로그인 페이지로 이동');
     router.push('/auth/login');
-  } else {
-    console.log('로그인 페이지 이동 취소');
   }
 };
 
-// 최상단으로 스크롤하는 함수
 const scrollToTop = () => {
   window.scrollTo({
     top: 0,

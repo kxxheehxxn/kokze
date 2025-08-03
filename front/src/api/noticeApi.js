@@ -2,12 +2,10 @@ import api from '@/api';
 const BASE_URL = '/api/notice';
 export default {
   async getList(params) {
-    //전체 리스트
     const { data } = await api.get(BASE_URL, { params });
     return data;
   },
   async getSearchList(params) {
-    //검색 리스트
     const { data } = await api.get(`${BASE_URL}/search`, { params });
     return data;
   },

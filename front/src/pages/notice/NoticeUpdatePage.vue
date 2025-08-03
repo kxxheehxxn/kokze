@@ -63,7 +63,7 @@ const load = async () => {
     router.replace('/notice/list');
   }
 };
-// 👉 권한 확인
+
 onMounted(() => {
   if (auth.role.toLowerCase() !== 'admin') {
     alert('권한이 없습니다.');

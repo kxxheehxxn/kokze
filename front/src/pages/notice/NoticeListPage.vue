@@ -37,13 +37,11 @@ const search = async () => {
     };
   }
 };
-//페이지네이션 - 페이지 변경
 const handlePageChange = async (pageNum) => {
   router.push({
     query: { page: pageNum, amount: pageRequest.amount },
   });
 };
-// pageRequest의 값 변경된 경우 호출
 watch(route, async () => {
   pageRequest.page = parseInt(route.query.page);
   pageRequest.amount = parseInt(route.query.amount);

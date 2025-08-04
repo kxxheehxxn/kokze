@@ -120,29 +120,92 @@ onMounted(async () => {
             class="search-input"
             v-model="searchKeyword"
             @keyup.enter="search"
+            placeholder="검색어를 입력하세요"
+            aria-label="문의사항 검색"
           />
           <i class="search-icon fa-solid fa-magnifying-glass" @click="search" />
         </div>
       </div>
-      <table class="table">
-        <thead>
-          <tr>
-            <th style="width: 70px">No</th>
-            <th>제목</th>
-            <th style="width: 100px">작성자</th>
-            <th style="width: 120px">작성일</th>
-            <th style="width: 100px">조회수</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="combinedInquiries.length === 0">
-            <td colspan="5" class="text-center py-4 text-muted">
-              게시글이 없습니다.
-            </td>
-          </tr>
-          <tr
-            v-else
-            v-for="(inquiry, index) in combinedInquiries"
+
+      <!-- 데스크탑: 테이블 / 모바일: 카드 -->
+      <div class="inquiries-wrapper">
+        <table class="table inquiry-table">
+          <thead>
+            <tr>
+              <th style="width: 70px">No</th>
+              <th>제목</th>
+              <th style="width: 100px">작성자</th>
+              <th style="width: 120px">작성일</th>
+              <th style="width: 100px">조회수</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="combinedInquiries.length === 0">
+              <td colspan="5" class="text-center py-4 text-muted">
+                게시글이 없습니다.
+              </td>
+            </tr>
+            <tr
+              v-else
+              v-for="(inquiry, index) in combinedInquiries"
+              :key="inquiry.infoId"
+              :class="{
+                'faq-row': faqInquiries.some(
+                  (faq) => faq.infoId === inquiry.infoId
+                ),
+              }"
+            >
+              <td class="text-center">
+                <template
+                  v-if="
+                    faqInquiries.some((faq) => faq.infoId === inquiry.infoId)
+                  "
+                >
+                  HOT
+                </template>
+                <template v-else>
+                  {{
+                    (page.totalCount || 0) -
+                    ((pageRequest.page - 1) * pageRequest.amount +
+                      getOriginalIndex(inquiry))
+                  }}
+                </template>
+              </td>
+              <td>
+                <router-link
+                  class="ellipsis-title link-reset ms-5"
+                  :to="{
+                    name: 'inquiryDetail',
+                    params: { no: inquiry.infoId },
+                  }"
+                  @click.prevent="goToInquiryDetail(inquiry.infoId)"
+                >
+                  <span v-if="inquiry.isAnswered">[답변완료] </span
+                  >{{ inquiry.title }}
+                </router-link>
+              </td>
+              <td class="grayfont ellipsis-writer">
+                {{ inquiry.userName }}
+              </td>
+              <td class="grayfont">
+                {{ moment(inquiry.createdAt).format('YYYY-MM-DD') }}
+              </td>
+              <td class="grayfont text-center">
+                {{ inquiry.viewCount }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- 모바일/좁은 화면용 카드 레이아웃 -->
+        <div
+          class="card-list"
+          v-if="combinedInquiries.length > 0"
+          aria-label="모바일용 문의사항 카드 리스트"
+        >
+          <div
+            class="inquiry-card"
+            v-for="inquiry in combinedInquiries"
             :key="inquiry.infoId"
             :class="{
               'faq-row': faqInquiries.some(
@@ -150,45 +213,53 @@ onMounted(async () => {
               ),
             }"
           >
-            <td style="width: 70px" class="text-center">
-              <template
+            <div class="card-header">
+              <div
                 v-if="faqInquiries.some((faq) => faq.infoId === inquiry.infoId)"
+                class="badge-no"
               >
                 HOT
-              </template>
-              <template v-else>
-                {{
-                  (page.totalCount || 0) -
-                  ((pageRequest.page - 1) * pageRequest.amount +
-                    getOriginalIndex(inquiry))
-                }}
-              </template>
-            </td>
-            <td>
-              <router-link
-                class="ellipsis-title link-reset ms-5"
-                :to="{ name: 'inquiryDetail', params: { no: inquiry.infoId } }"
-                @click.prevent="goToInquiryDetail(inquiry.infoId)"
-              >
-                <span v-if="inquiry.isAnswered">[답변완료] </span
-                >{{ inquiry.title }}
-              </router-link>
-            </td>
-            <td class="grayfont ellipsis-writer">
-              {{ inquiry.userName }}
-            </td>
-            <td class="grayfont">
-              {{ moment(inquiry.createdAt).format('YYYY-MM-DD') }}
-            </td>
-            <td class="grayfont text-center">
-              {{ inquiry.viewCount }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </div>
+              <div class="title-wrapper">
+                <router-link
+                  class="ellipsis-title link-reset"
+                  :to="{
+                    name: 'inquiryDetail',
+                    params: { no: inquiry.infoId },
+                  }"
+                  @click.prevent="goToInquiryDetail(inquiry.infoId)"
+                >
+                  <span v-if="inquiry.isAnswered">[답변완료] </span
+                  >{{ inquiry.title }}
+                </router-link>
+              </div>
+            </div>
+            <div class="card-meta">
+              <div class="meta-item">
+                <span class="meta-label">작성자:</span> {{ inquiry.userName }}
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">작성일:</span>
+                {{ moment(inquiry.createdAt).format('YYYY-MM-DD') }}
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">조회수:</span> {{ inquiry.viewCount }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-if="combinedInquiries.length === 0"
+          class="mobile-empty text-center"
+        >
+          <div class="text-muted py-4">게시글이 없습니다.</div>
+        </div>
+      </div>
+
       <div>
         <div
-          class="flex-grow-1 text-center"
+          class="flex-grow-1 text-center mt-2"
           v-if="combinedInquiries.length > 0"
         >
           <vue-awesome-paginate
@@ -241,6 +312,7 @@ td {
   justify-content: center;
   padding-top: 70px;
   padding-bottom: 30px;
+  margin: 0px 30px;
 }
 .custom-box {
   width: 920px;
@@ -314,5 +386,115 @@ i {
 .faq-row td {
   background-color: #dfefff; /* 연한 하늘색 */
   font-weight: bold;
+}
+/* 공통 수정 */
+.inquiries-wrapper {
+  position: relative;
+}
+
+/* 모바일 카드 리스트 숨김: 기본은 데스크탑 테이블 보여주기 */
+.card-list {
+  display: none;
+}
+
+/* 모바일/태블릿 대응 */
+@media (max-width: 1100px) {
+  .custom-box {
+    width: 100%;
+    padding: 1.5rem;
+  }
+  .table {
+    margin-top: 60px;
+    font-size: 14px;
+  }
+  .ellipsis-title {
+    max-width: 300px;
+  }
+  .ellipsis-writer {
+    max-width: 80px;
+  }
+}
+
+/* 태블릿 이하, 좁은 화면일 때: 테이블 숨기고 카드로 전환 */
+@media (max-width: 900px) {
+  .inquiry-table {
+    display: none;
+  }
+
+  .card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .inquiry-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    border: 1px solid transparent;
+  }
+  .inquiry-card.faq-row {
+    background-color: #dfefff;
+    font-weight: bold;
+  }
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .badge-no {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 1px;
+    border-radius: 12px;
+  }
+  .title-wrapper {
+    flex: 1;
+    min-width: 0;
+  }
+  .inquiry-card .ellipsis-title {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 13px;
+    color: #6f6f6f;
+  }
+  .meta-item {
+    flex: 1 1 45%;
+    min-width: 120px;
+  }
+  .meta-label {
+    font-weight: 600;
+    margin-right: 4px;
+  }
+}
+
+/* 아주 작은 스마트폰 */
+@media (max-width: 480px) {
+  .search-container {
+    width: 100%;
+  }
+  .btn {
+    width: 100px;
+    font-size: 13px;
+  }
+  .custom-box {
+    padding: 1rem;
+  }
 }
 </style>

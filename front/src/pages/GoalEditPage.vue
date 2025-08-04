@@ -92,7 +92,7 @@ export default {
         depositDate: 1,
       },
       selectedAccount: null,
-      prevAccountId: null, // ✅ 기존 계좌 ID 저장
+      prevAccountId: null,
       showProductModal: false,
       accounts: [],
     };
@@ -135,7 +135,7 @@ export default {
             bank_name: acc.bank_name,
             account_num: acc.account_num,
           };
-          this.prevAccountId = acc.account_id; // ✅ 기존 계좌 ID 저장
+          this.prevAccountId = acc.account_id;
         }
       } catch (err) {
         alert('목표 정보를 불러오지 못했습니다.');
@@ -159,7 +159,6 @@ export default {
       const token = userAuthStore().getToken();
 
       try {
-        // 1. 목표 정보 수정
         await updateGoal(
           goalId,
           {
@@ -172,16 +171,13 @@ export default {
           token
         );
 
-        // 2. 계좌 연동/해제 로직
         const selectedId = this.selectedAccount?.account_id;
 
         if (selectedId !== this.prevAccountId) {
-          // 2-1. 기존 계좌가 있었다면 해제
           if (this.prevAccountId) {
             await unlinkAccount(this.prevAccountId, token);
           }
 
-          // 2-2. 새 계좌가 선택된 경우 연동
           if (selectedId) {
             await linkAccountToGoal(goalId, selectedId, token);
           }

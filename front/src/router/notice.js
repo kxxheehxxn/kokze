@@ -1,14 +1,13 @@
-import { userAuthStore } from '@/stores/auth'; // 로그인했는지 확인하는 용도
+import { userAuthStore } from '@/stores/auth';
 
-// isAuthenticated 라우터 가드 정의
-const isAuthenticated = (next) => {
-  const authStore = userAuthStore(); // 가드 함수 내에서 스토어 인스턴스 가져오기
+const isAuthenticated = (to, from, next) => {
+  const authStore = userAuthStore();
 
   if (authStore.isLogin) {
-    next(); // 로그인되어 있으면 다음으로 진행
+    next();
   } else {
-    alert('로그인이 필요합니다.'); // 사용자에게 알림
-    next('/auth/login'); // 로그인 페이지로 리다이렉트 (또는 원하는 경로로)
+    alert('로그인이 필요합니다.');
+    next('/auth/login');
   }
 };
 export default [
@@ -26,12 +25,12 @@ export default [
     path: '/notice/create',
     name: 'noticeCreate',
     component: () => import('../pages/notice/NoticeCreatePage.vue'),
-    beforeEnter: isAuthenticated, // 가드 적용
+    beforeEnter: isAuthenticated,
   },
   {
     path: '/notice/update/:no',
     name: 'noticeUpdate',
     component: () => import('../pages/notice/NoticeUpdatePage.vue'),
-    beforeEnter: isAuthenticated, // 가드 적용
+    beforeEnter: isAuthenticated,
   },
 ];

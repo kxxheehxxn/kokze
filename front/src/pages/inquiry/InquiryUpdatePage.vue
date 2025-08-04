@@ -40,7 +40,6 @@ const submit = async () => {
     title: article.title,
     content: article.content,
   };
-  console.log('수정 제출 데이터:', updatedFields);
 
   try {
     await api.update(updatedFields);
@@ -57,8 +56,6 @@ const submit = async () => {
 };
 
 const load = async () => {
-  console.log('--- 게시글 로드 시작 ---');
-  console.log('로드할 infoId:', infoId);
 
   if (!infoId) {
     console.error('유효하지 않은 infoId:', infoId);
@@ -69,7 +66,6 @@ const load = async () => {
 
   try {
     const data = await api.get(infoId);
-    console.log('API 응답 데이터:', data);
 
     if (!data || !data.infoId) {
       throw new Error(
@@ -83,14 +79,10 @@ const load = async () => {
     article.userName = orgArticle.value.userName;
     article.title = orgArticle.value.title;
     article.content = orgArticle.value.content;
-
-    console.log('게시글 로드 완료:', article);
   } catch (e) {
     console.error('게시글 로드 중 오류 발생:', e);
     alert('게시글을 불러오는 데 실패했습니다.');
     router.replace('/inquiry/list');
-  } finally {
-    console.log('--- 게시글 로드 종료 ---');
   }
 };
 

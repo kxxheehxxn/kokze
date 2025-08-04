@@ -8,35 +8,27 @@ import PrivacyPolicyModal from '@/components/PrivacyPolicyModal.vue';
 const router = useRouter();
 const authStore = userAuthStore();
 
-// // 실제 사용
-// const userInfo = reactive({
-//     gender: '',
-//     birth: '',
-//     phone1: '',
-//     phone2: '',
-//     phone3: '',
-//     agreed: false,
-//     agreeSub0: false,
-//     agreeSub1: false,
-//     agreeSub2: false,
-// });
-
-// 테스트 용
 const userInfo = reactive({
-    gender: 'female',
-    birth: '1992-07-15',
-    phone1: '010',
-    phone2: '9876',
-    phone3: '4321',
-    agreed: true,
-    agreeSub0: true,
-    agreeSub1: true,
-    agreeSub2: true,
+    gender: '',
+    birth: '',
+    phone1: '',
+    phone2: '',
+    phone3: '',
+    agreed: false,
+    agreeSub0: false,
+    agreeSub1: false,
+    agreeSub2: false,
+});
+
+const kakaoUserInfo = computed(() => {
+    return {
+        name: authStore.userInfo.name || '카카오 사용자',
+        email: authStore.userInfo.email || ''
+    };
 });
 
 const isPolicyModalOpen = ref(false);
 
-// agreed 변경 시 동기화
 watch(
     () => userInfo.agreed,
     (val) => {
@@ -46,7 +38,6 @@ watch(
     }
 );
 
-// agreeSub0 변경 시 동기화
 watch(
     () => userInfo.agreeSub0,
     (val) => {
@@ -56,12 +47,10 @@ watch(
     }
 );
 
-// 동의 버튼
 const openModal = () => {
     isPolicyModalOpen.value = true;
 };
 
-// 모달에서 가져온 값 적용
 const handlePolicyAgree = (agreeData) => {
     userInfo.agreed = agreeData.agreed;
     userInfo.agreeSub0 = agreeData.agreeSub0;
@@ -70,7 +59,6 @@ const handlePolicyAgree = (agreeData) => {
     isPolicyModalOpen.value = false;
 };
 
-//
 const isFormValid = computed(() => {
     return (
         userInfo.gender &&
@@ -82,11 +70,9 @@ const isFormValid = computed(() => {
     );
 });
 
-// 다음 페이지
 const goNext = () => {
     if (!isFormValid.value) return;
 
-    // userInfo를 Pinia 스토어에 저장
     authStore.setUserInfo('sex', userInfo.gender);
     authStore.setUserInfo('birthDate', userInfo.birth);
     authStore.setUserInfo(
@@ -94,7 +80,6 @@ const goNext = () => {
         `${userInfo.phone1}-${userInfo.phone2}-${userInfo.phone3}`
     );
 
-    // 다음 단계로 이동
     router.push('/signup/step2');
 };
 </script>
@@ -118,6 +103,26 @@ const goNext = () => {
             <hr />
 
             <div class="title">개인정보 입력</div>
+
+            <div class="form-group">
+                <label>이름 (카카오 계정)</label>
+                <input 
+                    type="text" 
+                    :value="kakaoUserInfo.name" 
+                    disabled 
+                    class="disabled-input"
+                />
+            </div>
+
+            <div class="form-group">
+                <label>이메일 (카카오 계정)</label>
+                <input 
+                    type="email" 
+                    :value="kakaoUserInfo.email" 
+                    disabled 
+                    class="disabled-input"
+                />
+            </div>
 
             <div class="form-group">
                 <label>성별</label>
@@ -236,7 +241,6 @@ const goNext = () => {
     position: relative;
 }
 
-/* logo */
 .logo-section {
     cursor: pointer;
     margin: 15px 0 0 20px;
@@ -256,7 +260,6 @@ const goNext = () => {
     object-fit: contain;
 }
 
-/* signup-box */
 .signup-box {
     background-color: #fff;
     width: 100%;
@@ -270,7 +273,6 @@ const goNext = () => {
     gap: 20px;
 }
 
-/* title */
 .top {
     display: flex;
     align-items: flex-end;
@@ -302,7 +304,6 @@ const goNext = () => {
     display: inline-block;
 }
 
-/* 공통 입력 그룹 */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -325,7 +326,12 @@ const goNext = () => {
     font-family: inherit;
 }
 
-/* 성별 선택 */
+.disabled-input {
+    background-color: #f5f5f5;
+    color: #666;
+    cursor: not-allowed;
+}
+
 .gender-group {
     display: flex;
     gap: 40px;
@@ -340,7 +346,6 @@ const goNext = () => {
     white-space: nowrap;
 }
 
-/* 전화번호, 이메일, 인증번호 입력 줄 정렬 */
 .phone-group,
 .email-group,
 .auth-group {
@@ -354,7 +359,6 @@ const goNext = () => {
     min-width: 100px;
 }
 
-/* 인증/확인 버튼 */
 .email-group button,
 .auth-group button {
     height: 42px;
@@ -374,7 +378,6 @@ const goNext = () => {
     background-color: #255edb;
 }
 
-/* 비밀번호 조건 리스트 */
 .password-rules {
     margin-top: 6px;
     font-size: 13px;
@@ -382,7 +385,6 @@ const goNext = () => {
     list-style: disc;
 }
 
-/* 동의 버튼 */
 .agreement {
     display: flex;
     flex-direction: column;
@@ -461,7 +463,6 @@ const goNext = () => {
     cursor: pointer;
 }
 
-/* 항상 체크 아이콘 표시 */
 .agreement-con2 input[type='checkbox']::after {
     content: '✔';
     position: absolute;
@@ -469,15 +470,13 @@ const goNext = () => {
     left: 0;
     font-size: 16px;
     line-height: 1;
-    color: gray; /* 기본 회색 */
+    color: gray;
 }
 
-/* 체크된 경우 색 변경 */
 .agreement-con2 input[type='checkbox']:checked::after {
-    color: #3573ee; /* 파란색 */
+    color: #3573ee;
 }
 
-/* 힌트/성공/실패 메시지 */
 .hint {
     font-size: 13px;
     color: gray;
@@ -493,7 +492,6 @@ const goNext = () => {
     color: red;
 }
 
-/* 버튼 하단 */
 .button-group {
     display: flex;
     gap: 10px;
@@ -534,7 +532,6 @@ const goNext = () => {
     background-color: #255edb;
 }
 
-/* 모바일 대응 */
 @media (max-width: 768px) {
     .signup-box {
         padding: 40px 30px;

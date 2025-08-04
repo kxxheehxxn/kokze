@@ -17,7 +17,6 @@ const router = useRouter();
 
 // 금융 상품 추천 페이지로 이동
 const handleProductManagement = () => {
-  console.log('홈에서 금융 상품 추천으로 이동');
   router.push('/product');
 };
 </script>

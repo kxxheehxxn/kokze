@@ -8,26 +8,6 @@ import PrivacyPolicyModal from '@/components/PrivacyPolicyModal.vue';
 const router = useRouter();
 const authStore = userAuthStore();
 
-// // 실제 사용
-// const userInfo = reactive({
-//     name: '',
-//     gender: '',
-//     birth: '',
-//     phone1: '',
-//     phone2: '',
-//     phone3: '',
-//     emailId: '',
-//     emailDomain: '',
-//     emailCode: '',
-//     password: '',
-//     passwordConfirm: '',
-//     agreed: false,
-//     agreeSub0: false,
-//     agreeSub1: false,
-//     agreeSub2: false,
-// });
-
-// 테스트 용
 const userInfo = reactive({
     name: '홍길순',
     gender: 'female',
@@ -53,11 +33,9 @@ const emailVerifiedError = ref('');
 const passwordError = ref('');
 const isPolicyModalOpen = ref(false);
 
-// 이메일 인증
 const sendEmailVerification = async () => {
     const fullEmail = `${userInfo.emailId}@${userInfo.emailDomain}`;
 
-    // 이메일 형식 유효성 검사 (정규식 사용)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(fullEmail)) {
         emailSentError.value = '이메일을 정확히 입력해주세요.';
@@ -67,19 +45,13 @@ const sendEmailVerification = async () => {
 
     try {
         const res = await axios.get(`/api/auth/signup/check/${fullEmail}`);
-        console.log(res.data);
 
         if (res.data === true) {
-            // 이미 존재하는 이메일
             emailSentError.value = '이미 존재하는 이메일입니다.';
             emailSent.value = false;
         } else {
-            // 사용 가능한 이메일
-            emailSentError.value = ''; // 오류 메시지 초기화
+            emailSentError.value = '';
             emailSent.value = true;
-
-            // 실제 인증번호 발송 로직 여기에 추가 (선택)
-            // await axios.post('/api/auth/signup/send-code', { email: fullEmail });
         }
     } catch (err) {
         console.error('이메일 중복 확인 실패', err);
@@ -88,7 +60,6 @@ const sendEmailVerification = async () => {
     }
 };
 
-// 이메일 인증번호 검사
 const confirmEmailCode = () => {
     emailVerified.value = userInfo.emailCode === '123456';
     emailVerifiedError.value = emailVerified.value
@@ -96,7 +67,6 @@ const confirmEmailCode = () => {
         : '인증번호가 올바르지 않습니다.';
 };
 
-// 비밀번호 조건 검사
 const passwordConditions = computed(() => {
     const pw = userInfo.password;
     return {
@@ -107,7 +77,6 @@ const passwordConditions = computed(() => {
     };
 });
 
-// 실시간 비밀번호 확인 성공 여부 파악
 watch(
     () => [userInfo.password, userInfo.passwordConfirm],
     ([pw, pwConfirm]) => {
@@ -120,7 +89,6 @@ watch(
     }
 );
 
-// 비밀번호 확인 성공 여부
 const passwordSuccess = computed(() => {
     return (
         userInfo.password &&
@@ -129,7 +97,6 @@ const passwordSuccess = computed(() => {
     );
 });
 
-// agreed 변경 시 동기화
 watch(
     () => userInfo.agreed,
     (val) => {
@@ -139,7 +106,6 @@ watch(
     }
 );
 
-// agreeSub0 변경 시 동기화
 watch(
     () => userInfo.agreeSub0,
     (val) => {
@@ -149,12 +115,10 @@ watch(
     }
 );
 
-// 동의 버튼
 const openModal = () => {
     isPolicyModalOpen.value = true;
 };
 
-// 모달에서 가져온 값 적용
 const handlePolicyAgree = (agreeData) => {
     userInfo.agreed = agreeData.agreed;
     userInfo.agreeSub0 = agreeData.agreeSub0;
@@ -163,7 +127,6 @@ const handlePolicyAgree = (agreeData) => {
     isPolicyModalOpen.value = false;
 };
 
-//
 const isFormValid = computed(() => {
     return (
         userInfo.name &&
@@ -182,11 +145,9 @@ const isFormValid = computed(() => {
     );
 });
 
-// 다음 페이지
 const goNext = () => {
     if (!isFormValid.value) return;
 
-    // userInfo를 Pinia 스토어에 저장
     authStore.setUserInfo('name', userInfo.name);
     authStore.setUserInfo('sex', userInfo.gender);
     authStore.setUserInfo('birthDate', userInfo.birth);
@@ -200,7 +161,6 @@ const goNext = () => {
     );
     authStore.setUserInfo('password', userInfo.password);
 
-    // 다음 단계로 이동
     router.push('/signup/step2');
 };
 </script>
@@ -432,7 +392,6 @@ const goNext = () => {
     position: relative;
 }
 
-/* logo */
 .logo-section {
     cursor: pointer;
     margin: 15px 0 0 20px;
@@ -452,7 +411,6 @@ const goNext = () => {
     object-fit: contain;
 }
 
-/* signup-box */
 .signup-box {
     background-color: #fff;
     width: 100%;
@@ -466,7 +424,6 @@ const goNext = () => {
     gap: 20px;
 }
 
-/* title */
 .top {
     display: flex;
     align-items: flex-end;
@@ -498,7 +455,6 @@ const goNext = () => {
     display: inline-block;
 }
 
-/* 공통 입력 그룹 */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -521,7 +477,6 @@ const goNext = () => {
     font-family: inherit;
 }
 
-/* 성별 선택 */
 .gender-group {
     display: flex;
     gap: 40px;
@@ -536,7 +491,6 @@ const goNext = () => {
     white-space: nowrap;
 }
 
-/* 전화번호, 이메일, 인증번호 입력 줄 정렬 */
 .phone-group,
 .email-group,
 .auth-group {
@@ -550,7 +504,6 @@ const goNext = () => {
     min-width: 100px;
 }
 
-/* 인증/확인 버튼 */
 .email-group button,
 .auth-group button {
     height: 42px;
@@ -570,7 +523,6 @@ const goNext = () => {
     background-color: #255edb;
 }
 
-/* 비밀번호 조건 리스트 */
 .password-rules {
     margin-top: 6px;
     font-size: 13px;
@@ -578,7 +530,6 @@ const goNext = () => {
     list-style: disc;
 }
 
-/* 동의 버튼 */
 .agreement {
     display: flex;
     flex-direction: column;
@@ -657,7 +608,6 @@ const goNext = () => {
     cursor: pointer;
 }
 
-/* 항상 체크 아이콘 표시 */
 .agreement-con2 input[type='checkbox']::after {
     content: '✔';
     position: absolute;
@@ -665,15 +615,13 @@ const goNext = () => {
     left: 0;
     font-size: 16px;
     line-height: 1;
-    color: gray; /* 기본 회색 */
+    color: gray;
 }
 
-/* 체크된 경우 색 변경 */
 .agreement-con2 input[type='checkbox']:checked::after {
-    color: #3573ee; /* 파란색 */
+    color: #3573ee;
 }
 
-/* 힌트/성공/실패 메시지 */
 .hint {
     font-size: 13px;
     color: gray;
@@ -689,7 +637,6 @@ const goNext = () => {
     color: red;
 }
 
-/* 버튼 하단 */
 .button-group {
     display: flex;
     gap: 10px;
@@ -730,7 +677,6 @@ const goNext = () => {
     background-color: #255edb;
 }
 
-/* 모바일 대응 */
 @media (max-width: 768px) {
     .signup-box {
         padding: 40px 30px;

@@ -11,23 +11,19 @@ const assetInfo = reactive({
     monthlyExpenseRaw: '',
 });
 
-// 숫자만 추출
 const unformat = (value) => value.replace(/,/g, '').replace(/\D/g, '');
 
-// 3자리마다 콤마 찍기
 const format = (value) => {
     const num = unformat(value);
     if (!num) return '';
     return Number(num).toLocaleString();
 };
 
-// 입력된 문자열에서 숫자만 추출한 후 정수(Number)로 변환
 const getRawNumber = (value) => {
     const raw = unformat(value);
     return raw === '' ? 0 : parseInt(raw);
 };
 
-// 금액 → 한국어 단위 변환
 function numberToKorean(num) {
     const units = ['', '만', '억', '조'];
     const result = [];
@@ -47,7 +43,6 @@ function numberToKorean(num) {
     return result.length > 0 ? result.join(' ') + ' 원' : ' 원';
 }
 
-// 포맷팅된 v-model
 const monthlyIncome = computed({
     get: () => format(assetInfo.monthlyIncomeRaw),
     set: (val) => (assetInfo.monthlyIncomeRaw = unformat(val)),
@@ -58,7 +53,6 @@ const monthlyExpense = computed({
     set: (val) => (assetInfo.monthlyExpenseRaw = unformat(val)),
 });
 
-// 한글 시각화
 const koreanIncome = computed(() =>
     numberToKorean(getRawNumber(monthlyIncome.value))
 );
@@ -67,30 +61,25 @@ const koreanExpense = computed(() =>
     numberToKorean(getRawNumber(monthlyExpense.value))
 );
 
-// 입력 초기화
 const resetField = (type) => {
     if (type === 'income') assetInfo.monthlyIncomeRaw = '';
     if (type === 'expense') assetInfo.monthlyExpenseRaw = '';
 };
 
-// 유효성 검사
 const isFormValid = computed(
     () =>
         assetInfo.monthlyIncomeRaw !== '' && assetInfo.monthlyExpenseRaw !== ''
 );
 
-// 다음 페이지
 const goNext = () => {
     if (!isFormValid.value) return;
 
     const income = Number(assetInfo.monthlyIncomeRaw);
     const expense = Number(assetInfo.monthlyExpenseRaw);
 
-    // Pinia에 저장
     authStore.setUserInfo('salary', income);
     authStore.setUserInfo('payAmount', expense);
 
-    // 다음 단계로 이동
     router.push('/signup/step3');
 };
 </script>
@@ -184,7 +173,6 @@ const goNext = () => {
     position: relative;
 }
 
-/* logo */
 .logo-section {
     cursor: pointer;
     margin: 15px 0 0 20px;
@@ -204,7 +192,6 @@ const goNext = () => {
     object-fit: contain;
 }
 
-/* signup-box */
 .signup-box {
     background-color: #fff;
     width: 100%;
@@ -218,7 +205,6 @@ const goNext = () => {
     gap: 20px;
 }
 
-/* title */
 .top {
     display: flex;
     align-items: flex-end;
@@ -250,7 +236,6 @@ const goNext = () => {
     display: inline-block;
 }
 
-/* 공통 입력 그룹 */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -263,7 +248,6 @@ const goNext = () => {
     color: #222;
 }
 
-/* input + 단위 + X 버튼 */
 .input-with-unit {
     display: flex;
     align-items: center;
@@ -306,7 +290,6 @@ const goNext = () => {
     font-size: 14px;
 }
 
-/* 버튼 하단 */
 .button-group {
     display: flex;
     gap: 10px;
@@ -347,7 +330,6 @@ const goNext = () => {
     background-color: #255edb;
 }
 
-/* 모바일 대응 관련 */
 @media (max-width: 768px) {
     .signup-box {
         padding: 40px 30px;

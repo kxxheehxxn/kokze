@@ -45,7 +45,6 @@ const goToInquiryDetail = async (infoId) => {
   try {
     // 백엔드의 새로운 조회수 증가 API 호출
     await api.increaseViewCount(infoId); // 이 메서드는 inquiryApi에 추가해야 합니다.
-    console.log(`조회수 증가 성공: ${infoId}`);
   } catch (e) {
     console.error(`조회수 증가 실패: ${infoId}`, e);
     // 조회수 증가에 실패해도 상세 페이지로 이동은 계속 진행
@@ -63,7 +62,6 @@ const search = async () => {
       amount: pageRequest.amount,
     };
     page.value = await api.getSearchList(params);
-    console.log('검색 결과:', page.value);
   } catch (e) {
     console.error('검색 실패:', e);
   }
@@ -78,7 +76,6 @@ const handlePageChange = async (pageNum) => {
 const loadInquiries = async (query) => {
   try {
     page.value = await api.getList(query);
-    console.log('일반 문의 목록:', page.value);
   } catch (e) {
     console.error('일반 문의 목록 로드 실패:', e);
   }
@@ -87,7 +84,6 @@ const loadInquiries = async (query) => {
 const loadFaq = async () => {
   try {
     faqInquiries.value = await api.getFaqList();
-    console.log('FAQ 목록:', faqInquiries.value);
   } catch (e) {
     console.error('FAQ 목록 로드 실패:', e);
   }

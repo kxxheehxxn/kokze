@@ -15,12 +15,17 @@ const router = createRouter({
         {
             path: '/terms',
             name: 'TermsPage',
-            component: () => import('@/pages/TermsPage.vue'),
+            component: () => import('@/pages/term/TermsPage.vue'),
         },
         {
             path: '/userpage',
             name: 'UserPage',
             component: () => import('@/pages/UserPage.vue'),
+        },
+        {
+            path: '/points',
+            name: 'PointPage',
+            component: () => import('@/pages/PointPage.vue'),
         },
         {
             path: '/user/asset',

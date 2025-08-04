@@ -89,7 +89,9 @@ async function onWithdraw() {
   error.value = ''
   
   try {
+    // 회원탈퇴 처리
     const result = await withdrawUser()
+    
     if (result.success) {
       alert('탈퇴가 처리되었습니다.')
       auth.logout()

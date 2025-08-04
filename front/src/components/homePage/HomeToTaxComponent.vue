@@ -17,7 +17,6 @@ const router = useRouter();
 
 // 세금 관리 페이지로 이동
 const handleTaxManagement = () => {
-  console.log('홈에서 세금 관리로 이동');
   router.push('/tax-management');
 };
 </script>

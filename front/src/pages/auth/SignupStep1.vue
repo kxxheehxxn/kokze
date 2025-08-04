@@ -1,19 +1,22 @@
 <script setup>
-import { reactive, ref, computed, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import axios from 'axios'
-import { userAuthStore } from '@/stores/auth'
-import PrivacyPolicyModal from '@/components/PrivacyPolicyModal.vue'
-import { sendSignupVerificationCode, verifySignupCode } from '@/api/passwordApi.js'
+import { reactive, ref, computed, watch, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { userAuthStore } from '@/stores/auth';
+import PrivacyPolicyModal from '@/components/PrivacyPolicyModal.vue';
+import {
+  sendSignupVerificationCode,
+  verifySignupCode,
+} from '@/api/passwordApi.js';
 
-const router = useRouter()
-const authStore = userAuthStore()
+const router = useRouter();
+const authStore = userAuthStore();
 
-const isKakao = computed(() => authStore.isKakao)
-
+const isKakao = computed(() => authStore.isKakao);
+const today = ref('');
 const userInfo = reactive({
   name: '',
-  gender: '',
+  gender: 'male',
   birth: '',
   phone1: '',
   phone2: '',
@@ -27,136 +30,136 @@ const userInfo = reactive({
   agreeSub0: false,
   agreeSub1: false,
   agreeSub2: false,
-})
+});
 
 onMounted(() => {
+  // 오늘 날짜 (YYYY-MM-DD)
+  today.value = new Date().toISOString().split('T')[0];
   if (isKakao.value) {
-    const emailParts = authStore.userInfo.email.split('@')
-    userInfo.emailId = emailParts[0]
-    userInfo.emailDomain = emailParts[1]
-    userInfo.name = authStore.userInfo.name
+    const emailParts = authStore.userInfo.email.split('@');
+    userInfo.emailId = emailParts[0];
+    userInfo.emailDomain = emailParts[1];
+    userInfo.name = authStore.userInfo.name;
   }
-})
+});
 
-const emailSent = ref(false)
-const emailSentError = ref('')
-const emailVerified = ref(false)
-const emailVerifiedError = ref('')
-const passwordError = ref('')
-const isPolicyModalOpen = ref(false)
+const emailSent = ref(false);
+const emailSentError = ref('');
+const emailVerified = ref(false);
+const emailVerifiedError = ref('');
+const passwordError = ref('');
+const isPolicyModalOpen = ref(false);
 
 const sendEmailVerification = async () => {
-  const fullEmail = `${userInfo.emailId}@${userInfo.emailDomain}`
+  const fullEmail = `${userInfo.emailId}@${userInfo.emailDomain}`;
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(fullEmail)) {
-    emailSentError.value = '이메일을 정확히 입력해주세요.'
-    emailSent.value = false
-    return
+    emailSentError.value = '이메일을 정확히 입력해주세요.';
+    emailSent.value = false;
+    return;
   }
 
   try {
-    const res = await axios.get(`/api/auth/signup/check/${fullEmail}`)
+    const res = await axios.get(`/api/auth/signup/check/${fullEmail}`);
     if (res.data === true) {
-      emailSentError.value = '이미 존재하는 이메일입니다.'
-      emailSent.value = false
+      emailSentError.value = '이미 존재하는 이메일입니다.';
+      emailSent.value = false;
     } else {
       try {
-        const success = await sendSignupVerificationCode(fullEmail)
+        const success = await sendSignupVerificationCode(fullEmail);
         if (success) {
-          emailSentError.value = ''
-          emailSent.value = true
+          emailSentError.value = '';
+          emailSent.value = true;
         } else {
-          emailSentError.value = '인증번호 발송에 실패했습니다.'
-          emailSent.value = false
+          emailSentError.value = '인증번호 발송에 실패했습니다.';
+          emailSent.value = false;
         }
       } catch (error) {
-        emailSentError.value = '인증번호 발송에 실패했습니다.'
-        emailSent.value = false
+        emailSentError.value = '인증번호 발송에 실패했습니다.';
+        emailSent.value = false;
       }
     }
   } catch (err) {
-    console.error('이메일 중복 확인 실패', err)
-    emailSentError.value = '서버 오류가 발생했습니다.'
-    emailSent.value = false
+    console.error('이메일 중복 확인 실패', err);
+    emailSentError.value = '서버 오류가 발생했습니다.';
+    emailSent.value = false;
   }
-}
+};
 
 const confirmEmailCode = async () => {
-  const fullEmail = `${userInfo.emailId}@${userInfo.emailDomain}`
-  
+  const fullEmail = `${userInfo.emailId}@${userInfo.emailDomain}`;
+
   try {
-    const success = await verifySignupCode(userInfo.emailCode, fullEmail)
-    emailVerified.value = success
-    emailVerifiedError.value = success
-      ? ''
-      : '인증번호가 올바르지 않습니다.'
+    const success = await verifySignupCode(userInfo.emailCode, fullEmail);
+    emailVerified.value = success;
+    emailVerifiedError.value = success ? '' : '인증번호가 올바르지 않습니다.';
   } catch (error) {
-    console.error('인증번호 확인 실패:', error)
-    emailVerified.value = false
-    emailVerifiedError.value = '인증번호 확인에 실패했습니다.'
+    console.error('인증번호 확인 실패:', error);
+    emailVerified.value = false;
+    emailVerifiedError.value = '인증번호 확인에 실패했습니다.';
   }
-}
+};
 
 const passwordConditions = computed(() => {
-  const pw = userInfo.password
+  const pw = userInfo.password;
   return {
     length: pw.length >= 8,
     hasLetter: /[a-zA-Z]/.test(pw),
     hasNumber: /[0-9]/.test(pw),
     hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw),
-  }
-})
+  };
+});
 
 watch(
   () => [userInfo.password, userInfo.passwordConfirm],
   ([pw, pwConfirm]) => {
     if (!pwConfirm) {
-      passwordError.value = ''
-      return
+      passwordError.value = '';
+      return;
     }
     passwordError.value =
-      pw !== pwConfirm ? '비밀번호가 일치하지 않습니다.' : ''
-  },
-)
+      pw !== pwConfirm ? '비밀번호가 일치하지 않습니다.' : '';
+  }
+);
 
 const passwordSuccess = computed(() => {
   return (
     userInfo.password &&
     userInfo.passwordConfirm &&
     userInfo.password === userInfo.passwordConfirm
-  )
-})
+  );
+});
 
 watch(
   () => userInfo.agreed,
-  val => {
-    userInfo.agreeSub0 = val
-    userInfo.agreeSub1 = val
-    userInfo.agreeSub2 = val
-  },
-)
+  (val) => {
+    userInfo.agreeSub0 = val;
+    userInfo.agreeSub1 = val;
+    userInfo.agreeSub2 = val;
+  }
+);
 
 watch(
   () => userInfo.agreeSub0,
-  val => {
-    userInfo.agreed = val
-    userInfo.agreeSub1 = val
-    userInfo.agreeSub2 = val
-  },
-)
+  (val) => {
+    userInfo.agreed = val;
+    userInfo.agreeSub1 = val;
+    userInfo.agreeSub2 = val;
+  }
+);
 
 const openModal = () => {
-  isPolicyModalOpen.value = true
-}
+  isPolicyModalOpen.value = true;
+};
 
-const handlePolicyAgree = agreeData => {
-  userInfo.agreed = agreeData.agreed
-  userInfo.agreeSub0 = agreeData.agreeSub0
-  userInfo.agreeSub1 = agreeData.agreeSub1
-  userInfo.agreeSub2 = agreeData.agreeSub2
-  isPolicyModalOpen.value = false
-}
+const handlePolicyAgree = (agreeData) => {
+  userInfo.agreed = agreeData.agreed;
+  userInfo.agreeSub0 = agreeData.agreeSub0;
+  userInfo.agreeSub1 = agreeData.agreeSub1;
+  userInfo.agreeSub2 = agreeData.agreeSub2;
+  isPolicyModalOpen.value = false;
+};
 
 const isFormValid = computed(() => {
   const requiredFields =
@@ -166,10 +169,10 @@ const isFormValid = computed(() => {
     userInfo.phone1 &&
     userInfo.phone2 &&
     userInfo.phone3 &&
-    userInfo.agreed
+    userInfo.agreed;
 
   if (isKakao.value) {
-    return requiredFields
+    return requiredFields;
   } else {
     return (
       requiredFields &&
@@ -179,28 +182,28 @@ const isFormValid = computed(() => {
       userInfo.passwordConfirm &&
       emailVerified.value &&
       userInfo.password === userInfo.passwordConfirm
-    )
+    );
   }
-})
+});
 
 const goNext = () => {
-  if (!isFormValid.value) return
+  if (!isFormValid.value) return;
 
-  authStore.setUserInfo('name', userInfo.name)
-  authStore.setUserInfo('sex', userInfo.gender)
-  authStore.setUserInfo('birthDate', userInfo.birth)
+  authStore.setUserInfo('name', userInfo.name);
+  authStore.setUserInfo('sex', userInfo.gender);
+  authStore.setUserInfo('birthDate', userInfo.birth);
   authStore.setUserInfo(
     'phoneNum',
-    `${userInfo.phone1}-${userInfo.phone2}-${userInfo.phone3}`,
-  )
-  authStore.setUserInfo('email', `${userInfo.emailId}@${userInfo.emailDomain}`)
+    `${userInfo.phone1}-${userInfo.phone2}-${userInfo.phone3}`
+  );
+  authStore.setUserInfo('email', `${userInfo.emailId}@${userInfo.emailDomain}`);
 
   if (!isKakao.value) {
-    authStore.setUserInfo('password', userInfo.password)
+    authStore.setUserInfo('password', userInfo.password);
   }
 
-  router.push('/signup/step2')
-}
+  router.push('/signup/step2');
+};
 </script>
 
 <template>
@@ -249,7 +252,7 @@ const goNext = () => {
 
       <div class="form-group">
         <label>생년월일</label>
-        <input type="date" v-model="userInfo.birth" />
+        <input type="date" v-model="userInfo.birth" :max="today" />
       </div>
 
       <div class="form-group">
@@ -447,7 +450,6 @@ const goNext = () => {
   padding: 90px 140px;
   border-radius: 30px;
   box-shadow: 0 0 20px #85858540;
-  margin-top: 50px;
   display: flex;
   flex-direction: column;
   gap: 20px;

@@ -156,7 +156,6 @@ const handleSignup = () => {
   padding: 90px 140px;
   border-radius: 28px;
   box-shadow: 0 0 20px #85858540;
-  margin-top: 50px;
   display: flex;
   flex-direction: column;
   gap: 20px;

@@ -1,23 +1,30 @@
 <template>
-  <div class="user-card">
-    <slot />
+  <div class="container">
+    <div class="user-card">
+      <slot />
+    </div>
   </div>
 </template>
 
 <style scoped>
-.user-card {
-  background: #fff;
-  border-radius: 24px;
-  box-shadow: 0 2px 8px 0 #e5e7eb;
-  margin: 100px auto 0 auto;
-  padding: 64px 80px;
-  width: 70vw;
-  max-width: 1100px;
-  min-width: 400px;
-  border: 4px solid #189eff;
+.container {
+  background-color: #fbfbfb;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  box-sizing: border-box;
+  align-items: center;
+  min-height: 100vh;
+  justify-content: center;
+  position: relative;
 }
-</style> 
+.user-card {
+  background-color: #fff;
+  width: 100%;
+  max-width: 900px;
+  padding: 90px 140px;
+  border-radius: 28px;
+  box-shadow: 0 0 20px #85858540;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+</style>

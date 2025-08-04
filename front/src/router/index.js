@@ -1,8 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../pages/HomePage.vue';
-import inquiryRoutes from './inquiry';
-import noticeRoutes from './notice';
-import authRoutes from './auth';
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../pages/HomePage.vue'
+import inquiryRoutes from './inquiry'
+import noticeRoutes from './notice'
+import authRoutes from './auth'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,6 +22,11 @@ const router = createRouter({
             name: 'UserPage',
             component: () => import('@/pages/UserPage.vue'),
         },
+    {
+      path: '/points',
+      name: 'PointPage',
+      component: () => import('@/pages/PointPage.vue'),
+    },
         {
             path: '/user/asset',
             name: 'UserAssetEditPage',
@@ -92,4 +97,4 @@ const router = createRouter({
     ],
 });
 
-export default router;
+export default router

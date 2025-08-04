@@ -7,12 +7,11 @@ import axios from 'axios';
 const router = useRouter();
 
 const step = ref(0);
-const selectedList = ref([]); // 각 step의 선택 인덱스 기록
+const selectedList = ref([]);
 const scores = ref({ fast: 0, slow: 0, high: 0, low: 0 });
 
 const authStore = userAuthStore();
 
-// 질문
 const questions = [
     {
         question: '월급을 받았을 때 나는?',
@@ -74,7 +73,6 @@ const questions = [
     },
 ];
 
-// 금융 MBTI 결과
 const mbtiResult = computed(() => {
     if (step.value < questions.length) return '';
     const isFast = scores.value.fast >= scores.value.slow;
@@ -85,7 +83,6 @@ const mbtiResult = computed(() => {
     return '신중한 분석가';
 });
 
-// 금융 MBTI 상세 설명
 const mbtiDesc = computed(() => {
     switch (mbtiResult.value) {
         case '신속한 승부사':
@@ -101,7 +98,6 @@ const mbtiDesc = computed(() => {
     }
 });
 
-// 다음 질문
 function onNext() {
     const selected = selectedList.value[step.value];
     const choice = questions[step.value].choices[selected];
@@ -109,7 +105,6 @@ function onNext() {
     step.value++;
 }
 
-// 이전 질문 or 이전 페이지
 function onPrev() {
     if (step.value === 0) {
         router.push('/signup/step2');
@@ -121,19 +116,12 @@ function onPrev() {
     }
 }
 
-// 가입하기
 const onSubmit = async () => {
     try {
-        // MBTI 점수 저장
         authStore.setUserInfo('mbti', mbtiResult.value);
 
-        // 로컬인지 카카오인지
         authStore.setUserInfo('kakao', authStore.isKakao);
 
-        // 👉 1. 최종 전송 데이터 확인 로그
-        console.log('최종 전송될 회원가입 데이터:', authStore.userInfo);
-
-        // 👉 2. 누락 필드 체크
         const requiredFields = [
             'name',
             'email',
@@ -145,12 +133,10 @@ const onSubmit = async () => {
             'mbti',
         ];
 
-        // 누락 필드 검사 (isKakao일 땐 password 무시)
         const missing = requiredFields.filter(
             (key) => !authStore.userInfo[key]
         );
 
-        // password는 로컬인 경우에만 검사
         if (!authStore.isKakao && !(authStore.userInfo.password.length > 0)) {
             missing.push('password');
         }
@@ -160,11 +146,11 @@ const onSubmit = async () => {
             return;
         }
 
-        // 👉 3. 실제 회원가입 API 호출
-        const response = await axios.post(
-            'http://localhost:8080/api/auth/signup',
-            authStore.userInfo
-        );
+        const apiUrl = authStore.isKakao 
+            ? 'http://localhost:8080/api/auth/signup/kakao'
+            : 'http://localhost:8080/api/auth/signup';
+            
+        const response = await axios.post(apiUrl, authStore.userInfo);
         if (response.status === 200) {
             alert('회원가입이 완료되었습니다!');
             authStore.resetUserInfo();
@@ -252,7 +238,6 @@ const onSubmit = async () => {
     position: relative;
 }
 
-/* logo */
 .logo-section {
     cursor: pointer;
     margin: 15px 0 0 20px;
@@ -272,7 +257,6 @@ const onSubmit = async () => {
     object-fit: contain;
 }
 
-/* signup-box */
 .signup-box {
     background-color: #fff;
     width: 100%;
@@ -286,7 +270,6 @@ const onSubmit = async () => {
     gap: 20px;
 }
 
-/* title */
 .top {
     display: flex;
     align-items: flex-end;
@@ -318,7 +301,6 @@ const onSubmit = async () => {
     display: inline-block;
 }
 
-/* 질문/선택지 */
 .question {
     font-size: 20px;
     font-weight: 500;
@@ -355,7 +337,6 @@ const onSubmit = async () => {
     box-shadow: 0 4px 16px 0 #bcdcff;
 }
 
-/* 버튼 하단 */
 .button-group {
     display: flex;
     justify-content: center;
@@ -390,7 +371,6 @@ const onSubmit = async () => {
     cursor: not-allowed;
 }
 
-/* 결과 화면 */
 .mbti-type {
     font-size: 26px;
     font-weight: bold;
@@ -406,7 +386,6 @@ const onSubmit = async () => {
     margin-bottom: 24px;
 }
 
-/* 모바일 대응 */
 @media (max-width: 768px) {
     .signup-box {
         padding: 40px 30px;

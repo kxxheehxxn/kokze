@@ -68,7 +68,6 @@ const fetchUserAssetData = async () => {
 
   try {
     const data = await assetApi.getUserAssetSummary(props.userId);
-    console.log('Fetched User Asset Data:', data);
 
     // 데이터 할당
     userName.value = data.name;
@@ -103,7 +102,6 @@ const formatCurrency = (amount) => {
 
 const handleAssetLookup = () => {
   emit('asset-lookup');
-  console.log('자산 조회 버튼 클릭됨');
   fetchUserAssetData();
 };
 

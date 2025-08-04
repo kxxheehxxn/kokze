@@ -1,6 +1,5 @@
 import axios from './index.js'
 
-// 사용자 정보 확인 (전화번호와 이메일이 일치하는지)
 export async function verifyUserInfo(phoneNum, email) {
   try {
     const response = await axios.post('/api/auth/verify-user', {
@@ -15,7 +14,6 @@ export async function verifyUserInfo(phoneNum, email) {
   }
 }
 
-// 인증번호 발송
 export async function sendVerificationCode(email) {
   try {
     const response = await axios.post('/api/auth/send-verification-code', {
@@ -29,7 +27,19 @@ export async function sendVerificationCode(email) {
   }
 }
 
-// 인증번호 확인
+export async function sendSignupVerificationCode(email) {
+  try {
+    const response = await axios.post('/api/auth/signup/send-verification-code', {
+      email
+    })
+    
+    return response.data.success
+  } catch (error) {
+    console.error('회원가입 인증번호 발송 실패:', error)
+    throw error
+  }
+}
+
 export async function verifyCode(inputCode, email) {
   try {
     const response = await axios.post('/api/auth/verify-code', {
@@ -44,7 +54,20 @@ export async function verifyCode(inputCode, email) {
   }
 }
 
-// 비밀번호 변경
+export async function verifySignupCode(inputCode, email) {
+  try {
+    const response = await axios.post('/api/auth/signup/verify-code', {
+      code: inputCode,
+      email
+    })
+    
+    return response.data.success
+  } catch (error) {
+    console.error('회원가입 인증번호 확인 실패:', error)
+    return false
+  }
+}
+
 export async function changePassword(email, newPassword) {
   try {
     const response = await axios.post('/api/auth/change-password', {

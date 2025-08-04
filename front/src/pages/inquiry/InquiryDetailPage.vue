@@ -68,7 +68,7 @@ const submit = async () => {
     answeredContent: article.value.answeredContent,
   };
 
-  console.log(updatedFields); // undefined 방지
+
 
   try {
     await api.updateAnswer(updatedFields);
@@ -96,7 +96,6 @@ const remove = async () => {
 };
 const load = async () => {
   article.value = await api.get(infoId);
-  console.log('DETAIL', article.value);
 };
 load();
 </script>

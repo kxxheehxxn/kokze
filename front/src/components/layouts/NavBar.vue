@@ -53,15 +53,11 @@ const dynamicNavItems = computed(() => {
 
 // 아이템 클릭 시 처리
 const selectItem = (itemName) => {
-  console.log(`${itemName} 클릭됨`);
-
   // 특별한 처리가 필요한 경우 (예: 로그아웃)
   if (itemName === '로그인') {
     // 로그인 페이지로 이동하기 전 처리
-    console.log('로그인 페이지로 이동');
   } else if (itemName === '마이페이지') {
     // 마이페이지 접근 권한 확인 등
-    console.log('마이페이지로 이동');
   }
 };
 </script>

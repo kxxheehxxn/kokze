@@ -44,10 +44,9 @@ import { useRouter } from 'vue-router'
 import UserCardLayout from '@/components/UserCardLayout.vue'
 import { updateMbti } from '@/api/userApi'
 
-const userName = '김콕재' // 실제 사용자 이름 연동 시 수정
+const userName = '김콕재'
 
 const questions = [
-  // 빠름 VS 느림
   {
     question: '월급을 받았을 때 나는?',
     choices: [
@@ -69,7 +68,6 @@ const questions = [
       { text: '리뷰와 후기 충분히 보고 결정한다', type: 'slow', score: 4 },
     ],
   },
-  // 하이리스크 VS 로우리스크
   {
     question: '투자할 때 나는?',
     choices: [
@@ -144,7 +142,6 @@ const mbtiDesc = computed(() => {
   }
 })
 
-// MBTI 결과 저장
 async function saveMbtiResult() {
   try {
     const result = await updateMbti(mbtiResult.value)

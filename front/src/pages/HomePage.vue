@@ -7,25 +7,39 @@ import NoticeSummaryComponent from '@/components/homePage/NoticeSummaryComponent
 import HomeToTax from '@/components/homePage/HomeToTaxComponent.vue';
 import HomeToProduct from '@/components/homePage/HomeToProductComponent.vue';
 import HomeToGoal from '@/components/homePage/HomeToGoalComponent.vue';
+import QuizModal from '@/components/QuizModal.vue';
 import { ref, computed } from 'vue';
 import { userAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
 
-// 현재 사용자 ID (실제로는 로그인한 사용자 정보에서 가져와야 함)
 const auth = userAuthStore();
+const router = useRouter();
+const showQuizModal = ref(false);
 
-// 사용자가 로그인했는지 확인 (디버깅 추가)
 const isUserLoggedIn = computed(() => {
-  console.log('=== 로그인 상태 디버깅 ===');
-  console.log('auth.state:', auth.state);
-  console.log('auth.email:', auth.email);
-  console.log('auth.userId:', auth.userId);
-  console.log('auth.isLogin:', auth.isLogin);
-  console.log('========================');
-
-  return auth.isLogin; // auth store의 isLogin computed 속성 사용
+  return auth.isLogin;
 });
 
-// 최상단으로 스크롤하는 함수
+const openQuizModal = () => {
+  if (auth.isLogin) {
+    showQuizModal.value = true;
+  } else {
+    showLoginAlert();
+  }
+};
+
+const closeQuizModal = () => {
+  showQuizModal.value = false;
+};
+
+const showLoginAlert = () => {
+  const result = confirm('이용하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?');
+
+  if (result) {
+    router.push('/auth/login');
+  }
+};
+
 const scrollToTop = () => {
   window.scrollTo({
     top: 0,
@@ -36,8 +50,6 @@ const scrollToTop = () => {
 
 <template>
   <div class="homepage">
-    <!-- 디버깅 정보 (개발용) -->
-
     <!-- 메인 컨텐츠 -->
     <div class="main-content">
       <!-- 1. 사용자 자산 현황 + 차트 (상단) - 로그인 시에만 표시 -->
@@ -51,15 +63,12 @@ const scrollToTop = () => {
       </div>
 
       <!-- 2. 광고 + (퀴즈/공지사항) (중간) -->
-      <div
-        class="middle-section"
-        :class="{ 'no-asset-section': !isUserLoggedIn }"
-      >
+      <div class="middle-section" :class="{ 'no-asset-section': !isUserLoggedIn }">
         <div class="ad-component">
           <AdComponent />
         </div>
         <div class="right-section">
-          <div class="quiz-component">
+          <div class="quiz-component" @click="openQuizModal">
             <QuizComponent />
           </div>
           <div class="notice-component">
@@ -94,6 +103,9 @@ const scrollToTop = () => {
         <i class="fa-solid fa-chevron-up" style="color: #3573ee"></i>
       </div>
     </div>
+
+    <!-- 퀴즈 모달 -->
+    <QuizModal :show="showQuizModal" @close="closeQuizModal" />
   </div>
 </template>
 
@@ -158,6 +170,7 @@ const scrollToTop = () => {
   min-height: 250px;
   width: 100%;
   padding-right: 20px;
+  padding-left: 20px;
   margin-top: 100px; /* 상단 여백 */
   max-width: none;
   justify-content: center; /* 중앙 정렬 */
@@ -171,7 +184,7 @@ const scrollToTop = () => {
 .ad-component {
   flex: 1.6;
   background-color: #fbfbfb;
-  border-radius: 0 20px 20px 0;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -196,6 +209,12 @@ const scrollToTop = () => {
   font-weight: bold;
   color: #374151;
   min-height: 140px;
+  cursor: pointer;
+}
+
+.quiz-component:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .notice-component {
@@ -247,6 +266,7 @@ const scrollToTop = () => {
   width: 100%;
   max-width: none;
   justify-content: center; /* 그리드 중앙 정렬 */
+  padding: 0 20px 80px 20px; /* 좌우 패딩 */
 }
 
 .nav-card {
@@ -337,7 +357,6 @@ const scrollToTop = () => {
 
   .nav-card {
     height: 250px;
-    padding: 15px;
   }
 
   .scroll-top-btn {
@@ -430,7 +449,6 @@ const scrollToTop = () => {
   .nav-card {
     height: 220px;
     font-size: 12px;
-    padding: 12px;
     border-radius: 12px;
   }
 
@@ -485,7 +503,6 @@ const scrollToTop = () => {
   .notice-component {
     min-height: 100px;
     font-size: 12px;
-    padding: 10px;
   }
 
   .service-title-section {
@@ -505,7 +522,6 @@ const scrollToTop = () => {
   .nav-card {
     height: 160px;
     font-size: 11px;
-    padding: 8px;
     border-radius: 10px;
   }
 

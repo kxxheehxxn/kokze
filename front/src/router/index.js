@@ -22,6 +22,11 @@ const router = createRouter({
             name: 'UserPage',
             component: () => import('@/pages/UserPage.vue'),
         },
+    {
+      path: '/points',
+      name: 'PointPage',
+      component: () => import('@/pages/PointPage.vue'),
+    },
         {
             path: '/points',
             name: 'PointPage',

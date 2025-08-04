@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import NavBar from './NavBar.vue';
 import HamburgerButton from './HamburgerButton.vue';
 import { useRouter } from 'vue-router';
@@ -7,6 +7,10 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 // 햄버거 메뉴 상태
 const isHamburgerOpen = ref(false);
+
+// refs: 버튼과 메뉴 DOM/컴포넌트
+const hamburgerBtnRef = ref(null);
+const hamburgerRef = ref(null);
 
 // 햄버거 메뉴 토글
 const toggleHamburger = () => {
@@ -33,6 +37,36 @@ const handleHamburgerMenuClick = (menuType) => {
       break;
   }
 };
+// 외부 클릭 감지: 햄버거 버튼이나 메뉴 내부가 아니면 닫기
+const handleClickOutside = (event) => {
+  if (!isHamburgerOpen.value) return;
+
+  const target = event.target;
+  const btnEl = hamburgerBtnRef.value;
+  const menuEl =
+    // HamburgerButton이 Vue 컴포넌트라면 $el, 아니면 직접 DOM
+    (hamburgerRef.value && (hamburgerRef.value.$el || hamburgerRef.value)) ||
+    null;
+
+  // 클릭이 버튼 안이거나 메뉴 안이면 아무것도 안 함
+  if (
+    (btnEl && (btnEl.contains ? btnEl.contains(target) : false)) ||
+    (menuEl && (menuEl.contains ? menuEl.contains(target) : false))
+  ) {
+    return;
+  }
+
+  // 그 외 영역이면 닫기
+  closeHamburger();
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <template>
@@ -56,8 +90,8 @@ const handleHamburgerMenuClick = (menuType) => {
       <div class="hamburger-section d-flex align-items-center">
         <button
           class="hamburger-btn btn d-flex align-items-center justify-content-center"
-          @click="toggleHamburger"
           :class="{ active: isHamburgerOpen }"
+          @click.stop="toggleHamburger"
         >
           <i
             class="fa-solid fa-bars"

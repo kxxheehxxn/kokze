@@ -80,6 +80,12 @@ const router = createRouter({
             name: 'ProductRecommendPage',
             component: () => import('@/pages/product/ProductRecommendPage.vue'),
         },
+        {
+            path: '/product/:fin_prdt_cd',
+            name: 'ProductDetailPage',
+            component: () => import('@/pages/product/ProductDetailPage.vue'),
+            props: true, //
+        },
         ...authRoutes,
         ...inquiryRoutes,
         ...noticeRoutes,

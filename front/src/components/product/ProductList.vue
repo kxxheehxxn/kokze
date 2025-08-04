@@ -1,8 +1,10 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { bankNameMap } from '@/utils/bankMap';
 import ProductPagination from './ProductPagination.vue';
 
+const router = useRouter();
 const sortKey = ref('max'); // 'max' 또는 'basic'
 const currentPage = ref(1);
 const itemsPerPage = 10;
@@ -11,169 +13,44 @@ const props = defineProps({
     filters: Object,
 });
 
-// 더미 데이터
-const products = ref([
+// DB 맞춤 더미 데이터
+const products = [
     {
-        id: 1,
-        name: '우리 첫거래우대 정기예금',
-        bank: '우리',
-        tags: ['특판', '방문없이가입', '누구나가입'],
-        maxRate: 2.8,
-        basicRate: 1.8,
+        finPrdtCd: 'WR0001F',
+        productName: '우리SUPER주거래적금',
+        bankName: '우리은행',
+        intrRate: 2.15,
+        intrRate2: 3.55,
     },
     {
-        id: 2,
-        name: 'NH고향사랑기부예금',
-        bank: 'NH농협',
-        tags: ['방문없이가입', '누구나가입'],
-        maxRate: 2.8,
-        basicRate: 2.15,
+        finPrdtCd: 'WR0001L',
+        productName: 'WON적금',
+        bankName: '우리은행',
+        intrRate: 2.95,
+        intrRate2: 3.15,
     },
     {
-        id: 3,
-        name: '황금빛예금(일반형)',
-        bank: 'iM뱅크',
-        tags: [],
-        maxRate: 2.79,
-        basicRate: 2.19,
+        finPrdtCd: '00266451',
+        productName: '퍼스트가계적금',
+        bankName: '한국스탠다드차타드은행',
+        intrRate: 2.55,
+        intrRate2: 2.55,
     },
     {
-        id: 4,
-        name: 'NH대한민국 히어로예금',
-        bank: 'NH농협',
-        tags: ['특판', '방문없이가입', '누구나가입'],
-        maxRate: 2.75,
-        basicRate: 2.45,
+        finPrdtCd: '10527001000925000',
+        productName: '영플러스적금',
+        bankName: '아이엠뱅크',
+        intrRate: 2.71,
+        intrRate2: 3.26,
     },
     {
-        id: 5,
-        name: 'e-그린세이브예금',
-        bank: 'SC제일',
-        tags: ['방문없이가입', '누구나가입'],
-        maxRate: 2.75,
-        basicRate: 2.45,
+        finPrdtCd: '01020400490002',
+        productName: '펫 적금',
+        bankName: '부산은행',
+        intrRate: 2.0,
+        intrRate2: 2.9,
     },
-    {
-        id: 6,
-        name: 'Sh해양플라스틱Zero!예금',
-        bank: 'SH수협',
-        tags: ['방문없이가입', '누구나가입'],
-        maxRate: 2.75,
-        basicRate: 2.4,
-    },
-    {
-        id: 7,
-        name: '우리 첫거래우대 정기예금',
-        bank: '우리',
-        tags: ['특판', '방문없이가입', '누구나가입'],
-        maxRate: 2.8,
-        basicRate: 1.8,
-    },
-    {
-        id: 8,
-        name: 'NH고향사랑기부예금',
-        bank: 'NH농협',
-        tags: ['방문없이가입', '누구나가입'],
-        maxRate: 2.8,
-        basicRate: 2.15,
-    },
-    {
-        id: 9,
-        name: '황금빛예금(일반형)',
-        bank: 'iM뱅크',
-        tags: [],
-        maxRate: 2.79,
-        basicRate: 2.19,
-    },
-    {
-        id: 10,
-        name: 'NH대한민국 히어로예금',
-        bank: 'NH농협',
-        tags: ['특판', '방문없이가입', '누구나가입'],
-        maxRate: 2.75,
-        basicRate: 2.45,
-    },
-    {
-        id: 11,
-        name: 'e-그린세이브예금',
-        bank: 'SC제일',
-        tags: ['방문없이가입', '누구나가입'],
-        maxRate: 2.75,
-        basicRate: 2.45,
-    },
-    {
-        id: 12,
-        name: 'Sh해양플라스틱Zero!예금',
-        bank: 'SH수협',
-        tags: ['방문없이가입', '누구나가입'],
-        maxRate: 2.75,
-        basicRate: 2.4,
-    },
-    {
-        id: 13,
-        name: '황금빛예금(일반형)',
-        bank: 'iM뱅크',
-        tags: [],
-        maxRate: 2.79,
-        basicRate: 2.19,
-    },
-    {
-        id: 14,
-        name: 'NH대한민국 히어로예금',
-        bank: 'NH농협',
-        tags: ['특판', '방문없이가입', '누구나가입'],
-        maxRate: 2.75,
-        basicRate: 2.45,
-    },
-    {
-        id: 15,
-        name: 'e-그린세이브예금',
-        bank: 'SC제일',
-        tags: ['방문없이가입', '누구나가입'],
-        maxRate: 2.75,
-        basicRate: 2.45,
-    },
-    {
-        id: 16,
-        name: 'Sh해양플라스틱Zero!예금',
-        bank: 'SH수협',
-        tags: ['방문없이가입', '누구나가입'],
-        maxRate: 2.75,
-        basicRate: 2.4,
-    },
-    {
-        id: 17,
-        name: '우리 첫거래우대 정기예금',
-        bank: '우리',
-        tags: ['특판', '방문없이가입', '누구나가입'],
-        maxRate: 2.8,
-        basicRate: 1.8,
-    },
-    {
-        id: 18,
-        name: 'NH고향사랑기부예금',
-        bank: 'NH농협',
-        tags: ['방문없이가입', '누구나가입'],
-        maxRate: 2.8,
-        basicRate: 2.15,
-    },
-    {
-        id: 19,
-        name: '황금빛예금(일반형)',
-        bank: 'iM뱅크',
-        tags: [],
-        maxRate: 2.79,
-        basicRate: 2.19,
-    },
-    {
-        id: 20,
-        name: '황금빛예금(일반형)',
-        bank: 'iM뱅크',
-        tags: [],
-        maxRate: 2.79,
-        basicRate: 2.19,
-    },
-]);
+];
 
 // 아이콘 이미지 파일들을 모두 가져오기
 const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
@@ -181,75 +58,62 @@ const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
     import: 'default',
 });
 
+// 기본 아이콘 경로
+const defaultIcon = new URL(
+    '@/assets/images/bankIcon/default.png',
+    import.meta.url
+).href;
+
 // 은행 이름(영문)을 받아 아이콘 경로를 반환
 const getBankIcon = (bankName) => {
     const english = bankNameMap[bankName];
-    if (!english) return '';
+    if (!english) return defaultIcon;
     const match = Object.entries(iconModules).find(([path]) =>
         path.includes(`/${english}.png`)
     );
-    return match ? match[1] : '';
+    return match ? match[1] : defaultIcon;
 };
 
 // 필터링
 const filteredProducts = computed(() => {
-    if (!props.filters) return products.value;
+    return products.filter((p) => {
+        const f = props.filters;
 
-    return products.value.filter((product) => {
-        const {
-            banks = [],
-            period = 0,
-            amount = '',
-            type = [],
-            conditions = [],
-        } = props.filters;
-
-        // 은행 필터
-        if (banks.length > 0 && !banks.includes(product.bank)) return false;
-
-        // 기간 필터
-        if (period > 0) {
-            if (!product.period) return false;
-            if (
-                product.period !== period &&
-                !(period === 25 && product.period > 24)
-            ) {
-                return false;
-            }
-        }
-
-        // 금액 필터
-        if (amount) {
-            const amt = parseInt(amount);
-            if (isNaN(amt) || amt < 100000) return false;
-            if (product.minAmount && amt < product.minAmount) return false;
-        }
-
-        // 유형 필터 (모두 포함)
-        if (type.length > 0 && !type.every((t) => product.tags.includes(t))) {
+        if (f.bankNames?.length && !f.bankNames.includes(p.bankName))
             return false;
-        }
-
-        // 조건 필터 (하나만 포함해도 통과)
-        if (
-            conditions.length > 0 &&
-            !conditions.some((c) => product.tags.includes(c))
-        ) {
+        if (f.productType && !p.productName.includes(f.productType))
             return false;
-        }
-
         return true;
     });
 });
 
-// 필터링 결과에 정렬
+// filters가 바뀌면 페이지 초기화
+watch(
+    () => props.filters,
+    () => {
+        currentPage.value = 1;
+    },
+    { deep: true }
+);
+
+// 정렬
 const sortedProducts = computed(() => {
     return [...filteredProducts.value].sort((a, b) => {
         return sortKey.value === 'max'
-            ? b.maxRate - a.maxRate
-            : b.basicRate - a.basicRate;
+            ? b.intrRate2 - a.intrRate2
+            : b.intrRate - a.intrRate;
     });
 });
+
+// 상세보기 이동
+function goToDetail(product) {
+    router
+        .push({
+            path: `/product/${product.finPrdtCd}`,
+            state: { product },
+        })
+        .then(() => window.scrollTo(0, 0));
+}
 
 // 페이지 이동
 const paginatedProducts = computed(() => {
@@ -261,7 +125,7 @@ const paginatedProducts = computed(() => {
 <template>
     <div class="product-list-wrapper">
         <div class="header-row">
-            <div class="count">{{ filteredProducts.length }}개</div>
+            <div class="count">{{ sortedProducts.length }}개</div>
             <div class="sort">
                 <select v-model="sortKey">
                     <option value="max">최고금리순</option>
@@ -274,27 +138,24 @@ const paginatedProducts = computed(() => {
 
         <div
             v-for="product in paginatedProducts"
-            :key="product.id"
+            :key="product.finPrdtCd"
             class="product"
+            @click="goToDetail(product)"
+            style="cursor: pointer"
         >
             <div class="left">
-                <img :src="getBankIcon(product.bank)" class="bank-icon" />
+                <img :src="getBankIcon(product.bankName)" class="bank-icon" />
                 <div class="info">
-                    <div class="name">{{ product.name }}</div>
-                    <div class="bank">{{ product.bank }}</div>
-                    <div class="tags">
-                        <span v-for="tag in product.tags" :key="tag">{{
-                            tag
-                        }}</span>
-                    </div>
+                    <div class="name">{{ product.productName }}</div>
+                    <div class="bank">{{ product.bankName }}</div>
                 </div>
             </div>
             <div class="right">
                 <div class="max">
-                    최고 <span>{{ product.maxRate.toFixed(2) }}%</span>
+                    최고 <span>{{ product.intrRate2 }}%</span>
                 </div>
                 <div class="basic">
-                    기본 {{ product.basicRate.toFixed(2) }}%
+                    기본 <span>{{ product.intrRate }}%</span>
                 </div>
             </div>
         </div>

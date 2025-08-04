@@ -8,20 +8,74 @@ import ConditionFilter from './filter/ConditionFilter.vue';
 const props = defineProps({
     filters: Object,
 });
-const emit = defineEmits(['update:filters']); // 외부로 emit
+const emit = defineEmits(['update:filters']);
 
-// 내부 편의를 위해 로컬에서 조작하듯 사용 (shallow copy)
-const localFilters = computed({
-    get: () => props.filters,
-    set: (val) => emit('update:filters', { ...val }),
+// 입력 전용 상태 (UI용)
+const localFilters = ref({
+    banks: [],
+    period: 0,
+    amount: '',
+    type: [],
+    conditions: [],
 });
 
-const activeFilter = computed({
-    get: () => props.filters.__active || null,
-    set: (val) => emit('update:filters', { ...props.filters, __active: val }),
-});
+// 외부 필터 active 상태
+const activeFilter = ref(null);
 
-// 기간 표시 변환
+// 외부 filters가 변경되면 localFilters도 초기화
+watch(
+    () => props.filters,
+    (newVal) => {
+        localFilters.value = {
+            banks: newVal.bankNames || [],
+            period: getPeriodFromRange(newVal.minSaveTrm, newVal.maxSaveTrm),
+            amount: newVal.minAmount?.toString() || '',
+            type: newVal.productType ? [newVal.productType] : [],
+            conditions: newVal.joinMembers || [],
+        };
+        activeFilter.value = newVal.__active || null;
+    },
+    { immediate: true }
+);
+
+// 필터 DTO로 변환해서 emit
+function emitFilterDto() {
+    const f = localFilters.value;
+    emit('update:filters', {
+        bankNames: f.banks || [],
+        joinMembers: f.conditions || [],
+        productType: f.type?.[0] || null,
+        minSaveTrm: getMinSaveTrm(f.period),
+        maxSaveTrm: getMaxSaveTrm(f.period),
+        minAmount: parseAmount(f.amount),
+        maxAmount: null,
+        hasSpclCnd: f.conditions.includes('우대조건'),
+        __active: activeFilter.value,
+    });
+}
+
+// 저장 기간 매핑
+function getMinSaveTrm(period) {
+    if (!period || period === 0) return null;
+    if (period === 25) return 25;
+    return period;
+}
+function getMaxSaveTrm(period) {
+    if (!period || period === 0) return null;
+    if (period === 25) return null;
+    return period;
+}
+function getPeriodFromRange(min, max) {
+    if (!min && !max) return 0;
+    if (min === 25) return 25;
+    return min;
+}
+function parseAmount(amount) {
+    const parsed = parseInt(amount);
+    return isNaN(parsed) ? null : parsed;
+}
+
+// UI 표시용
 const periodMap = {
     6: '6개월',
     12: '12개월',
@@ -29,10 +83,8 @@ const periodMap = {
     25: '24개월 이상',
 };
 
-// 한국어 금액 포맷 함수
 function formatKoreanCurrency(num) {
     if (isNaN(num) || num <= 0) return '';
-
     const jo = Math.floor(num / 1_0000_0000_0000);
     const uk = Math.floor((num % 1_0000_0000_0000) / 1_0000_0000);
     const man = Math.floor((num % 1_0000_0000) / 10000);
@@ -48,51 +100,42 @@ function formatKoreanCurrency(num) {
     return result;
 }
 
-// 선택된 필터를 chip으로 변환
 const chips = computed(() => {
-    const { banks, period, amount, type, conditions } = props.filters;
-
+    const f = localFilters.value;
     return [
-        ...banks,
-        periodMap[period] || null,
-        amount ? formatKoreanCurrency(Number(amount)) : null,
-        ...type,
-        ...conditions,
+        ...f.banks,
+        periodMap[f.period] || null,
+        f.amount ? formatKoreanCurrency(Number(f.amount)) : null,
+        ...f.type,
+        ...f.conditions,
     ].filter(Boolean);
 });
 
-// chip 제거
 function removeChip(chip) {
-    const updated = { ...props.filters };
-
-    updated.banks = updated.banks.filter((b) => b !== chip);
-
+    const f = localFilters.value;
+    f.banks = f.banks.filter((b) => b !== chip);
     const periodKey = Object.entries(periodMap).find(
         ([, label]) => label === chip
     )?.[0];
-    if (periodKey) updated.period = 0;
-
-    if (chip === formatKoreanCurrency(Number(updated.amount))) {
-        updated.amount = '';
-    }
-
-    updated.type = updated.type.filter((t) => t !== chip);
-    updated.conditions = updated.conditions.filter((c) => c !== chip);
-
-    emit('update:filters', updated);
+    if (periodKey) f.period = 0;
+    if (chip === formatKoreanCurrency(Number(f.amount))) f.amount = '';
+    f.type = f.type.filter((t) => t !== chip);
+    f.conditions = f.conditions.filter((c) => c !== chip);
+    emitFilterDto();
 }
 </script>
 
 <template>
     <div class="filter-bar-wrapper">
         <!-- 은행 필터 -->
-        <BankFilter v-model="localFilters.banks" />
+        <BankFilter v-model="localFilters.banks" @change="emitFilterDto" />
 
-        <!-- 필터 토글 버튼 -->
+        <!-- 토글 버튼 -->
         <div class="filter-toggle-row">
             <button
                 @click="
-                    activeFilter = activeFilter === 'period' ? null : 'period'
+                    activeFilter = activeFilter === 'period' ? null : 'period';
+                    emitFilterDto();
                 "
                 :class="[
                     'filter-toggle',
@@ -102,18 +145,20 @@ function removeChip(chip) {
                 기간·금액
                 <span>{{ activeFilter === 'period' ? '▲' : '▼' }}</span>
             </button>
-
             <button
-                @click="activeFilter = activeFilter === 'type' ? null : 'type'"
+                @click="
+                    activeFilter = activeFilter === 'type' ? null : 'type';
+                    emitFilterDto();
+                "
                 :class="['filter-toggle', { active: activeFilter === 'type' }]"
             >
                 상품유형 <span>{{ activeFilter === 'type' ? '▲' : '▼' }}</span>
             </button>
-
             <button
                 @click="
                     activeFilter =
-                        activeFilter === 'condition' ? null : 'condition'
+                        activeFilter === 'condition' ? null : 'condition';
+                    emitFilterDto();
                 "
                 :class="[
                     'filter-toggle',
@@ -131,13 +176,21 @@ function removeChip(chip) {
                 <PeriodFilter
                     v-model:period="localFilters.period"
                     v-model:amount="localFilters.amount"
+                    @update:period="emitFilterDto"
+                    @update:amount="emitFilterDto"
                 />
             </div>
             <div v-if="activeFilter === 'type'" class="dropdown-panel">
-                <TypeFilter v-model="localFilters.type" />
+                <TypeFilter
+                    v-model="localFilters.type"
+                    @change="emitFilterDto"
+                />
             </div>
             <div v-if="activeFilter === 'condition'" class="dropdown-panel">
-                <ConditionFilter v-model="localFilters.conditions" />
+                <ConditionFilter
+                    v-model="localFilters.conditions"
+                    @change="emitFilterDto"
+                />
             </div>
         </div>
 
@@ -158,7 +211,7 @@ function removeChip(chip) {
     background: white;
     padding: 2rem;
     border-radius: 1.5rem;
-    box-shadow: inset 0 0 12px #3573ee;
+    box-shadow: inset 0 0 12px #ddd;
     text-align: center;
     margin-bottom: 2rem;
 }

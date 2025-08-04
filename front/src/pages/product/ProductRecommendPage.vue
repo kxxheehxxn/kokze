@@ -6,11 +6,15 @@ import ProductList from '@/components/product/ProductList.vue';
 
 // 상위에서 필터 상태 관리
 const filters = ref({
-    banks: [],
-    period: 0,
-    amount: '',
-    type: [],
-    conditions: [],
+    bankNames: [],
+    joinMembers: [],
+    productType: null,
+    minSaveTrm: null,
+    maxSaveTrm: null,
+    minAmount: null,
+    maxAmount: null,
+    hasSpclCnd: false,
+    __active: null,
 });
 </script>
 

@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import { bankNameMap } from '@/utils/bankMap'; // 한글 은행명을 영문 파일명으로 매핑
 
 const currentPage = ref(0); // 현재 페이지
-const itemsPerPage = 2; //
+const itemsPerPage = 2; // 보여줄 갯수
 
 // 이미지 파일을 glob으로 불러오기
 const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
@@ -11,49 +11,55 @@ const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
     import: 'default',
 });
 
-// 은행명으로 아이콘 경로 반환
+// 기본 아이콘 경로
+const defaultIcon = new URL(
+    '@/assets/images/bankIcon/default.png',
+    import.meta.url
+).href;
+
+// 은행 이름(영문)을 받아 아이콘 경로를 반환
 const getBankIcon = (bankName) => {
-    const englishName = bankNameMap[bankName];
-    if (!englishName) return '';
+    const english = bankNameMap[bankName];
+    if (!english) return defaultIcon;
     const match = Object.entries(iconModules).find(([path]) =>
-        path.includes(`/${englishName}.png`)
+        path.includes(`/${english}.png`)
     );
-    return match ? match[1] : '';
+    return match ? match[1] : defaultIcon;
 };
 
-// 추천 상품 더미 데이터
+// DB 맞춤 더미 데이터
 const products = [
     {
-        id: 1,
-        name: 'Sh첫만남우대예금',
-        bank: 'SH수협',
-        maxRate: 2.9,
-        basicRate: 1.85,
-        highlights: ['20대 여성들의 TOP 10', 'SH 수협 첫거래 고객 우대사항'],
+        finPrdtCd: 'WR0001F',
+        productName: '우리SUPER주거래적금',
+        bankName: '우리은행',
+        intrRate: 2.15,
+        intrRate2: 3.55,
+        reason: '안정적이고 장기적인 상품',
     },
     {
-        id: 2,
-        name: 'KB청년우대적금',
-        bank: 'KB국민',
-        maxRate: 3.2,
-        basicRate: 2.0,
-        highlights: ['청년 전용 금리 우대', '국민은행 첫 거래 고객 특별 혜택'],
+        finPrdtCd: 'WR0001L',
+        productName: 'WON적금',
+        bankName: '우리은행',
+        intrRate: 2.95,
+        intrRate2: 3.15,
+        reason: '안정적이고 장기적인 상품',
     },
     {
-        id: 3,
-        name: '내맘적금',
-        bank: '카카오뱅크',
-        maxRate: 3.2,
-        basicRate: 2.0,
-        highlights: ['카카오페이 연동 시 금리 우대', 'MZ세대 인기 상품'],
+        finPrdtCd: '00266451',
+        productName: '퍼스트가계적금',
+        bankName: '한국스탠다드차타드은행',
+        intrRate: 2.55,
+        intrRate2: 2.55,
+        reason: '안정적이고 장기적인 상품',
     },
     {
-        id: 4,
-        name: '청년도약적금',
-        bank: '신한',
-        maxRate: 4.0,
-        basicRate: 2.5,
-        highlights: ['청년 대상 국고 지원 혜택', '우대금리 조건 간편'],
+        finPrdtCd: '10527001000925000',
+        productName: '영플러스적금',
+        bankName: '아이엠뱅크',
+        intrRate: 2.71,
+        intrRate2: 3.26,
+        reason: '안정적이고 장기적인 상품',
     },
 ];
 
@@ -93,31 +99,26 @@ function nextSlide() {
                 <div
                     class="card"
                     v-for="product in visibleProducts"
-                    :key="product.id"
+                    :key="product.finPrdtCd"
                 >
                     <div class="card-header">
                         <img
-                            :src="getBankIcon(product.bank)"
+                            :src="getBankIcon(product.bankName)"
                             alt="은행 로고"
                             class="bank-icon"
                         />
                         <div>
-                            <div class="product-name">{{ product.name }}</div>
-                            <div class="bank-name">{{ product.bank }}</div>
+                            <div class="product-name">
+                                {{ product.productName }}
+                            </div>
+                            <div class="bank-name">{{ product.bankName }}</div>
                         </div>
                     </div>
                     <div class="rate">
-                        최고 {{ product.maxRate.toFixed(2) }}% / 기본
-                        {{ product.basicRate.toFixed(2) }}% (12개월 세전)
+                        최고 {{ product.intrRate2 }}% / 기본
+                        {{ product.intrRate }}% (12개월 세전)
                     </div>
-                    <ul class="highlights">
-                        <li
-                            v-for="(highlight, idx) in product.highlights"
-                            :key="idx"
-                        >
-                            ✨ {{ highlight }} ✨
-                        </li>
-                    </ul>
+                    <div class="highlight">✨ {{ product.reason }} ✨</div>
                 </div>
             </div>
 
@@ -225,16 +226,10 @@ function nextSlide() {
     font-size: 0.95rem;
 }
 
-.highlights {
+.highlight {
     list-style: none;
     padding-left: 0.5rem;
     margin: 0;
-}
-
-.highlights li {
-    font-size: 0.95rem;
-    color: #111;
     font-weight: bold;
-    margin-bottom: 0.3rem;
 }
 </style>

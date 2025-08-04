@@ -1,10 +1,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { bankNameMap } from '@/utils/bankMap';
-import { fetchRecommendedProducts } from '@/api/productApi'; // ✅ 추가
+import { fetchRecommendedProducts } from '@/api/productApi';
 import { userAuthStore } from '@/stores/auth';
-import { useRouter } from 'vue-router'; // ✅ 추가
-const router = useRouter(); // ✅ 라우터 사용
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 function goToDetail(finPrdtCd) {
   router.push(`/product/${finPrdtCd}`);
@@ -12,9 +12,8 @@ function goToDetail(finPrdtCd) {
 
 const currentPage = ref(0);
 const itemsPerPage = 2;
-const products = ref([]); // ✅ 더미 → 동적 ref
+const products = ref([]);
 
-// ✅ 스토어에서 userId 불러오기
 const auth = userAuthStore();
 const userId = auth.state.user.userId;
 
@@ -36,7 +35,6 @@ const getBankIcon = (bankName) => {
   return match ? match[1] : defaultIcon;
 };
 
-// ✅ API 호출
 onMounted(async () => {
   try {
     const result = await fetchRecommendedProducts(userId);

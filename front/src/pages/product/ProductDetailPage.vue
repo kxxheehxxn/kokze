@@ -7,7 +7,6 @@ import ProductInfoBox from '@/components/product/detail/ProductInfo.vue';
 import ProductRateBox from '@/components/product/detail/ProductRate.vue';
 import { fetchProductDetail } from '@/api/productApi';
 
-// ✅ 여기에서 props로 받아야 함 (라우터에서 props: true 사용 중이므로)
 const props = defineProps({
   fin_prdt_cd: String,
 });
@@ -17,9 +16,9 @@ const isLoading = ref(true);
 
 // 상품 정보 불러오기
 const loadProduct = async () => {
-  console.log('받은 fin_prdt_cd:', props.fin_prdt_cd); // ✅ 확인용
+  console.log('받은 fin_prdt_cd:', props.fin_prdt_cd);
   try {
-    const result = await fetchProductDetail(props.fin_prdt_cd); // ✅ 여기!
+    const result = await fetchProductDetail(props.fin_prdt_cd);
     product.value = result;
   } catch (error) {
     console.error('상세 정보 불러오기 실패:', error);

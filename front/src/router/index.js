@@ -33,13 +33,16 @@ const router = createRouter({
       path: '/userpage',
       name: 'UserPage',
       component: () => import('@/pages/UserPage.vue'),
-      beforeEnter: isAuthenticated,
     },
     {
       path: '/points',
       name: 'PointPage',
       component: () => import('@/pages/PointPage.vue'),
-      beforeEnter: isAuthenticated,
+    },
+    {
+      path: '/points',
+      name: 'PointPage',
+      component: () => import('@/pages/PointPage.vue'),
     },
     {
       path: '/user/asset',
@@ -50,41 +53,37 @@ const router = createRouter({
       path: '/user/mbti',
       name: 'UserMbtiEditPage',
       component: () => import('@/pages/UserMbtiEditPage.vue'),
-      beforeEnter: isAuthenticated,
     },
     {
       path: '/user/password',
       name: 'UserPasswordEditPage',
       component: () => import('@/pages/UserPasswordEditPage.vue'),
-      beforeEnter: isAuthenticated,
     },
     {
       path: '/user/withdraw',
       name: 'UserWithdrawPage',
       component: () => import('@/pages/UserWithdrawPage.vue'),
-      beforeEnter: isAuthenticated,
     },
     {
       path: '/goals',
       name: 'GoalPage',
-      component: () => import('@/pages/GoalPage.vue'),
-      beforeEnter: isAuthenticated,
+      component: () => import('@/pages/goal/GoalPage.vue'),
     },
     {
       path: '/goals/:goalId', // 상세 페이지 경로
       name: 'GoalDetailPage',
-      component: () => import('@/pages/GoalDetailPage.vue'),
+      component: () => import('@/pages/goal/GoalDetailPage.vue'),
       props: true, // goalId를 props로 전달
     },
     {
       path: '/goals/create',
       name: 'GoalCreatePage',
-      component: () => import('@/pages/GoalCreatePage.vue'),
+      component: () => import('@/pages/goal/GoalCreatePage.vue'),
     },
     {
-      path: '/goal/edit/:goalId',
+      path: '/goals/edit/:goalId',
       name: 'GoalEditPage',
-      component: () => import('@/pages/GoalEditPage.vue'),
+      component: () => import('@/pages/goal/GoalEditPage.vue'),
       props: true, // goalId param을 props로 전달
     },
 
@@ -97,13 +96,11 @@ const router = createRouter({
       path: '/tax-management',
       name: 'TaxPage.vue',
       component: () => import('@/pages/tax/TaxPage.vue'),
-      beforeEnter: isAuthenticated,
     },
     {
       path: '/product',
       name: 'ProductRecommendPage',
       component: () => import('@/pages/product/ProductRecommendPage.vue'),
-      beforeEnter: isAuthenticated,
     },
     {
       path: '/product/:fin_prdt_cd',

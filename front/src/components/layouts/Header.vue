@@ -45,8 +45,7 @@ const handleClickOutside = (event) => {
   const btnEl = hamburgerBtnRef.value;
   const menuEl =
     // HamburgerButton이 Vue 컴포넌트라면 $el, 아니면 직접 DOM
-    (hamburgerRef.value && (hamburgerRef.value.$el || hamburgerRef.value)) ||
-    null;
+    (hamburgerRef.value && (hamburgerRef.value.$el || hamburgerRef.value)) || null;
 
   // 클릭이 버튼 안이거나 메뉴 안이면 아무것도 안 함
   if (
@@ -80,9 +79,7 @@ onBeforeUnmount(() => {
       </router-link>
 
       <!-- 네비게이션 컴포넌트 공간 (중앙) -->
-      <div
-        class="navigation-space d-flex justify-content-center align-items-center"
-      >
+      <div class="navigation-space d-flex justify-content-center align-items-center">
         <NavBar />
       </div>
 
@@ -93,21 +90,14 @@ onBeforeUnmount(() => {
           :class="{ active: isHamburgerOpen }"
           @click.stop="toggleHamburger"
         >
-          <i
-            class="fa-solid fa-bars"
-            style="background-color: transparent; color: white"
-          ></i>
+          <i class="fa-solid fa-bars" style="background-color: transparent; color: white"></i>
         </button>
       </div>
     </div>
   </header>
 
   <!-- Sidebar 컴포넌트 -->
-  <HamburgerButton
-    :is-open="isHamburgerOpen"
-    @close="closeHamburger"
-    @menu-click="handleHamburgerMenuClick"
-  />
+  <HamburgerButton :is-open="isHamburgerOpen" @close="closeHamburger" @menu-click="handleHamburgerMenuClick" />
 </template>
 
 <style scoped>
@@ -163,10 +153,12 @@ onBeforeUnmount(() => {
 
 /* 네비게이션 공간 (중앙) */
 .navigation-space {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   background-color: transparent;
+  flex-grow: 1; /* 남은 공간을 모두 차지하도록 설정 */
+  min-width: 0; /* flex 컨테이너 내부에서 내용물이 넘칠 때 너비를 0까지 줄일 수 있게 함 */
+  display: flex; /* 내부 아이템(NavBar)을 정렬하기 위해 flex 컨테이너로 만듭니다. */
+  justify-content: center; /* NavBar 컴포넌트를 중앙 정렬합니다. */
+  align-items: center;
 }
 
 /* 햄버거 버튼 (오른쪽 고정) */
@@ -257,8 +249,8 @@ onBeforeUnmount(() => {
   }
 
   .logo-icon {
-    width: 40px; /* 로고 아이콘 크기 더 줄임 */
-    height: 40px;
+    width: 44px; /* 로고 아이콘 크기 더 줄임 */
+    height: 44px;
   }
 
   .hamburger-section {
@@ -266,8 +258,8 @@ onBeforeUnmount(() => {
   }
 
   .hamburger-btn {
-    width: 40px; /* 햄버거 버튼 크기 더 줄임 */
-    height: 40px;
+    width: 44px; /* 햄버거 버튼 크기 더 줄임 */
+    height: 44px;
   }
 
   .hamburger-btn i {

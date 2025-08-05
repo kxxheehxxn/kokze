@@ -7,11 +7,7 @@
         class="navbar-item"
         :class="{ active: item.route === currentRoute }"
       >
-        <router-link
-          :to="item.route"
-          class="navbar-link"
-          @click="selectItem(item.name)"
-        >
+        <router-link :to="item.route" class="navbar-link" @click="selectItem(item.name)">
           {{ item.name }}
         </router-link>
       </li>
@@ -72,7 +68,7 @@ const selectItem = (itemName) => {
   display: flex; /* 내부 아이템 중앙 정렬을 위해 flex 사용 */
   justify-content: center; /* 수평 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
-  max-width: fit-content; /* 내용물에 맞춰 너비 조절 */
+  max-width: 880px; /* 내용물에 맞춰 너비 조절 */
   margin: 0 auto; /* 상위 컨테이너 내에서 중앙 정렬 (필요시) */
 }
 
@@ -81,7 +77,7 @@ const selectItem = (itemName) => {
   margin: 0;
   padding: 0;
   display: flex; /* 리스트 아이템들을 가로로 나열 */
-  gap: 100px; /* 아이템들 사이의 간격 */
+  gap: 80px; /* 아이템들 사이의 간격 */
 }
 
 .navbar-item {
@@ -140,7 +136,7 @@ const selectItem = (itemName) => {
     padding: 6px 12px; /* 패딩 줄임 */
   }
   .navbar-link {
-    font-size: 14px; /* 폰트 크기 줄임 */
+    font-size: 15px; /* 폰트 크기 줄임 */
   }
 }
 
@@ -157,7 +153,7 @@ const selectItem = (itemName) => {
     padding: 4px 8px; /* 패딩 더 줄임 */
   }
   .navbar-link {
-    font-size: 13px; /* 폰트 크기 줄임 */
+    font-size: 15px; /* 폰트 크기 줄임 */
   }
 }
 

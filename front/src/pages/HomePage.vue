@@ -15,6 +15,7 @@ import { useRouter } from 'vue-router';
 const auth = userAuthStore();
 const router = useRouter();
 const showQuizModal = ref(false);
+const chartComponentRef = ref(null);
 
 const isUserLoggedIn = computed(() => {
   return auth.isLogin;
@@ -32,11 +33,25 @@ const closeQuizModal = () => {
   showQuizModal.value = false;
 };
 
+const handleNavCardClick = (path) => {
+  if (auth.isLogin) {
+    router.push(path);
+  } else {
+    showLoginAlert();
+  }
+};
+
 const showLoginAlert = () => {
   const result = confirm('이용하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?');
 
   if (result) {
     router.push('/auth/login');
+  }
+};
+
+const updateChart = () => {
+  if (chartComponentRef.value && chartComponentRef.value.fetchUserAssetChart) {
+    chartComponentRef.value.fetchUserAssetChart();
   }
 };
 
@@ -55,10 +70,10 @@ const scrollToTop = () => {
       <!-- 1. 사용자 자산 현황 + 차트 (상단) - 로그인 시에만 표시 -->
       <div class="asset-section" v-if="isUserLoggedIn">
         <div class="asset-info-component">
-          <UserAssetComponent :userId="auth.userId" />
+          <UserAssetComponent :userId="auth.userId" @asset-lookup="updateChart" />
         </div>
         <div class="chart-component">
-          <AssetChartComponent :userId="auth.userId" />
+          <AssetChartComponent :userId="auth.userId" ref="chartComponentRef" />
         </div>
       </div>
 
@@ -85,13 +100,13 @@ const scrollToTop = () => {
 
       <!-- 4. 하단 3개 컴포넌트 (세금 관리, 금융 상품 추천, 목표) -->
       <div class="bottom-navigation-section">
-        <div class="nav-card">
+        <div class="nav-card" @click="handleNavCardClick('/tax-management')">
           <HomeToTax />
         </div>
-        <div class="nav-card">
+        <div class="nav-card" @click="handleNavCardClick('/product')">
           <HomeToProduct />
         </div>
-        <div class="nav-card">
+        <div class="nav-card" @click="handleNavCardClick('/goals')">
           <HomeToGoal />
         </div>
       </div>
@@ -171,7 +186,7 @@ const scrollToTop = () => {
   width: 100%;
   padding-right: 20px;
   padding-left: 20px;
-  margin-top: 100px; /* 상단 여백 */
+  margin-top: 70px; /* 상단 여백 */
   max-width: none;
   justify-content: center; /* 중앙 정렬 */
 }
@@ -242,7 +257,7 @@ const scrollToTop = () => {
   color: #374151;
   font-size: 28px;
   width: 100%;
-  margin-top: 100px; /* 상단 여백 */
+  margin-top: 70px; /* 상단 여백 */
   max-width: none;
   flex-direction: column; /* 세로 정렬 */
 }
@@ -348,7 +363,7 @@ const scrollToTop = () => {
 
   /* 자산 섹션이 없을 때 여백 조정 */
   .middle-section.no-asset-section {
-    margin-top: 20px;
+    margin-top: 0px;
   }
 
   .bottom-navigation-section {
@@ -385,10 +400,14 @@ const scrollToTop = () => {
   /* 자산 + 차트 세로 배치 */
   .asset-section {
     flex-direction: column;
-    gap: 15px;
+    gap: 0px;
   }
 
-  .asset-info-component,
+  .asset-info-component {
+    min-width: 160px;
+    padding-bottom: 0px;
+  }
+
   .chart-component {
     min-height: 160px;
   }

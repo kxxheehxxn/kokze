@@ -5,6 +5,7 @@
         <i class="fa-solid fa-bell"></i>
       </div>
       <h2 class="title">알려드립니다.</h2>
+      <div class="spacer"></div>
     </div>
     <div class="middle">
       <div class="content">
@@ -71,6 +72,11 @@
   word-break: break-word; /* 긴 단어가 영역을 벗어나지 않도록 */
 }
 
+/* 새로 추가된 spacer에 flex-grow를 적용합니다. */
+.spacer {
+  width: 20px; /* spacer의 너비를 설정 */
+}
+
 .middle {
   flex: 1;
 }
@@ -118,12 +124,8 @@
   overflow-wrap: break-word; /* 긴 단어가 영역을 벗어나지 않도록 */
 }
 
-/* ---------------------------------------------------------------------- */
-/* 반응형 디자인 */
-/* ---------------------------------------------------------------------- */
-
-/* 1023px 이하 (데스크탑 -> 태블릿 전환 지점) */
-@media (max-width: 1023px) {
+/* 1024px 이하 (데스크탑 -> 태블릿 전환 지점) */
+@media (max-width: 1024px) {
   .notice-summary-component {
     padding: 18px; /* 기존 패딩 유지 */
     gap: 20px; /* 기존 간격 유지 */

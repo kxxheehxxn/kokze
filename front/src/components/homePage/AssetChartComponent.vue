@@ -1,41 +1,40 @@
 <template>
   <div class="user-asset-chart">
-    <div class="chart-container">
-      <div class="chart-wrapper">
-        <Doughnut :data="chartData" :options="chartOptions" :plugins="chartPlugins" />
-      </div>
-    </div>
-
-    <div class="legend-container" v-if="hasAssetData">
-      <div
-        class="legend-item"
-        v-for="(item, index) in assetData"
-        :key="index"
-        :class="{ 'legend-hover': hoveredIndex === index }"
-        @mouseover="hoveredIndex = index"
-        @mouseleave="hoveredIndex = null"
-      >
-        <div class="legend-indicator">
-          <div class="color-dot" :style="{ backgroundColor: item.color }"></div>
-        </div>
-        <div class="legend-content">
-          <div class="asset-info">
-            <span class="asset-type">{{ item.type }}</span>
-            <span class="asset-percentage">({{ item.percentage.toFixed(1) }}%)</span>
-          </div>
-          <div class="asset-amount">{{ formatCurrency(item.amount) }}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 데이터가 없을 때 메시지 표시 -->
-    <div class="empty-state" v-if="!hasAssetData && !loading">
-      <p class="empty-message">등록된 자산이 없습니다</p>
-    </div>
-
-    <!-- 로딩 상태 -->
     <div class="loading-state" v-if="loading">
       <p class="loading-message">자산 정보를 불러오는 중...</p>
+    </div>
+
+    <template v-else-if="hasAssetData">
+      <div class="chart-container">
+        <div class="chart-wrapper">
+          <Doughnut ref="doughnutChartRef" :data="chartData" :options="chartOptions" :plugins="chartPlugins" />
+        </div>
+      </div>
+      <div class="legend-container">
+        <div
+          class="legend-item"
+          v-for="(item, index) in assetData"
+          :key="index"
+          :class="{ 'legend-hover': hoveredIndex === index }"
+          @mouseover="hoveredIndex = index"
+          @mouseleave="hoveredIndex = null"
+        >
+          <div class="legend-indicator">
+            <div class="color-dot" :style="{ backgroundColor: item.color }"></div>
+          </div>
+          <div class="legend-content">
+            <div class="asset-info">
+              <span class="asset-type">{{ item.type }}</span>
+              <span class="asset-percentage">({{ item.percentage.toFixed(1) }}%)</span>
+            </div>
+            <div class="asset-amount">{{ formatCurrency(item.amount) }}</div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <div class="empty-state" v-else>
+      <p class="empty-message">등록된 자산이 없습니다</p>
     </div>
   </div>
 </template>
@@ -59,6 +58,7 @@ const props = defineProps({
 const hoveredIndex = ref(null);
 const loading = ref(false);
 const error = ref(null);
+const doughnutChartRef = ref(null);
 
 // 계좌 타입별 색상 매핑 (그룹화된 타입 기준)
 const accountTypeColors = {
@@ -274,6 +274,10 @@ const formatCurrency = (amount) => {
   );
 };
 
+defineExpose({
+  fetchUserAssetChart,
+});
+
 onMounted(() => {
   fetchUserAssetChart();
 });
@@ -421,10 +425,9 @@ onMounted(() => {
 }
 
 /* 1024px 미만 화면에서 .asset-amount 숨기기 */
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   /* AssetCard.vue의 .asset-item .amount와 유사한 처리 */
   .asset-amount {
-    /* .legend-item 내의 .asset-amount */
     display: none;
   }
   .legend-content {
@@ -436,6 +439,7 @@ onMounted(() => {
 @media (max-width: 768px) {
   .user-asset-chart {
     padding: 16px;
+    flex-direction: row;
   }
 
   .chart-wrapper {
@@ -446,13 +450,19 @@ onMounted(() => {
   .legend-container {
     padding: 0; /* 모바일에서는 굳이 필요 없으므로 패딩 제거 */
     gap: 12px; /* 간격 조정 */
+    flex-direction: column; /* 세로로 정렬 */
   }
 
   .legend-item {
     flex-basis: calc(50% - 6px); /* 2개씩 배치 (gap 12px의 절반인 6px을 뺌) */
-    max-width: calc(50% - 6px);
+    max-width: none;
     padding: 10px 12px; /* 패딩 추가 조정 */
     min-width: unset; /* 최소 너비 제한 해제하여 더 유연하게 */
+  }
+
+  .asset-amount {
+    font-size: 14px; /* 폰트 크기 줄임 */
+    display: contents;
   }
 
   .asset-type,
@@ -479,8 +489,11 @@ onMounted(() => {
     flex-basis: 100%; /* 한 줄에 하나씩 */
     max-width: 100%;
     padding: 12px;
-    border: 1px solid #cfcfd0;
     justify-content: space-between;
+  }
+
+  .asset-amount {
+    display: none; /* 모바일에서는 금액 숨김 */
   }
 
   .asset-info {

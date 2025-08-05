@@ -1,5 +1,5 @@
 <template>
-  <div class="home-to-goal-card" @click="handleGoalManagement">
+  <div class="home-to-goal-card">
     <div class="card-header">
       <div>2025년 연말정산</div>
       <h3 class="card-title">목표</h3>
@@ -14,11 +14,6 @@
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
-// 목표 페이지로 이동
-const handleGoalManagement = () => {
-  router.push('/goals');
-};
 </script>
 
 <style scoped>
@@ -62,7 +57,7 @@ const handleGoalManagement = () => {
   z-index: 1;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .home-to-goal-card {
     padding: 20px;
   }

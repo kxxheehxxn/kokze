@@ -1,7 +1,7 @@
 <template>
   <UserCardLayout>
     <h2 class="title">자산정보 수정</h2>
-    <form class="asset-form" @submit.prevent="onSubmit">
+    <form class="asset-form mt-5" @submit.prevent="onSubmit">
       <div class="form-group">
         <label class="label">월급(수입)</label>
         <input
@@ -39,77 +39,77 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { getUserInfo, updateUserProfile, createTestUser } from '@/api/userApi'
-import UserCardLayout from '@/components/UserCardLayout.vue'
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { getUserInfo, updateUserProfile, createTestUser } from '@/api/userApi';
+import UserCardLayout from '@/components/UserCardLayout.vue';
 
-const salary = ref(0)
-const payAmount = ref(0)
-const loading = ref(false)
-const error = ref(null)
-const success = ref(false)
-const router = useRouter()
+const salary = ref(0);
+const payAmount = ref(0);
+const loading = ref(false);
+const error = ref(null);
+const success = ref(false);
+const router = useRouter();
 
 async function loadUserAsset() {
-  error.value = null
+  error.value = null;
   try {
-    const user = await getUserInfo()
-    salary.value = user.salary || 0
-    payAmount.value = user.payAmount || 0
+    const user = await getUserInfo();
+    salary.value = user.salary || 0;
+    payAmount.value = user.payAmount || 0;
   } catch (e) {
-    error.value = '사용자 정보를 불러올 수 없습니다.'
+    error.value = '사용자 정보를 불러올 수 없습니다.';
 
     try {
-      await createTestUser()
+      await createTestUser();
 
-      const user = await getUserInfo()
-      salary.value = user.salary || 0
-      payAmount.value = user.payAmount || 0
-      error.value = null
+      const user = await getUserInfo();
+      salary.value = user.salary || 0;
+      payAmount.value = user.payAmount || 0;
+      error.value = null;
     } catch (testError) {
-      error.value = '테스트용 사용자 생성에도 실패했습니다.'
+      error.value = '테스트용 사용자 생성에도 실패했습니다.';
     }
   }
 }
 
 onMounted(() => {
-  loadUserAsset()
-})
+  loadUserAsset();
+});
 
 async function onSubmit() {
   if (salary.value === null || payAmount.value === null) {
-    error.value = '모든 필드를 입력해주세요.'
-    return
+    error.value = '모든 필드를 입력해주세요.';
+    return;
   }
 
-  loading.value = true
-  error.value = null
-  success.value = false
+  loading.value = true;
+  error.value = null;
+  success.value = false;
   try {
     const result = await updateUserProfile({
       salary: salary.value,
       payAmount: payAmount.value,
-    })
+    });
     if (result.success) {
-      success.value = true
+      success.value = true;
       setTimeout(() => {
-        router.push('/userpage')
-      }, 1200)
+        router.push('/userpage');
+      }, 1200);
     } else {
       error.value =
         '자산 정보 수정에 실패했습니다: ' +
-        (result.message || '알 수 없는 오류')
+        (result.message || '알 수 없는 오류');
     }
   } catch (e) {
-    error.value = '자산 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.'
+    error.value = '자산 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.';
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 function onCancel() {
-  router.back()
+  router.back();
 }
 </script>
 
@@ -164,7 +164,7 @@ function onCancel() {
   display: flex;
   justify-content: center;
   gap: 32px;
-  margin-top: 32px;
+  margin-top: 52px;
   width: 100%;
 }
 .cancel-btn,

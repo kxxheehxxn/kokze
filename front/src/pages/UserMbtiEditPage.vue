@@ -39,12 +39,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import UserCardLayout from '@/components/UserCardLayout.vue'
-import { updateMbti } from '@/api/userApi'
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import UserCardLayout from '@/components/UserCardLayout.vue';
+import { updateMbti } from '@/api/userApi';
 
-const userName = '김콕재'
+const userName = '김콕재';
 
 const questions = [
   {
@@ -89,71 +89,73 @@ const questions = [
       { text: '손해는 피하고 확실한 걸 고른다', type: 'low', score: 4 },
     ],
   },
-]
+];
 
-const step = ref(0)
-const selected = ref(null)
-const scores = ref({ fast: 0, slow: 0, high: 0, low: 0 })
-const router = useRouter()
+const step = ref(0);
+const selected = ref(null);
+const scores = ref({ fast: 0, slow: 0, high: 0, low: 0 });
+const router = useRouter();
 
 function onNext() {
-  const choice = questions[step.value].choices[selected.value]
+  const choice = questions[step.value].choices[selected.value];
   if (choice.type === 'fast' || choice.type === 'slow') {
-    scores.value[choice.type] += choice.score
+    scores.value[choice.type] += choice.score;
   } else if (choice.type === 'high' || choice.type === 'low') {
-    scores.value[choice.type] += choice.score
+    scores.value[choice.type] += choice.score;
   }
-  step.value++
-  selected.value = null
+  step.value++;
+  selected.value = null;
 }
 
 function onCancel() {
-  router.back()
+  router.back();
 }
 
 function onRetry() {
-  step.value = 0
-  selected.value = null
-  scores.value = { fast: 0, slow: 0, high: 0, low: 0 }
+  step.value = 0;
+  selected.value = null;
+  scores.value = { fast: 0, slow: 0, high: 0, low: 0 };
 }
 
 const mbtiResult = computed(() => {
-  if (step.value < questions.length) return ''
-  const isFast = scores.value.fast >= scores.value.slow
-  const isHigh = scores.value.high >= scores.value.low
-  if (isFast && isHigh) return '신속한 승부사'
-  if (!isFast && isHigh) return '신중한 승부사'
-  if (isFast && !isHigh) return '신속한 분석가'
-  return '신중한 분석가'
-})
+  if (step.value < questions.length) return '';
+  const isFast = scores.value.fast >= scores.value.slow;
+  const isHigh = scores.value.high >= scores.value.low;
+  if (isFast && isHigh) return '신속한 승부사';
+  if (!isFast && isHigh) return '신중한 승부사';
+  if (isFast && !isHigh) return '신속한 분석가';
+  return '신중한 분석가';
+});
 
 const mbtiDesc = computed(() => {
   switch (mbtiResult.value) {
     case '신속한 승부사':
-      return `빠른 결정과 과감한 투자로 기회를 잡는 타입!\n새로운 도전과 높은 수익을 추구하며, 리스크도 두려워하지 않습니다.`
+      return `빠른 결정과 과감한 투자로 기회를 잡는 타입!\n새로운 도전과 높은 수익을 추구하며, 리스크도 두려워하지 않습니다.`;
     case '신중한 승부사':
-      return `분석과 신중함을 바탕으로, 기회가 오면 과감하게 승부하는 타입!\n충분한 정보와 준비 후에 도전하는 스타일입니다.`
+      return `분석과 신중함을 바탕으로, 기회가 오면 과감하게 승부하는 타입!\n충분한 정보와 준비 후에 도전하는 스타일입니다.`;
     case '신속한 분석가':
-      return `빠른 판단으로도 리스크는 최소화하는, 실용적 투자자!\n효율과 실리를 중시하며, 안정적인 수익도 놓치지 않습니다.`
+      return `빠른 판단으로도 리스크는 최소화하는, 실용적 투자자!\n효율과 실리를 중시하며, 안정적인 수익도 놓치지 않습니다.`;
     case '신중한 분석가':
-      return `꼼꼼한 분석과 안정성을 중시하는, 계획형 투자자!\n안정적인 자산 관리와 예측 가능한 결과를 선호합니다.`
+      return `꼼꼼한 분석과 안정성을 중시하는, 계획형 투자자!\n안정적인 자산 관리와 예측 가능한 결과를 선호합니다.`;
     default:
-      return ''
+      return '';
   }
-})
+});
 
 async function saveMbtiResult() {
   try {
-    const result = await updateMbti(mbtiResult.value)
+    const result = await updateMbti(mbtiResult.value);
     if (result.success) {
-      alert('MBTI가 성공적으로 저장되었습니다!')
-      router.push('/userpage')
+      alert('MBTI가 성공적으로 저장되었습니다!');
+      router.push('/userpage');
     } else {
-      alert('MBTI 저장에 실패했습니다: ' + (result.message || '알 수 없는 오류'))
+      alert(
+        'MBTI 저장에 실패했습니다: ' + (result.message || '알 수 없는 오류')
+      );
     }
   } catch (error) {
-    alert('MBTI 저장 중 오류가 발생했습니다. 다시 시도해주세요.')
-    console.error('MBTI 저장 실패:', error)
+    alert('MBTI 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+    console.error('MBTI 저장 실패:', error);
   }
 }
 </script>
@@ -210,7 +212,6 @@ async function saveMbtiResult() {
   display: flex;
   justify-content: center;
   gap: 32px;
-  margin-top: 32px;
   width: 100%;
 }
 .cancel-btn,

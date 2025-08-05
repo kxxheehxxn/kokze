@@ -136,7 +136,6 @@ onMounted(() => {
   height: 570px;
   background-color: #fff;
   border-radius: 28px;
-  padding: 2rem;
   padding: 3rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
@@ -195,6 +194,7 @@ onMounted(() => {
 }
 
 .user-menu li:last-child {
+  font-size: 16px;
   color: #bdbdbd;
 }
 
@@ -206,5 +206,10 @@ onMounted(() => {
   padding: 8px;
   background: #f8f9fa;
   border-radius: 8px;
+}
+@media (max-width: 1024px) and (orientation: portrait) {
+  .user-card {
+    min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
+  }
 }
 </style>

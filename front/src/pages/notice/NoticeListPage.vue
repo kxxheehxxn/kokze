@@ -86,6 +86,7 @@ load(pageRequest);
             type="text"
             class="search-input"
             v-model="searchKeyword"
+            placeholder="검색어를 입력하세요"
             @keyup.enter="search"
           />
           <i class="search-icon fa-solid fa-magnifying-glass" @click="search" />
@@ -231,5 +232,10 @@ table {
 }
 i {
   background-color: transparent;
+}
+@media (max-width: 1024px) and (orientation: portrait) {
+  .custom-box {
+    min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
+  }
 }
 </style>

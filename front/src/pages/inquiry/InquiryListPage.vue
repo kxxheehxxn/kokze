@@ -140,13 +140,7 @@ onMounted(async () => {
             </tr>
           </thead>
           <tbody>
-            <tr v-if="combinedInquiries.length === 0">
-              <td colspan="5" class="text-center py-4 text-muted">
-                게시글이 없습니다.
-              </td>
-            </tr>
             <tr
-              v-else
               v-for="(inquiry, index) in combinedInquiries"
               :key="inquiry.infoId"
               :class="{
@@ -398,7 +392,7 @@ i {
 }
 
 /* 모바일/태블릿 대응 */
-@media (max-width: 1100px) {
+@media (max-width: 1024wpx) {
   .custom-box {
     width: 100%;
     padding: 1.5rem;
@@ -495,6 +489,11 @@ i {
   }
   .custom-box {
     padding: 1rem;
+  }
+}
+@media (max-width: 1024px) and (orientation: portrait) {
+  .custom-box {
+    min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
   }
 }
 </style>

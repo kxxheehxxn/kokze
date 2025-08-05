@@ -18,3 +18,13 @@ export const fetchRecommendedProducts = async (userId) => {
   });
   return response.data;
 };
+
+export async function filterProducts(filter) {
+  try {
+    const response = await axios.post('/api/products/filter', filter);
+    return response.data;
+  } catch (error) {
+    console.error('상품 필터링 에러:', error);
+    return [];
+  }
+}

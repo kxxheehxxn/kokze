@@ -26,7 +26,26 @@
       </div>
     </div>
 
-    <button class="action-button" @click="handleAssetLookup">현재 자산 조회 하기</button>
+    <div class="button-group">
+      <button class="action-button" @click="handleAssetLookup">현재 자산 조회 하기</button>
+      <button class="sync-button" @click="handleYeomsky95Sync" :disabled="syncing">
+        {{ syncing ? '연동 중...' : '현재자산연동하기' }}
+      </button>
+    </div>
+
+    <!-- 연동 결과 모달 -->
+    <div v-if="showSyncModal" class="modal-overlay" @click="closeSyncModal">
+      <div class="modal-content" @click.stop>
+        <h3>자산 연동 결과</h3>
+        <div class="sync-result">
+          <p>{{ syncMessage }}</p>
+          <div v-if="syncData" class="sync-data">
+            <pre>{{ JSON.stringify(syncData, null, 2) }}</pre>
+          </div>
+        </div>
+        <button class="modal-close-btn" @click="closeSyncModal">닫기</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -52,6 +71,12 @@ const monthlyIncome = ref(0);
 const averageGoalRate = ref(0);
 const loading = ref(false);
 const error = ref(null);
+
+// yeomsky95 연동 관련 데이터
+const syncing = ref(false);
+const showSyncModal = ref(false);
+const syncMessage = ref('');
+const syncData = ref(null);
 
 // Computed 속성
 const formattedAverageGoalRate = computed(() => {
@@ -103,6 +128,32 @@ const formatCurrency = (amount) => {
 const handleAssetLookup = () => {
   emit('asset-lookup');
   fetchUserAssetData();
+};
+
+// yeomsky95 자산 연동 메서드
+const handleYeomsky95Sync = async () => {
+  syncing.value = true;
+  syncMessage.value = '';
+  syncData.value = null;
+
+  try {
+    const result = await assetApi.getYeomsky95Assets();
+    syncData.value = result;
+    syncMessage.value = 'yeomsky95 사용자의 자산 정보가 성공적으로 연동되었습니다.';
+    showSyncModal.value = true;
+  } catch (err) {
+    console.error('Failed to sync yeomsky95 assets:', err);
+    syncMessage.value = '자산 연동에 실패했습니다: ' + (err.message || '알 수 없는 오류');
+    showSyncModal.value = true;
+  } finally {
+    syncing.value = false;
+  }
+};
+
+const closeSyncModal = () => {
+  showSyncModal.value = false;
+  syncMessage.value = '';
+  syncData.value = null;
 };
 
 // 컴포넌트 마운트 시 실행
@@ -226,10 +277,16 @@ onMounted(() => {
   transition: width 0.3s ease;
 }
 
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+}
+
 .action-button {
   width: 100%;
   padding: 16px;
-  margin-top: auto; /* 하단으로 자동 배치 */
   background: #fd5757;
   color: white;
   border: none;
@@ -249,6 +306,110 @@ onMounted(() => {
   transform: translateY(0);
 }
 
+.sync-button {
+  width: 100%;
+  padding: 16px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.sync-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+.sync-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.sync-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* 모달 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h3 {
+  margin: 0 0 16px 0;
+  color: #333;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.sync-result {
+  margin-bottom: 20px;
+}
+
+.sync-result p {
+  margin: 0 0 12px 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.sync-data {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.sync-data pre {
+  margin: 0;
+  font-size: 12px;
+  color: #495057;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.modal-close-btn {
+  width: 100%;
+  padding: 12px;
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.modal-close-btn:hover {
+  background: #4b5563;
+}
+
 @media (max-width: 1023px) {
   .title {
     font-size: 22px; /* 폰트 크기 조정 */
@@ -265,7 +426,8 @@ onMounted(() => {
   .progress-value {
     font-size: 20px; /* 폰트 크기 조정 */
   }
-  .action-button {
+  .action-button,
+  .sync-button {
     font-size: 18px; /* 폰트 크기 조정 */
   }
 }
@@ -286,7 +448,8 @@ onMounted(() => {
   .progress-value {
     font-size: 20px;
   }
-  .action-button {
+  .action-button,
+  .sync-button {
     font-size: 18px;
     padding: 14px;
   }
@@ -325,7 +488,8 @@ onMounted(() => {
   .progress-value {
     font-size: 18px; /* 폰트 크기 더 줄임 */
   }
-  .action-button {
+  .action-button,
+  .sync-button {
     font-size: 16px;
     padding: 12px;
   }
@@ -365,7 +529,8 @@ onMounted(() => {
   .progress-value {
     font-size: 16px; /* 폰트 크기 더 줄임 */
   }
-  .action-button {
+  .action-button,
+  .sync-button {
     font-size: 14px;
     padding: 10px;
   }

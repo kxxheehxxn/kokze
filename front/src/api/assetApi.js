@@ -17,4 +17,12 @@ export default {
       throw error
     }
   },
+  async getYeomsky95Assets() {
+    try {
+      const { data } = await api.get('AllAccount/yeomsky95/assets')
+      return data
+    } catch (error) {
+      throw error
+    }
+  },
 }

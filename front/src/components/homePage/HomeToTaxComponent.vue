@@ -1,5 +1,5 @@
 <template>
-  <div class="home-to-tax-card" @click="handleTaxManagement">
+  <div class="home-to-tax-card">
     <div class="card-header">
       <div>2025년 연말정산</div>
       <h3 class="card-title">세금 관리</h3>
@@ -14,11 +14,6 @@
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
-// 세금 관리 페이지로 이동
-const handleTaxManagement = () => {
-  router.push('/tax-management');
-};
 </script>
 
 <style scoped>
@@ -62,7 +57,7 @@ const handleTaxManagement = () => {
   z-index: 1;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .home-to-tax-card {
     padding: 20px;
   }

@@ -22,7 +22,7 @@
 .footer {
   border-top: 1px solid #e5e7eb;
   background-color: #d3d3d3;
-  padding: 24px 0;
+  padding: 24px 40px;
   margin-top: auto;
   width: 100%;
 }
@@ -32,8 +32,8 @@
 }
 
 .footer-logo {
-  width: 60px;
-  height: 60px;
+  width: 54px;
+  height: 54px;
   object-fit: contain;
 }
 
@@ -59,14 +59,14 @@
   color: #9ca3af;
 }
 /* 1023px 이하 (데스크탑 -> 태블릿 전환 지점) */
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .footer {
-    padding: 22px 0; /* 패딩 약간 줄임 */
+    padding: 22px 35px; /* 패딩 약간 줄임 */
   }
 
   .footer-logo {
-    width: 55px; /* 로고 크기 약간 줄임 */
-    height: 55px;
+    width: 48px; /* 로고 크기 약간 줄임 */
+    height: 48px;
   }
 
   .company-name {
@@ -81,7 +81,7 @@
 /* 반응형 */
 @media (max-width: 768px) {
   .footer {
-    padding: 20px 0;
+    padding: 20px 28px;
   }
 
   .footer-container {
@@ -89,8 +89,8 @@
   }
 
   .footer-logo {
-    width: 50px;
-    height: 50px;
+    width: 44px;
+    height: 44px;
   }
 
   .company-name {

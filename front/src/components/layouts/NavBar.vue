@@ -122,8 +122,8 @@ const selectItem = (itemName) => {
   color: #3b82f6;
   font-weight: 600;
 }
-/* 1023px 이하 (데스크탑 -> 태블릿 전환 지점) */
-@media (max-width: 1023px) {
+/* 1024px 이하 (데스크탑 -> 태블릿 전환 지점) */
+@media (max-width: 1024px) {
   .navbar {
     padding: 8px 15px; /* 패딩 약간 줄임 */
   }

@@ -425,7 +425,7 @@ onMounted(() => {
 }
 
 /* 1024px 미만 화면에서 .asset-amount 숨기기 */
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   /* AssetCard.vue의 .asset-item .amount와 유사한 처리 */
   .asset-amount {
     display: none;

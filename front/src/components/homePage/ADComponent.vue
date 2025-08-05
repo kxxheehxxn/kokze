@@ -182,7 +182,7 @@ const goToDetail = () => {
 }
 
 /* 반응형 디자인 */
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .ad-card {
     padding: 32px 24px;
     min-height: auto;

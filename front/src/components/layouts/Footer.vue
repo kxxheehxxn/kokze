@@ -59,7 +59,7 @@
   color: #9ca3af;
 }
 /* 1023px 이하 (데스크탑 -> 태블릿 전환 지점) */
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .footer {
     padding: 22px 35px; /* 패딩 약간 줄임 */
   }

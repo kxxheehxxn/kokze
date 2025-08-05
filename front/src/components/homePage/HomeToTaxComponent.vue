@@ -57,7 +57,7 @@ const router = useRouter();
   z-index: 1;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .home-to-tax-card {
     padding: 20px;
   }

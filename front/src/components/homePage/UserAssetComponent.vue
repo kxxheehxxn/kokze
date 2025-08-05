@@ -317,7 +317,7 @@ onMounted(() => {
   transform: translateY(0);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .title {
     font-size: 22px;
   }

@@ -198,8 +198,8 @@ onBeforeUnmount(() => {
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-/* 1023px 이하 (데스크탑 -> 태블릿 전환 지점) */
-@media (max-width: 1023px) {
+/* 1024px 이하 (데스크탑 -> 태블릿 전환 지점) */
+@media (max-width: 1024px) {
   .header-container {
     height: 70px; /* 헤더 높이 약간 줄임 */
   }

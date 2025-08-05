@@ -3,7 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { bankNameMap } from '@/utils/bankMap';
 import ProductPagination from './ProductPagination.vue';
-import { fetchProductList } from '@/api/productApi';
+import { fetchProductList, filterProducts } from '@/api/productApi';
 
 const router = useRouter();
 const sortKey = ref('max');
@@ -17,18 +17,50 @@ const props = defineProps({
 const products = ref([]);
 const totalPages = ref(0);
 
+// ✅ 필터 적용 여부 판단
+const isFiltering = computed(() => {
+  const f = props.filters || {};
+  return (
+    f.bankNames?.length > 0 ||
+    f.joinMembers?.length > 0 ||
+    f.productType ||
+    f.minSaveTrm ||
+    f.maxSaveTrm ||
+    f.minAmount ||
+    f.maxAmount ||
+    f.hasSpclCnd === true
+  );
+});
+
 // 🔽 상품 리스트 가져오기
 const loadProducts = async () => {
   try {
-    const result = await fetchProductList(currentPage.value, itemsPerPage);
-    products.value = result.products;
-    totalPages.value = result.totalPages;
+    if (isFiltering.value) {
+      const result = await filterProducts(props.filters);
+      products.value = Array.isArray(result) ? result : result.products;
+      totalPages.value = 1; // 의미 없는 값
+    } else {
+      const result = await fetchProductList(currentPage.value, itemsPerPage);
+      products.value = result.products;
+      totalPages.value = result.totalPages;
+    }
   } catch (err) {
     console.error('상품 목록 불러오기 실패:', err);
+    products.value = [];
+    totalPages.value = 0;
   }
 };
 
-watch(currentPage, loadProducts);
+watch(currentPage, () => {
+  if (!isFiltering.value) loadProducts();
+});
+watch(
+  () => props.filters,
+  () => {
+    currentPage.value = 1; // 필터 적용 시 첫 페이지로 초기화
+    loadProducts();
+  }
+);
 onMounted(loadProducts);
 
 // 🔽 아이콘 처리
@@ -40,7 +72,6 @@ const defaultIcon = new URL(
   '@/assets/images/bankIcon/default.png',
   import.meta.url
 ).href;
-
 const getBankIcon = (bankName) => {
   const english = bankNameMap[bankName];
   if (!english) return defaultIcon;
@@ -50,19 +81,9 @@ const getBankIcon = (bankName) => {
   return match ? match[1] : defaultIcon;
 };
 
-// 🔽 필터
-const filteredProducts = computed(() => {
-  const f = props.filters || {};
-  return products.value.filter((p) => {
-    if (f.bankNames?.length && !f.bankNames.includes(p.bankName)) return false;
-    if (f.productType && !p.productName.includes(f.productType)) return false;
-    return true;
-  });
-});
-
 // 🔽 정렬
 const sortedProducts = computed(() => {
-  return [...filteredProducts.value].sort((a, b) =>
+  return [...products.value].sort((a, b) =>
     sortKey.value === 'max'
       ? b.intrRate2 - a.intrRate2
       : b.intrRate - a.intrRate
@@ -123,7 +144,9 @@ function handlePageChange(page) {
       </div>
     </div>
 
+    <!-- ✅ 필터 적용 중일 때는 페이지네이션 숨김 -->
     <ProductPagination
+      v-if="!isFiltering"
       :totalPages="totalPages"
       :page="currentPage"
       @update:page="handlePageChange"

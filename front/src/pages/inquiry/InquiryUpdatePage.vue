@@ -56,7 +56,6 @@ const submit = async () => {
 };
 
 const load = async () => {
-
   if (!infoId) {
     console.error('유효하지 않은 infoId:', infoId);
     alert('유효하지 않은 게시글 ID입니다.');
@@ -160,6 +159,7 @@ onMounted(() => {
   justify-content: center;
   padding-top: 70px;
   padding-bottom: 30px;
+  margin: 0px 30px;
 }
 .custom-box {
   width: 920px;

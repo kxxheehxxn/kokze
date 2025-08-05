@@ -3,6 +3,18 @@ import HomeView from '../pages/HomePage.vue';
 import inquiryRoutes from './inquiry';
 import noticeRoutes from './notice';
 import authRoutes from './auth';
+import { userAuthStore } from '@/stores/auth';
+
+const isAuthenticated = (to, from, next) => {
+  const authStore = userAuthStore();
+
+  if (authStore.isLogin) {
+    next();
+  } else {
+    alert('로그인이 필요합니다.');
+    next('/auth/login');
+  }
+};
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -36,7 +36,6 @@ const submit = async () => {
   });
 };
 const load = async () => {
-
   if (!noticeId) {
     console.error('유효하지 않은 noticeId:', noticeId);
     alert('유효하지 않은 공지사항 ID입니다.');
@@ -129,12 +128,12 @@ load();
 </template>
 
 <style scoped>
-/* inquiryCreate.vue 에서 가져온 스타일을 그대로 유지합니다 */
 .custom-box-wrapper {
   display: flex;
   justify-content: center;
   padding-top: 70px;
   padding-bottom: 30px;
+  margin: 0px 30px;
 }
 .custom-box {
   width: 920px;

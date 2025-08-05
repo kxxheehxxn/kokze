@@ -68,8 +68,6 @@ const submit = async () => {
     answeredContent: article.value.answeredContent,
   };
 
-
-
   try {
     await api.updateAnswer(updatedFields);
     alert('답변이 성공적으로 등록되었습니다.'); // Success feedback
@@ -206,6 +204,7 @@ load();
   justify-content: center;
   padding-top: 70px;
   padding-bottom: 30px;
+  margin: 0px 30px;
 }
 .custom-box {
   width: 920px;

@@ -16,7 +16,7 @@ const getUserInfo = () => {
   return {
     userId: authData.user?.userId || '',
     userName: authData.user?.userName || '',
-    isLogin: !!authData.user?.email
+    isLogin: !!authData.user?.email,
   };
 };
 
@@ -48,7 +48,7 @@ const submit = async () => {
     router.push('/inquiry/list');
   } catch (e) {
     console.error('문의사항 등록 실패:', e);
-    
+
     if (e.response && e.response.data && e.response.data.message) {
       alert(`문의사항 등록 실패: ${e.response.data.message}`);
     } else {
@@ -123,6 +123,7 @@ const back = () => {
   justify-content: center;
   padding-top: 70px;
   padding-bottom: 30px;
+  margin: 0px 30px;
 }
 .custom-box {
   width: 920px;

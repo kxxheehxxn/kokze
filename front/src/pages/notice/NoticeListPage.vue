@@ -165,6 +165,7 @@ td {
   justify-content: center;
   padding-top: 70px;
   padding-bottom: 30px;
+  margin: 0px 30px;
 }
 .custom-box {
   width: 920px;

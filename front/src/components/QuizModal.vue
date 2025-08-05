@@ -26,9 +26,8 @@
           <button @click="fetchQuiz" v-if="!currentQuiz">다시 시도</button>
         </div>
         <div v-else-if="currentQuiz" class="quiz-question-section">
-          <div class="question-label">Q.</div>
-          <div class="question-text">
-            {{ currentQuiz.question }}
+          <div class="d-flex flex-column align-items-center text-center">
+            <div class="question-text">Q. {{ currentQuiz.question }}</div>
           </div>
           <div class="quiz-type-indicator">
             <span class="type-badge" :class="currentQuiz.type">
@@ -64,7 +63,10 @@
             </div>
           </div>
 
-          <div v-else-if="currentQuiz.type === 'short'" class="short-answer-section">
+          <div
+            v-else-if="currentQuiz.type === 'short'"
+            class="short-answer-section"
+          >
             <div class="answer-label">정답을 입력해주세요</div>
             <div class="input-container">
               <input
@@ -94,7 +96,8 @@
               isLoading ||
               !currentQuiz ||
               !selectedAnswer ||
-              (typeof selectedAnswer.value === 'string' && selectedAnswer.trim() === ''),
+              (typeof selectedAnswer.value === 'string' &&
+                selectedAnswer.trim() === ''),
           }"
         >
           정답 제출
@@ -151,7 +154,6 @@ const fetchQuiz = async () => {
   try {
     const quizData = await quizApi.getTodayQuiz(auth.userId);
     currentQuiz.value = quizData;
-
   } catch (error) {
     // 이미 풀었다면 alreadySolved 상태로 표시
     if (error.message.includes('오늘은 이미 퀴즈를 풀었습니다')) {
@@ -200,7 +202,8 @@ const submitAnswer = async () => {
     isLoading.value ||
     !currentQuiz.value ||
     !selectedAnswer.value ||
-    (typeof selectedAnswer.value === 'string' && selectedAnswer.value.trim() === '')
+    (typeof selectedAnswer.value === 'string' &&
+      selectedAnswer.value.trim() === '')
   ) {
     errorMessage.value = '답안을 입력해주세요!';
     return;
@@ -216,9 +219,11 @@ const submitAnswer = async () => {
   }
 
   try {
-    const result = await quizApi.submitAnswer(auth.userId, currentQuiz.value.quiz_id, selectedAnswer.value);
-
-
+    const result = await quizApi.submitAnswer(
+      auth.userId,
+      currentQuiz.value.quiz_id,
+      selectedAnswer.value
+    );
 
     if (result.correct) {
       alert('정답입니다! 🎉');
@@ -273,11 +278,11 @@ onUnmounted(() => {
 }
 
 .modal-container {
-  background-color: #0d3a95;
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #000;
   border-radius: 12px;
   width: 90%;
-  max-width: 600px;
+  max-width: 700px;
   max-height: 90vh;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -318,7 +323,7 @@ onUnmounted(() => {
   border: none;
   font-size: 32px;
   cursor: pointer;
-  color: #ffffff;
+  color: #fd5757;
   width: 32px;
   height: 32px;
   display: flex;
@@ -362,14 +367,6 @@ onUnmounted(() => {
 .quiz-question-section {
   padding: 24px;
 }
-
-.question-label {
-  font-size: 20px;
-  font-weight: bold;
-  color: #ffd700;
-  margin-bottom: 12px;
-}
-
 .question-text {
   font-size: 18px;
   line-height: 1.6;
@@ -394,15 +391,15 @@ onUnmounted(() => {
 }
 
 .type-badge.OX {
-  background-color: rgba(255, 215, 0, 0.2);
-  color: #ffd700;
-  border: 1px solid #ffd700;
+  background-color: rgba(135, 191, 255, 0.2);
+  color: #0d3a95;
+  border: 1px solid #0d3a95;
 }
 
 .type-badge.short {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(135, 191, 255, 0.2);
+  color: #0d3a95;
+  border: 1px solid #0d3a95;
 }
 
 /* O/X 퀴즈 스타일 */
@@ -423,12 +420,12 @@ onUnmounted(() => {
   align-items: center;
   padding: 20px 24px;
   background-color: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(76, 76, 76, 0.2);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 100px;
-  color: #ffffff;
+  color: #989898;
 }
 
 .OX-button:hover {
@@ -482,10 +479,9 @@ onUnmounted(() => {
   width: 100%;
   max-width: 300px;
   padding: 16px 20px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(83, 83, 83, 0.2);
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.05);
-  color: #ffffff;
   font-size: 16px;
   text-align: center;
   transition: all 0.2s;
@@ -493,7 +489,7 @@ onUnmounted(() => {
 
 .answer-input:focus {
   outline: none;
-  border-color: #ffd700;
+  border-color: #0d3a95;
   background-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
 }
@@ -503,13 +499,13 @@ onUnmounted(() => {
 }
 
 .modal-footer {
-  padding: 24px;
+  padding: 14px;
   text-align: center;
 }
 
 .submit-btn {
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  color: #0d3a95;
+  background: linear-gradient(135deg, #0d3a95, #0d3a95);
+  color: #fff;
   border: none;
   padding: 14px 32px;
   border-radius: 8px;
@@ -521,7 +517,7 @@ onUnmounted(() => {
 }
 
 .submit-btn:hover:not(.disabled) {
-  background: linear-gradient(135deg, #ffed4e, #ffd700);
+  background: linear-gradient(135deg, #0d3a95, #0d3a95);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
 }
@@ -542,7 +538,7 @@ onUnmounted(() => {
 
 .solved-icon {
   font-size: 64px;
-  margin-bottom: 24px;
+  margin-bottom: 30px;
 }
 
 .solved-title {

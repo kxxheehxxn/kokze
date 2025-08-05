@@ -4,17 +4,19 @@
       <div class="loading-spinner"></div>
       <p>사용자 정보를 불러오는 중...</p>
     </div>
-    
+
     <div v-else-if="error" class="error">
       <p>{{ error }}</p>
       <button @click="loadUserData" class="retry-btn">다시 시도</button>
     </div>
-    
+
     <div v-else class="user-card">
       <div class="user-mbti">{{ user.mbti || '미입력' }}</div>
       <div class="user-name">
         {{ user.name || '사용자' }} 님
-        <span class="user-point" @click="goTo('/points')">{{ point.toLocaleString() }} P</span>
+        <span class="user-point" @click="goTo('/points')"
+          >{{ point.toLocaleString() }} P</span
+        >
       </div>
       <ul class="user-menu">
         <li @click="goTo('/user/asset')">자산 정보 수정</li>
@@ -22,9 +24,6 @@
         <li @click="goTo('/user/password')">비밀번호 수정</li>
         <li @click="goTo('/user/withdraw')">회원 탈퇴</li>
       </ul>
-      <div v-if="user.user_id" class="user-id">
-        사용자 ID: {{ user.user_id }}
-      </div>
     </div>
   </div>
 </template>
@@ -49,9 +48,12 @@ function goTo(path) {
 async function loadUserData() {
   loading.value = true;
   error.value = null;
-  
+
   try {
-    const [userInfo, userPoints] = await Promise.all([getUserInfo(), getUserPoints()]);
+    const [userInfo, userPoints] = await Promise.all([
+      getUserInfo(),
+      getUserPoints(),
+    ]);
     user.value = userInfo;
     point.value = userPoints;
   } catch (err) {
@@ -71,12 +73,11 @@ onMounted(() => {
 
 <style scoped>
 .user-page {
-  min-height: 100vh;
-  background: #f6f6f6;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  padding-top: 60px;
+  padding-bottom: 30px;
+  margin: 0px 30px;
 }
 
 .loading {
@@ -92,15 +93,19 @@ onMounted(() => {
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #189eff;
+  border-top: 4px solid #3573ee;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error {
@@ -115,7 +120,7 @@ onMounted(() => {
 .retry-btn {
   margin-top: 16px;
   padding: 8px 16px;
-  background: #189eff;
+  background: #3573ee;
   color: white;
   border: none;
   border-radius: 8px;
@@ -123,22 +128,17 @@ onMounted(() => {
 }
 
 .retry-btn:hover {
-  background: #147acc;
+  background: #3573ee;
 }
 
 .user-card {
-  background: #fff;
-  border-radius: 24px;
-  box-shadow: 0 2px 8px 0 #e5e7eb;
-  margin: 48px auto 0 auto;
-  padding: 64px 80px;
-  width: 70vw;
-  max-width: 1100px;
-  min-width: 400px;
-  border: 4px solid #189eff;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  width: 920px;
+  height: 570px;
+  background-color: #fff;
+  border-radius: 28px;
+  padding: 2rem;
+  padding: 3rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .user-mbti {
@@ -161,11 +161,11 @@ onMounted(() => {
 }
 
 .user-point {
-  background: #f6f6f6;
-  color: #888;
-  border-radius: 18px;
+  background: #e8f0ff;
+  color: #3573ee;
+  border-radius: 23px;
   padding: 8px 24px;
-  font-size: 28px;
+  font-size: 25px;
   font-weight: 500;
   margin-left: 12px;
   cursor: pointer;
@@ -173,8 +173,9 @@ onMounted(() => {
 }
 
 .user-point:hover {
-  background: #e8f0ff;
-  color: #189eff;
+  background: #ccdcfb;
+  color: #0d3a95;
+  transform: translateY(-2px);
 }
 
 .user-menu {

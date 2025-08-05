@@ -5,6 +5,7 @@
         <i class="fa-solid fa-bell"></i>
       </div>
       <h2 class="title">알려드립니다.</h2>
+      <div class="spacer"></div>
     </div>
     <div class="middle">
       <div class="content">
@@ -69,6 +70,11 @@
   flex-grow: 1; /* 남은 공간을 채우도록 설정 */
   min-width: 0; /* 내용이 넘칠 경우 줄어들 수 있도록 허용 */
   word-break: break-word; /* 긴 단어가 영역을 벗어나지 않도록 */
+}
+
+/* 새로 추가된 spacer에 flex-grow를 적용합니다. */
+.spacer {
+  width: 20px; /* spacer의 너비를 설정 */
 }
 
 .middle {

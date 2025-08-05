@@ -29,7 +29,7 @@
       </div>
 
       <div class="close-bottom-wrapper">
-        <button class="close-btn" @click="$emit('close')">[닫기 ✕]</button>
+        <button class="close-btn" @click="$emit('close')">[ 닫기 ✕ ]</button>
       </div>
     </div>
   </div>
@@ -105,8 +105,8 @@ export default {
   width: 500px;
   height: 100%;
   background: #f9f9f9;
-  border-left: 3px solid #a2c3ff;
   padding: 1.5rem 1rem 4rem;
+  border-radius: 12px;
   box-shadow: -3px 0 6px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   z-index: 1001;
@@ -143,6 +143,12 @@ export default {
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
+
+.period,
+.amount {
+  text-align: left;
+}
+
 .period {
   margin: 0.5rem 0;
   line-height: 1.4;
@@ -174,7 +180,7 @@ export default {
   background: #666;
   color: white;
   padding: 0.5rem 1rem;
-  border-radius: 16px;
+  border-radius: 18px;
   border: none;
   font-size: 0.85rem;
   font-weight: bold;

@@ -86,7 +86,6 @@ const router = createRouter({
       component: () => import('@/pages/goal/GoalEditPage.vue'),
       props: true, // goalId param을 props로 전달
     },
-
     {
       path: '/find-password',
       name: 'FindPasswordPage',
@@ -94,7 +93,7 @@ const router = createRouter({
     },
     {
       path: '/tax-management',
-      name: 'TaxPage.vue',
+      name: 'TaxPage',
       component: () => import('@/pages/tax/TaxPage.vue'),
     },
     {

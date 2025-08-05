@@ -191,4 +191,9 @@ async function onSubmit() {
   color: #fff;
   border: none;
 }
+@media (max-width: 1024px) and (orientation: portrait) {
+  .button-row {
+    margin-top: 100px;
+  }
+}
 </style>

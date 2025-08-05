@@ -4,25 +4,29 @@
     <form class="asset-form mt-5" @submit.prevent="onSubmit">
       <div class="form-group">
         <label class="label">월급(수입)</label>
-        <input
-          v-model.number="salary"
-          type="number"
-          min="0"
-          class="input"
-          placeholder="월급을 입력하세요."
-        />
-        <span class="unit">원</span>
+        <div class="d-flex w-100">
+          <input
+            :value="formatNumber(salary)"
+            @input="salary = parseNumber($event.target.value)"
+            type="text"
+            class="input"
+            placeholder="월급을 입력하세요."
+          />
+          <span class="unit">원</span>
+        </div>
       </div>
       <div class="form-group">
         <label class="label">월 지출비</label>
-        <input
-          v-model.number="payAmount"
-          type="number"
-          min="0"
-          class="input"
-          placeholder="월 지출비를 입력하세요."
-        />
-        <span class="unit">원</span>
+        <div class="d-flex w-100">
+          <input
+            :value="formatNumber(payAmount)"
+            @input="payAmount = parseNumber($event.target.value)"
+            type="text"
+            class="input"
+            placeholder="월 지출비를 입력하세요."
+          />
+          <span class="unit">원</span>
+        </div>
       </div>
       <div class="button-row">
         <button type="button" class="cancel-btn" @click="onCancel">취소</button>
@@ -72,14 +76,27 @@ async function loadUserAsset() {
     }
   }
 }
+function formatNumber(value) {
+  if (value === null || value === undefined) return '';
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
 
+function parseNumber(value) {
+  const cleaned = value.replace(/[^0-9]/g, '');
+  return cleaned ? parseInt(cleaned, 10) : 0;
+}
 onMounted(() => {
   loadUserAsset();
 });
 
 async function onSubmit() {
-  if (salary.value === null || payAmount.value === null) {
-    error.value = '모든 필드를 입력해주세요.';
+  if (
+    salary.value === null ||
+    payAmount.value === null ||
+    isNaN(salary.value) ||
+    isNaN(payAmount.value)
+  ) {
+    error.value = '모든 필드를 숫자로 정확히 입력해주세요.';
     return;
   }
 
@@ -125,83 +142,85 @@ function onCancel() {
 .asset-form {
   background-color: #fff;
   width: 100%;
+  padding: 0 16px;
 }
 .form-group {
-  background-color: #fff;
-  margin-bottom: 32px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 24px;
 }
 .label {
-  background-color: #fff;
-  display: block;
   color: #888;
-  font-size: 20px;
-  margin-bottom: 0;
-  margin-left: 8px;
-  width: 120px;
+  font-size: 16px;
+  margin-bottom: 8px;
+  width: 100%;
   text-align: left;
 }
+
 .input {
-  flex: 1;
+  width: 95%;
+  max-width: 100%;
   border: none;
   border-radius: 24px;
   background: #f6f6f6;
   box-shadow: 0 2px 8px 0 #e5e7eb inset;
-  font-size: 20px;
-  padding: 12px 24px;
+  font-size: 18px;
+  padding: 12px 16px;
   outline: none;
-  margin: 0 8px 0 0;
-  min-width: 0;
+  text-align: right;
+  box-sizing: border-box;
 }
 .unit {
-  color: #888;
-  font-size: 18px;
-  margin-left: 4px;
+  padding: 0 0 15px 5px;
+  font-size: 16px;
+  color: #666;
+  align-self: flex-end;
 }
+
+/* 버튼 영역 */
 .button-row {
-  background-color: #fff;
   display: flex;
-  justify-content: center;
-  gap: 32px;
-  margin-top: 52px;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 40px;
   width: 100%;
 }
 .cancel-btn,
 .submit-btn {
-  width: 180px;
+  width: 100%;
   height: 48px;
-  border-radius: 18px;
-  font-size: 18px;
+  border-radius: 12px;
+  font-size: 16px;
   font-weight: 500;
   border: none;
   cursor: pointer;
 }
+
 .cancel-btn {
   background: #fafbfc;
   color: #222;
   border: 1.5px solid #e5e7eb;
 }
+
 .submit-btn {
   background: #2573ee;
   color: #fff;
-  border: none;
 }
 .submit-btn:disabled {
   background: #b3d0fa;
   cursor: not-allowed;
 }
-.error-msg {
-  color: #e74c3c;
-  font-size: 16px;
+
+.error-msg,
+.success-msg {
+  font-size: 14px;
   margin-top: 8px;
-  margin-left: 8px;
+  color: #e74c3c;
 }
+
 .success-msg {
   color: #2573ee;
-  font-size: 16px;
-  margin-top: 8px;
-  margin-left: 8px;
 }
 
 input[type='number']::-webkit-outer-spin-button,

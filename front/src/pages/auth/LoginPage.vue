@@ -147,22 +147,6 @@ body {
   align-items: center;
   position: relative;
 }
-/* .logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 54px;
-  height: 54px;
-}
-.logo-icon {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 50%;
-  padding: 2px;
-  background: transparent;
-} */
-
 .login-box {
   background-color: #fff;
   width: 100%;
@@ -285,64 +269,10 @@ body {
 .sign-up:hover {
   opacity: 0.9;
 }
-
-/* Responsive */
-@media (max-width: 880px) {
-  .login-box {
-    padding: 60px 30px 40px;
-    border-radius: 22px;
-  }
-  .title {
-    font-size: 22px;
-  }
-  .login-button {
-    font-size: 16px;
-    height: 52px;
-  }
-  .kakao-login {
-    font-size: 16px;
-    height: 52px;
-  }
-}
-
-@media (max-width: 600px) {
-  .login-box {
-    padding: 50px 24px 32px;
-    border-radius: 20px;
-  }
-  .title {
-    font-size: 20px;
-  }
-  .form-group input {
-    padding: 12px 14px;
-    font-size: 15px;
-  }
-  .login-button,
-  .kakao-login {
-    height: 50px;
-  }
-  .sign-up-prompt {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 420px) {
-  .login-box {
-    padding: 36px 18px 28px;
-  }
-  .title {
-    font-size: 18px;
-  }
-  .login-button,
-  .kakao-login {
-    font-size: 14px;
-    height: 48px;
-  }
-}
 @media (max-width: 1024px) and (orientation: portrait) {
   .login-box {
     min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
-    width: 80vw;
+    width: 90vw;
   }
 }
 </style>

@@ -349,32 +349,4 @@ const onSubmit = async () => {
   white-space: pre-line;
   margin-bottom: 24px;
 }
-
-@media (max-width: 768px) {
-  .signup-box {
-    padding: 40px 30px;
-  }
-
-  .title {
-    font-size: 22px;
-  }
-
-  .choices {
-    flex-direction: column;
-    align-items: center;
-    flex-wrap: nowrap;
-    gap: 24px;
-  }
-
-  .choice {
-    width: 100%;
-    max-width: 320px;
-  }
-
-  .cancel-button,
-  .next-button {
-    font-size: 14px;
-    padding: 12px 16px;
-  }
-}
 </style>

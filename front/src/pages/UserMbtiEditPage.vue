@@ -247,4 +247,12 @@ async function saveMbtiResult() {
   white-space: pre-line;
   margin-bottom: 32px;
 }
+@media (max-width: 1024px) and (orientation: portrait) {
+  .choices {
+    margin-top: 40px;
+  }
+  .button-row {
+    margin-top: 40px;
+  }
+}
 </style>

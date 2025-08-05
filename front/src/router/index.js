@@ -33,41 +33,43 @@ const router = createRouter({
       path: '/userpage',
       name: 'UserPage',
       component: () => import('@/pages/UserPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/points',
       name: 'PointPage',
       component: () => import('@/pages/PointPage.vue'),
-    },
-    {
-      path: '/points',
-      name: 'PointPage',
-      component: () => import('@/pages/PointPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/user/asset',
       name: 'UserAssetEditPage',
       component: () => import('@/pages/UserAssetEditPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/user/mbti',
       name: 'UserMbtiEditPage',
       component: () => import('@/pages/UserMbtiEditPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/user/password',
       name: 'UserPasswordEditPage',
       component: () => import('@/pages/UserPasswordEditPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/user/withdraw',
       name: 'UserWithdrawPage',
       component: () => import('@/pages/UserWithdrawPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/goals',
       name: 'GoalPage',
       component: () => import('@/pages/goal/GoalPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/goals/:goalId', // 상세 페이지 경로
@@ -96,17 +98,19 @@ const router = createRouter({
       path: '/tax-management',
       name: 'TaxPage.vue',
       component: () => import('@/pages/tax/TaxPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/product',
       name: 'ProductRecommendPage',
       component: () => import('@/pages/product/ProductRecommendPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/product/:fin_prdt_cd',
       name: 'ProductDetailPage',
       component: () => import('@/pages/product/ProductDetailPage.vue'),
-      props: true, //
+      props: true,
     },
     ...authRoutes,
     ...inquiryRoutes,

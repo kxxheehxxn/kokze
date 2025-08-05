@@ -281,26 +281,4 @@ const goNext = () => {
 .next-button:hover:enabled {
   background-color: #255edb;
 }
-
-@media (max-width: 768px) {
-  .signup-box {
-    padding: 40px 30px;
-    border-radius: 30px;
-  }
-
-  .title {
-    font-size: 22px;
-  }
-
-  .form-group input {
-    font-size: 15px;
-    padding: 10px 12px;
-  }
-
-  .next-button,
-  .cancel-button {
-    font-size: 14px;
-    padding: 12px 16px;
-  }
-}
 </style>

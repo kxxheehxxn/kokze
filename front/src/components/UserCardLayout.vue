@@ -19,7 +19,7 @@
 .user-card {
   background-color: #fff;
   width: 100%;
-  max-width: 900px;
+  max-width: 920px;
   min-height: 80vh;
   padding: 90px 140px;
   border-radius: 28px;
@@ -33,6 +33,7 @@
   .user-card {
     min-height: 80vh;
     width: 90vw;
+    padding: 80px 100px;
   }
 }
 </style>

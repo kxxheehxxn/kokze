@@ -31,9 +31,7 @@ const extraInfo = computed(() => {
     result.push({ label: '조건', value: props.product.spclCnd });
   }
 
-  const types = [
-    ...new Set((props.product.options || []).map((o) => o.rsrvTypeNm)),
-  ].join(', ');
+  const types = [...new Set((props.product.options || []).map((o) => o.rsrvTypeNm))].join(', ');
   if (types) {
     result.push({ label: '유형', value: types });
   }
@@ -54,17 +52,12 @@ const formattedAmount = computed(() => {
 
 // 💸 계산 로직
 const interest = computed(() => {
-  const rate =
-    selectedTab.value === 'max'
-      ? rates.value.max / 100
-      : rates.value.basic / 100;
+  const rate = selectedTab.value === 'max' ? rates.value.max / 100 : rates.value.basic / 100;
   return Math.floor(parsedAmount.value * rate);
 });
 
 const tax = computed(() => Math.floor(interest.value * taxRate));
-const afterTax = computed(
-  () => parsedAmount.value + interest.value - tax.value
-);
+const afterTax = computed(() => parsedAmount.value + interest.value - tax.value);
 
 function onInputChange(e) {
   const onlyNumbers = e.target.value.replace(/\D/g, '');
@@ -106,12 +99,7 @@ function clearInput() {
 
     <!-- 예치금액 입력 -->
     <div class="amount-input">
-      <input
-        type="text"
-        :value="formattedAmount"
-        @input="onInputChange"
-        placeholder="예치금액을 입력해주세요"
-      />
+      <input type="text" :value="formattedAmount" @input="onInputChange" placeholder="예치금액을 입력해주세요" />
       <span>원</span>
       <button class="clear-btn" @click="clearInput">×</button>
     </div>
@@ -120,16 +108,10 @@ function clearInput() {
 
     <!-- 탭 버튼 -->
     <div class="tab-buttons">
-      <button
-        :class="{ active: selectedTab === 'max' }"
-        @click="selectedTab = 'max'"
-      >
+      <button :class="{ active: selectedTab === 'max' }" @click="selectedTab = 'max'">
         최고금리 <span>{{ rates.max.toFixed(2) }}%</span>
       </button>
-      <button
-        :class="{ active: selectedTab === 'basic' }"
-        @click="selectedTab = 'basic'"
-      >
+      <button :class="{ active: selectedTab === 'basic' }" @click="selectedTab = 'basic'">
         기본금리 <span>{{ rates.basic.toFixed(2) }}%</span>
       </button>
     </div>
@@ -188,7 +170,7 @@ function clearInput() {
   background: white;
   border-radius: 1.5rem;
   padding: 2rem;
-  box-shadow: inset 0 0 12px #a1c4fd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-top: 1.5rem;
   font-size: 1rem;
 }

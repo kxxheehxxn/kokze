@@ -5,7 +5,7 @@
       <h3 class="card-title">금융 상품 추천</h3>
     </div>
     <div class="card-content">
-      <img src="@/assets/images/product_recommand_logo.svg" alt="금융 상품 로고" class="logo" />
+      <img src="@/assets/images/product_recommand_logo.svg" alt="금융 상품 로고" />
     </div>
   </div>
 </template>

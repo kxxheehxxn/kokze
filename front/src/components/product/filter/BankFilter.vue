@@ -27,9 +27,7 @@ const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
 
 // 은행 이름(영문)을 받아 아이콘 경로를 반환
 const getBankIcon = (iconName) => {
-  const match = Object.entries(iconModules).find(([path]) =>
-    path.includes(`/${iconName}.png`)
-  );
+  const match = Object.entries(iconModules).find(([path]) => path.includes(`/${iconName}.png`));
   return match ? match[1] : '';
 };
 
@@ -92,9 +90,9 @@ function toggleBank(name) {
 }
 
 .bank-box {
-  background: white;
+  background: #ffffff;
   border: 1px solid #ddd;
-  border-radius: 1rem;
+  border-radius: 20px;
   width: 100px;
   height: 90px;
   padding: 0.5rem 0.3rem;
@@ -102,10 +100,15 @@ function toggleBank(name) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   box-shadow: none;
   transition: box-shadow 0.2s, border-color 0.2s;
   flex-shrink: 0;
+}
+
+.bank-box:hover {
+  cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .bank-box img {

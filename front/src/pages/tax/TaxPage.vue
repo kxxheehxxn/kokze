@@ -131,17 +131,17 @@ export default {
 <style scoped>
 /* 기존 스타일 유지 */
 .tax-page {
-  background-color: #ffffff;
-  padding: 40px;
+  background-color: #fbfbfb;
+  padding: 60px 32px 40px;
   min-height: 100vh;
   box-sizing: border-box;
 }
 .tax-wrapper {
-  background-color: #ffffff;
+  background-color: transparent;
   border-radius: 16px;
   padding: 32px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  max-width: 1280px;
+  max-width: none;
   margin: 0 auto;
 }
 .tax-content {
@@ -150,7 +150,7 @@ export default {
   align-items: flex-start;
 }
 .tax-grid {
-  background-color: #ffffff;
+  background-color: transparent;
   flex: 1.618;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -159,7 +159,7 @@ export default {
 .tax-card {
   background-color: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 16px;
   text-align: center;
   transition: all 0.2s ease;
@@ -181,7 +181,7 @@ export default {
   min-width: 280px;
   background-color: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 20px;
   box-sizing: border-box;
 }
@@ -248,7 +248,7 @@ export default {
 
 @media (max-width: 1024px) {
   .tax-wrapper {
-    padding: 16px; /* 패딩 약간 줄임 */
+    padding: 24px; /* 패딩 약간 줄임 */
   }
   .tax-grid {
     flex: 1.2;
@@ -293,10 +293,15 @@ export default {
 
     /* 레이아웃 속성 */
     gap: 16px;
-    padding: 8px 0 16px 0;
+    padding: 16px 16px; /* 위아래 16px, 좌우 16px */
+    border-radius: 12px;
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
 
-    /* 너비 설정 - 부모 컨테이너보다 넓게 */
-    width: 100%;
+    /* 스크롤 안쪽에서 양옆 여백 */
+    scroll-padding: 0 16px; /* 스크롤 시 양쪽에 16px 여백 */
+
+    /* 너비 설정 */
+    width: 100%; /* 부모 너비에 맞춤 */
 
     /* 스크롤 동작 강제 */
     scroll-behavior: smooth;

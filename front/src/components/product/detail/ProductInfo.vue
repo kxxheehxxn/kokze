@@ -53,11 +53,7 @@ const infoData = computed(() => [
       </template>
 
       <template v-else>
-        <div
-          v-for="item in infoData.slice(0, 4)"
-          :key="item.label"
-          class="info-row"
-        >
+        <div v-for="item in infoData.slice(0, 4)" :key="item.label" class="info-row">
           <div class="label">{{ item.label }}</div>
           <div class="value" v-html="item.value.replaceAll('\n', '<br />')" />
         </div>
@@ -65,9 +61,7 @@ const infoData = computed(() => [
     </div>
 
     <div class="more-btn-wrapper" v-if="!isExpanded">
-      <button class="more-btn" @click="isExpanded = true">
-        더보기 <span class="icon">⌄</span>
-      </button>
+      <button class="more-btn" @click="isExpanded = true">더보기<br></br><i class="fa-solid fa-chevron-down"></i></button>
     </div>
   </div>
 </template>
@@ -77,7 +71,7 @@ const infoData = computed(() => [
   background: white;
   border-radius: 1.5rem;
   padding: 2rem;
-  box-shadow: inset 0 0 12px #a1c4fd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-top: 1.5rem;
   font-size: 1rem;
 }
@@ -119,11 +113,16 @@ const infoData = computed(() => [
 }
 
 .more-btn {
-  border: 1px solid #ccc;
+  border: 0 solid #ccc;
   padding: 0.6rem 1.2rem;
   border-radius: 0.5rem;
   background: white;
-  cursor: pointer;
   font-weight: bold;
+}
+
+.more-btn:hover {
+  cursor: pointer;
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
 }
 </style>

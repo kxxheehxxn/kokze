@@ -33,20 +33,14 @@
               placeholder="금액을 입력하세요"
             />
             <span>원</span>
-            <button
-              v-if="parsedAmount > 0"
-              class="clear-btn"
-              @click="clearInput"
-            >
-              ×
-            </button>
+            <button class="clear-btn" @click="clearInput">×</button>
           </div>
           <p class="helper-text">{{ formatKoreanCurrency(parsedAmount) }}</p>
         </div>
 
         <!-- 입금 날짜 -->
         <div class="form-group">
-          <label>입금 날짜 (매월 몇 일)</label>
+          <label>입금 날짜 (매월 며칠)</label>
           <input type="number" v-model="depositDate" min="1" max="28" />
           <p class="helper-text">1~28 사이의 숫자 입력</p>
         </div>

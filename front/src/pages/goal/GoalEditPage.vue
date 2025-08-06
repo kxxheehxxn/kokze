@@ -1,75 +1,86 @@
 <template>
   <div class="goal-edit-page">
-    <h2>목표 수정하기</h2>
+    <div class="goal-edit-card">
+      <h2 class="title">목표 수정하기</h2>
 
-    <!-- 목표 이름 -->
-    <div class="form-group">
-      <label>목표 이름</label>
-      <input type="text" v-model="goal.title" />
-    </div>
+      <hr />
 
-    <!-- 목표 기간 -->
-    <div class="form-group">
-      <label>목표 기간</label>
-      <div class="date-range">
-        <input type="date" v-model="goal.startDate" />
-        <span>~</span>
-        <input type="date" v-model="goal.endDate" />
-      </div>
-      <p class="helper-text">입력하지 않을 시 기존 날짜로 설정됩니다.</p>
-    </div>
-
-    <!-- 목표 금액 -->
-    <div class="form-group">
-      <label>목표 금액</label>
-      <div class="amount-input">
-        <input type="number" v-model="goal.amount" />
-        <span>원</span>
-      </div>
-      <p class="helper-text">{{ formattedAmount }}원</p>
-    </div>
-
-    <!-- 입금 날짜 -->
-    <div class="form-group">
-      <label>입금 날짜 (매월 몇 일)</label>
-      <input type="number" v-model="goal.depositDate" min="1" max="28" />
-      <p class="helper-text">1~28 사이의 숫자 입력</p>
-    </div>
-
-    <!-- 금융 상품 연결 -->
-    <div class="form-group">
-      <label>금융 상품 연결하기</label>
-      <p class="subtext">최소 1개 이상의 상품을 연결해야 합니다.</p>
-
-      <div class="product-card" v-if="selectedAccount">
-        <span class="product-icon">💳</span>
-        <div class="product-text">
-          {{ selectedAccount.bank_name }} - {{ selectedAccount.account_num }}
+      <div class="input-form">
+        <!-- 목표 이름 -->
+        <div class="form-group">
+          <label>목표 이름</label>
+          <input type="text" v-model="goal.title" />
         </div>
-        <button class="remove-btn" @click="selectedAccount = null">－</button>
+
+        <!-- 목표 기간 -->
+        <div class="form-group">
+          <label>목표 기간</label>
+          <div class="date-range">
+            <input type="date" v-model="goal.startDate" />
+            <span>~</span>
+            <input type="date" v-model="goal.endDate" :min="endDateMin" />
+          </div>
+          <p class="helper-text">입력하지 않을 시 기존 날짜로 설정됩니다.</p>
+        </div>
+
+        <!-- 목표 금액 -->
+        <div class="form-group">
+          <label>목표 금액</label>
+          <div class="amount-input">
+            <input type="text" v-model="goal.amount" @input="onInputChange" />
+            <span>원</span>
+            <button class="clear-btn" @click="clearInput">×</button>
+          </div>
+          <p class="helper-text">{{ formatKoreanCurrency(parsedAmount) }}</p>
+        </div>
+
+        <!-- 입금 날짜 -->
+        <div class="form-group">
+          <label>입금 날짜 (매월 며칠)</label>
+          <input type="number" v-model="goal.depositDate" min="1" max="28" />
+          <p class="helper-text">1~28 사이의 숫자 입력</p>
+        </div>
+
+        <!-- 금융 상품 연결 -->
+        <div class="form-group">
+          <label>금융 상품 연결하기</label>
+          <p class="subtext">최소 1개 이상의 상품을 연결해야 합니다.</p>
+
+          <div class="product-card" v-if="selectedAccount">
+            <span class="product-icon">💳</span>
+            <div class="product-text">
+              {{ selectedAccount.bank_name }} -
+              {{ selectedAccount.account_num }}
+            </div>
+
+            <button class="remove-btn" @click="selectedAccount = null">
+              －
+            </button>
+          </div>
+
+          <div class="product-placeholder" v-else @click="fetchAccounts">
+            ＋
+          </div>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="btn-row">
+          <button class="btn cancel" @click="goBack">취소하기</button>
+          <button class="btn submit" @click="submitEdit">목표 수정하기</button>
+        </div>
       </div>
 
-      <div class="product-placeholder" v-else @click="fetchAccounts">
-        <span>＋</span>
-      </div>
+      <ProductModal
+        v-if="showProductModal"
+        :accounts="accounts"
+        @close="showProductModal = false"
+        @connect="handleProductConnect"
+      />
     </div>
-
-    <!-- 버튼 -->
-    <div class="btn-row">
-      <button class="btn cancel" @click="goBack">취소하기</button>
-      <button class="btn submit" @click="submitEdit">목표 수정하기</button>
-    </div>
-
-    <ProductModal
-      v-if="showProductModal"
-      :accounts="accounts"
-      @close="showProductModal = false"
-      @connect="handleProductConnect"
-    />
   </div>
 </template>
+
 <script>
-import ProductModal from '@/components/ProductModal.vue';
 import {
   getGoalById,
   updateGoal,
@@ -77,6 +88,7 @@ import {
   linkAccountToGoal,
   unlinkAccount,
 } from '@/api/goalApi';
+import ProductModal from '@/components/ProductModal.vue';
 import { userAuthStore } from '@/stores/auth';
 
 export default {
@@ -98,21 +110,52 @@ export default {
     };
   },
   computed: {
+    parsedAmount() {
+      return Number(String(this.goal.amount).replace(/\D/g, '')) || 0;
+    },
     formattedAmount() {
-      return Number(this.goal.amount).toLocaleString();
+      if (!this.goal.amount) return '';
+      return this.goal.amount.toLocaleString();
+    },
+    today() {
+      const now = new Date();
+      return now.toISOString().split('T')[0];
+    },
+    endDateMin() {
+      if (!this.goal.startDate) return this.today;
+      return this.goal.startDate > this.today
+        ? this.goal.startDate
+        : this.today;
     },
   },
   mounted() {
     this.fetchGoalDetail();
   },
   methods: {
-    formatDate(date) {
-      if (!date) return '';
-      const d = new Date(date);
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
+    onInputChange(e) {
+      this.goal.amount = e.target.value.replace(/\D/g, '');
+    },
+    clearInput() {
+      this.goal.amount = '';
+    },
+    formatKoreanCurrency(num) {
+      if (isNaN(num) || num <= 0) return '0원';
+      const jo = Math.floor(num / 1_0000_0000_0000);
+      const uk = Math.floor((num % 1_0000_0000_0000) / 1_0000_0000);
+      const man = Math.floor((num % 1_0000_0000) / 10000);
+      const rest = num % 10000;
+
+      let result = '';
+      if (jo > 0) result += `${jo}조`;
+      if (uk > 0) result += `${uk}억`;
+      if (man > 0) result += `${man}만`;
+      if (rest > 0) result += rest.toLocaleString();
+      return result + '원';
+    },
+    formatDateForInput(dateStr) {
+      const date = new Date(dateStr);
+      if (isNaN(date)) return '';
+      return date.toISOString().split('T')[0];
     },
     async fetchGoalDetail() {
       const goalId = this.$route.params.goalId;
@@ -123,8 +166,8 @@ export default {
         const data = res.data;
 
         this.goal.title = data.goal_name;
-        this.goal.startDate = data.start_date;
-        this.goal.endDate = data.end_date;
+        this.goal.startDate = this.formatDateForInput(data.start_date);
+        this.goal.endDate = this.formatDateForInput(data.end_date);
         this.goal.amount = data.target_amount;
         this.goal.depositDate = data.deposit_date;
 
@@ -163,8 +206,8 @@ export default {
           goalId,
           {
             goal_name: this.goal.title,
-            start_date: this.formatDate(this.goal.startDate),
-            end_date: this.formatDate(this.goal.endDate),
+            start_date: this.goal.startDate,
+            end_date: this.goal.endDate,
             target_amount: this.goal.amount,
             deposit_date: this.goal.depositDate,
           },
@@ -205,26 +248,31 @@ export default {
 
 <style scoped>
 .goal-edit-page {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-  font-family: 'Noto Sans KR', sans-serif;
+  padding: 2rem;
 }
 
-h2 {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
+.goal-edit-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+}
+
+.input-form {
+  padding: 1rem 10rem;
 }
 
 .form-group {
   margin-bottom: 1.5rem;
 }
+
 label {
   font-weight: bold;
   display: block;
   margin-bottom: 0.5rem;
 }
+
 input[type='text'],
 input[type='number'],
 input[type='date'] {
@@ -233,17 +281,34 @@ input[type='date'] {
   border: 1px solid #ccc;
   border-radius: 12px;
   font-size: 1rem;
+  box-shadow: inset 0 0 5px #eee;
 }
+
 .date-range {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
+
 .amount-input {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  position: relative;
 }
+
+.amount-input .clear-btn {
+  position: absolute;
+  right: 2.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #aaa;
+}
+
 .helper-text {
   font-size: 0.85rem;
   color: #999;
@@ -296,21 +361,30 @@ input[type='date'] {
   gap: 1.5rem;
   margin-top: 2rem;
 }
+
 .btn {
-  padding: 0.7rem 2rem;
-  border-radius: 24px;
+  border-radius: 20px;
+  padding: 0.5rem 3rem;
   font-weight: bold;
   font-size: 1rem;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .cancel {
   background: #eee;
   color: #444;
 }
+
 .submit {
   background: #296bff;
   color: white;
+}
+
+@media (max-width: 1024px) {
+  .input-form {
+    padding: 1rem;
+  }
 }
 </style>

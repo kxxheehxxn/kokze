@@ -38,20 +38,20 @@ onMounted(async () => {
 
         const result = await response.json();
 
-        if (response.status === 200 && result.token && result.user) {
+        if (response.status === 200 && result.accessToken && result.user) {
             if (result.newUser === true) {
                 auth.setAllUserInfo({
                     name: result.user.username || '카카오 사용자',
                     email: result.user.email || '',
                 });
                 auth.isKakao = true;
-                auth.setToken(result.token);
+                auth.setToken(result.accessToken);
 
                 router.push('/signup/step1');
             } else {
                 auth.login({
                     email: result.user.email,
-                    token: result.token,
+                    token: result.accessToken,
                     userId: result.user.userId,
                     userName: result.user.username,
                 });

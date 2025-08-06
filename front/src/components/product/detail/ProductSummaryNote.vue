@@ -4,9 +4,7 @@ const props = defineProps({
 });
 
 // AI 요약이 없다면 안내 메시지로 대체
-const summaryText =
-  props.product.summary?.trim() ||
-  `이 상품에 대한 요약 정보가 존재하지 않습니다.`;
+const summaryText = props.product.summary?.trim() || `이 상품에 대한 요약 정보가 존재하지 않습니다.`;
 </script>
 
 <template>
@@ -17,10 +15,7 @@ const summaryText =
         <span class="title">상품 3줄 요약</span>
         <span>✨</span>
       </div>
-      <div class="desc">
-        해당 요약은 AI가 자동 생성한 설명입니다. 실제 상품 약관과는 다를 수
-        있습니다.
-      </div>
+      <div class="desc">해당 요약은 AI가 자동 생성한 설명입니다. 실제 상품 약관과는 다를 수 있습니다.</div>
     </div>
     <hr />
     <div class="content">
@@ -34,7 +29,7 @@ const summaryText =
   background: white;
   border-radius: 1.5rem;
   padding: 2rem;
-  box-shadow: inset 0 0 12px #a1c4fd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-top: 1.5rem;
   font-size: 1rem;
 }

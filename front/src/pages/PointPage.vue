@@ -1,14 +1,14 @@
 <template>
   <div class="point-page">
-    <div class="point-header">
+    <div class="point-header mt-4">
       <h1>포인트 관리</h1>
       <div class="point-summary">
         <div class="current-points">
           <span class="label">보유 포인트</span>
           <span class="amount">{{ totalPoints.toLocaleString() }} P</span>
         </div>
-        <button 
-          class="withdraw-btn" 
+        <button
+          class="withdraw-btn"
           @click="showWithdrawModal = true"
           :disabled="totalPoints < 10000"
         >
@@ -22,16 +22,20 @@
     </div>
 
     <!-- 출금 모달 -->
-    <div v-if="showWithdrawModal" class="modal-overlay" @click.self="showWithdrawModal = false">
+    <div
+      v-if="showWithdrawModal"
+      class="modal-overlay"
+      @click.self="showWithdrawModal = false"
+    >
       <div class="modal-content">
         <h3>포인트 출금</h3>
         <div class="withdraw-form">
           <div class="form-group">
             <label>출금 금액</label>
-            <input 
-              v-model.number="withdrawAmount" 
-              type="number" 
-              min="10000" 
+            <input
+              v-model.number="withdrawAmount"
+              type="number"
+              min="10000"
               step="1000"
               placeholder="최소 10,000원"
             />
@@ -39,17 +43,19 @@
           </div>
           <div class="form-group">
             <label>출금 사유</label>
-            <input 
-              v-model="withdrawReason" 
-              type="text" 
+            <input
+              v-model="withdrawReason"
+              type="text"
               placeholder="출금 사유를 입력하세요"
             />
           </div>
         </div>
         <div class="modal-actions">
-          <button class="btn cancel" @click="showWithdrawModal = false">취소</button>
-          <button 
-            class="btn confirm" 
+          <button class="btn cancel" @click="showWithdrawModal = false">
+            취소
+          </button>
+          <button
+            class="btn confirm"
             @click="handleWithdraw"
             :disabled="!canWithdraw"
           >
@@ -72,9 +78,11 @@ const withdrawAmount = ref(10000);
 const withdrawReason = ref('');
 
 const canWithdraw = computed(() => {
-  return withdrawAmount.value >= 10000 && 
-         withdrawAmount.value <= totalPoints.value && 
-         withdrawReason.value.trim() !== '';
+  return (
+    withdrawAmount.value >= 10000 &&
+    withdrawAmount.value <= totalPoints.value &&
+    withdrawReason.value.trim() !== ''
+  );
 });
 
 const loadTotalPoints = async () => {
@@ -95,7 +103,10 @@ const handleWithdraw = async () => {
   }
 
   try {
-    const response = await withdrawPoints(withdrawAmount.value, withdrawReason.value);
+    const response = await withdrawPoints(
+      withdrawAmount.value,
+      withdrawReason.value
+    );
     if (response.success) {
       alert('포인트 출금이 완료되었습니다.');
       showWithdrawModal.value = false;
@@ -158,12 +169,12 @@ onMounted(() => {
 .current-points .amount {
   font-size: 32px;
   font-weight: bold;
-  color: #189eff;
+  color: #3573ee;
 }
 
 .withdraw-btn {
   padding: 12px 24px;
-  background: #189eff;
+  background: #3573ee;
   color: white;
   border: none;
   border-radius: 8px;
@@ -272,7 +283,7 @@ onMounted(() => {
 }
 
 .btn.confirm {
-  background: #189eff;
+  background: #3573ee;
   color: white;
 }
 
@@ -284,4 +295,4 @@ onMounted(() => {
   background: #ccc;
   cursor: not-allowed;
 }
-</style> 
+</style>

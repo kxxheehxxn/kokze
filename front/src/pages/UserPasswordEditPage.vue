@@ -42,7 +42,11 @@
         <button type="button" class="cancel-btn" @click="onCancel">
           취소하기
         </button>
-        <button type="submit" class="submit-btn" :disabled="!canSubmit || loading">
+        <button
+          type="submit"
+          class="submit-btn"
+          :disabled="!canSubmit || loading"
+        >
           {{ loading ? '수정 중...' : '수정' }}
         </button>
       </div>
@@ -52,65 +56,67 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import UserCardLayout from '@/components/UserCardLayout.vue'
-import { updatePassword } from '@/api/userApi'
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import UserCardLayout from '@/components/UserCardLayout.vue';
+import { updatePassword } from '@/api/userApi';
 
-const currentPassword = ref('')
-const password = ref('')
-const passwordCheck = ref('')
-const loading = ref(false)
-const error = ref('')
-const router = useRouter()
+const currentPassword = ref('');
+const password = ref('');
+const passwordCheck = ref('');
+const loading = ref(false);
+const error = ref('');
+const router = useRouter();
 
 const passwordStrength = computed(() => {
-  const pwd = password.value
-  if (!pwd) return { valid: false, message: '' }
+  const pwd = password.value;
+  if (!pwd) return { valid: false, message: '' };
 
-  const hasLength = pwd.length >= 8
-  const hasUpper = /[A-Z]/.test(pwd)
-  const hasLower = /[a-z]/.test(pwd)
-  const hasNumber = /\d/.test(pwd)
-  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd)
+  const hasLength = pwd.length >= 8;
+  const hasUpper = /[A-Z]/.test(pwd);
+  const hasLower = /[a-z]/.test(pwd);
+  const hasNumber = /\d/.test(pwd);
+  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd);
 
-  const valid = hasLength && hasUpper && hasLower && hasNumber && hasSpecial
+  const valid = hasLength && hasUpper && hasLower && hasNumber && hasSpecial;
   return {
     valid,
     message: valid ? '' : '8자 이상, 대소문자, 숫자, 특수문자 포함 필요',
-  }
-})
+  };
+});
 
 const canSubmit = computed(
   () =>
     currentPassword.value &&
     password.value &&
     passwordStrength.value.valid &&
-    password.value === passwordCheck.value,
-)
+    password.value === passwordCheck.value
+);
 
 function onCancel() {
-  router.back()
+  router.back();
 }
 async function onSubmit() {
-  if (!canSubmit.value) return
-  
-  loading.value = true
-  error.value = ''
-  
+  if (!canSubmit.value) return;
+
+  loading.value = true;
+  error.value = '';
+
   try {
-    const result = await updatePassword(currentPassword.value, password.value)
+    const result = await updatePassword(currentPassword.value, password.value);
     if (result.success) {
-      alert('비밀번호가 성공적으로 변경되었습니다!')
-      router.push('/userpage')
+      alert('비밀번호가 성공적으로 변경되었습니다!');
+      router.push('/userpage');
     } else {
-      error.value = '비밀번호 변경에 실패했습니다: ' + (result.message || '알 수 없는 오류')
+      error.value =
+        '비밀번호 변경에 실패했습니다: ' +
+        (result.message || '알 수 없는 오류');
     }
   } catch (error) {
-    error.value = '비밀번호 변경 중 오류가 발생했습니다. 다시 시도해주세요.'
-    console.error('비밀번호 변경 실패:', error)
+    error.value = '비밀번호 변경 중 오류가 발생했습니다. 다시 시도해주세요.';
+    console.error('비밀번호 변경 실패:', error);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>
@@ -184,5 +190,10 @@ async function onSubmit() {
   background: #2573ee;
   color: #fff;
   border: none;
+}
+@media (max-width: 1024px) and (orientation: portrait) {
+  .button-row {
+    margin-top: 100px;
+  }
 }
 </style>

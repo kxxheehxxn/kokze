@@ -8,6 +8,7 @@ import HomeToTax from '@/components/homePage/HomeToTaxComponent.vue';
 import HomeToProduct from '@/components/homePage/HomeToProductComponent.vue';
 import HomeToGoal from '@/components/homePage/HomeToGoalComponent.vue';
 import QuizModal from '@/components/QuizModal.vue';
+import ScrollTopButton from '@/components/layouts/ScrollTopButton.vue';
 import { ref, computed } from 'vue';
 import { userAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
@@ -15,6 +16,7 @@ import { useRouter } from 'vue-router';
 const auth = userAuthStore();
 const router = useRouter();
 const showQuizModal = ref(false);
+const chartComponentRef = ref(null);
 
 const isUserLoggedIn = computed(() => {
   return auth.isLogin;
@@ -32,6 +34,14 @@ const closeQuizModal = () => {
   showQuizModal.value = false;
 };
 
+const handleNavCardClick = (path) => {
+  if (auth.isLogin) {
+    router.push(path);
+  } else {
+    showLoginAlert();
+  }
+};
+
 const showLoginAlert = () => {
   const result = confirm('이용하려면 로그인이 필요합니다.\n로그인 페이지로 이동하시겠습니까?');
 
@@ -40,11 +50,10 @@ const showLoginAlert = () => {
   }
 };
 
-const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth',
-  });
+const updateChart = () => {
+  if (chartComponentRef.value && chartComponentRef.value.fetchUserAssetChart) {
+    chartComponentRef.value.fetchUserAssetChart();
+  }
 };
 </script>
 
@@ -55,10 +64,10 @@ const scrollToTop = () => {
       <!-- 1. 사용자 자산 현황 + 차트 (상단) - 로그인 시에만 표시 -->
       <div class="asset-section" v-if="isUserLoggedIn">
         <div class="asset-info-component">
-          <UserAssetComponent :userId="auth.userId" />
+          <UserAssetComponent :userId="auth.userId" @asset-lookup="updateChart" />
         </div>
         <div class="chart-component">
-          <AssetChartComponent :userId="auth.userId" />
+          <AssetChartComponent :userId="auth.userId" ref="chartComponentRef" />
         </div>
       </div>
 
@@ -85,24 +94,20 @@ const scrollToTop = () => {
 
       <!-- 4. 하단 3개 컴포넌트 (세금 관리, 금융 상품 추천, 목표) -->
       <div class="bottom-navigation-section">
-        <div class="nav-card">
+        <div class="nav-card" @click="handleNavCardClick('/tax-management')">
           <HomeToTax />
         </div>
-        <div class="nav-card">
+        <div class="nav-card" @click="handleNavCardClick('/product')">
           <HomeToProduct />
         </div>
-        <div class="nav-card">
+        <div class="nav-card" @click="handleNavCardClick('/goals')">
           <HomeToGoal />
         </div>
       </div>
     </div>
 
     <!-- ScrollToTop 버튼 -->
-    <div class="scroll-top-btn" @click="scrollToTop">
-      <div class="scroll-top-icon">
-        <i class="fa-solid fa-chevron-up" style="color: #3573ee"></i>
-      </div>
-    </div>
+    <ScrollTopButton />
 
     <!-- 퀴즈 모달 -->
     <QuizModal :show="showQuizModal" @close="closeQuizModal" />
@@ -126,7 +131,7 @@ const scrollToTop = () => {
   /* max-width: none; 최대 너비 제한 해제 */
   margin: 0 auto; /* 중앙 정렬 */
   margin-top: 15px;
-  padding: 30px 70px;
+  padding: 30px 12px;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -138,7 +143,7 @@ const scrollToTop = () => {
 /* ===== 1. 자산 현황 + 차트 영역 ===== */
 .asset-section {
   display: flex;
-  gap: 0px; /* 자산 컴포넌트와 차트 컴포넌트 사이 간격 */
+  gap: 32px; /* 자산 컴포넌트와 차트 컴포넌트 사이 간격 */
   width: 100%;
   /* height: 630px; */
   max-width: none; /* 최대 너비 제한 해제 */
@@ -151,7 +156,7 @@ const scrollToTop = () => {
   align-items: center;
   justify-content: center;
   min-height: 200px;
-  padding: 20px;
+  padding: 20px 0 20px 20px;
 }
 
 .chart-component {
@@ -160,18 +165,18 @@ const scrollToTop = () => {
   align-items: center;
   justify-content: center;
   min-height: 200px;
-  padding: 20px;
+  padding: 20px 20px 20px 0;
 }
 
 /* ===== 2. 광고 + 퀴즈/공지사항 영역 ===== */
 .middle-section {
   display: flex;
-  gap: 20px;
+  gap: 32px;
   min-height: 250px;
   width: 100%;
   padding-right: 20px;
   padding-left: 20px;
-  margin-top: 100px; /* 상단 여백 */
+  margin-top: 70px; /* 상단 여백 */
   max-width: none;
   justify-content: center; /* 중앙 정렬 */
 }
@@ -242,7 +247,7 @@ const scrollToTop = () => {
   color: #374151;
   font-size: 28px;
   width: 100%;
-  margin-top: 100px; /* 상단 여백 */
+  margin-top: 70px; /* 상단 여백 */
   max-width: none;
   flex-direction: column; /* 세로 정렬 */
 }
@@ -289,47 +294,12 @@ const scrollToTop = () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* ===== ScrollToTop 버튼 ===== */
-.scroll-top-btn {
-  cursor: pointer;
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 56px;
-  height: 56px;
-  background-color: #ffffff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: #374151;
-  border: 2px solid #e5e7eb;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-}
-
-.scroll-top-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-}
-
-.scroll-top-icon {
-  font-size: 20px;
-  transition: transform 0.3s ease;
-}
-
-.scroll-top-btn:hover .scroll-top-icon {
-  transform: translateY(-2px);
-}
-
 /* ===== 태블릿 반응형 (1024px 이하) ===== */
 @media (max-width: 1024px) {
   .main-content {
     max-width: none;
     margin-top: 0px;
-    padding: 25px 0px; /* 좌우 패딩 없음 */
+    padding: 25px 12px; /* 좌우 패딩 없음 */
     gap: 25px;
   }
 
@@ -341,14 +311,17 @@ const scrollToTop = () => {
     max-width: 100%;
   }
 
-  .asset-section,
+  .asset-section {
+    gap: 16px;
+  }
+
   .middle-section {
-    gap: 15px;
+    gap: 16px;
   }
 
   /* 자산 섹션이 없을 때 여백 조정 */
   .middle-section.no-asset-section {
-    margin-top: 20px;
+    margin-top: 0px;
   }
 
   .bottom-navigation-section {
@@ -357,13 +330,6 @@ const scrollToTop = () => {
 
   .nav-card {
     height: 250px;
-  }
-
-  .scroll-top-btn {
-    width: 52px;
-    height: 52px;
-    bottom: 25px;
-    right: 25px;
   }
 
   .ad-component {
@@ -378,19 +344,24 @@ const scrollToTop = () => {
 @media (max-width: 768px) {
   .main-content {
     margin: 15px 0px 0px 0px;
-    padding: 10px 0px; /* 좌우 패딩 없음 */
+    padding: 10px 12px; /* 좌우 패딩 없음 */
     gap: 15px;
   }
 
   /* 자산 + 차트 세로 배치 */
   .asset-section {
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
   }
 
-  .asset-info-component,
+  .asset-info-component {
+    min-width: 160px;
+    padding: 20px 20px 0 20px;
+  }
+
   .chart-component {
     min-height: 160px;
+    padding: 0 20px 20px 20px;
   }
 
   /* 광고 + 퀴즈/공지 세로 배치 */
@@ -450,94 +421,6 @@ const scrollToTop = () => {
     height: 220px;
     font-size: 12px;
     border-radius: 12px;
-  }
-
-  /* 스크롤 버튼 */
-  .scroll-top-btn {
-    width: 48px;
-    height: 48px;
-    bottom: 20px;
-    right: 20px;
-  }
-
-  .scroll-top-icon {
-    font-size: 18px;
-  }
-}
-
-/* ===== 작은 모바일 반응형 (480px 이하) ===== */
-@media (max-width: 480px) {
-  .main-content {
-    margin-top: 0px;
-    gap: 15px;
-  }
-
-  .asset-info-component,
-  .chart-component {
-    min-height: 140px;
-  }
-
-  .chart-component {
-    font-size: 14px;
-  }
-
-  /* 자산 섹션이 없을 때 여백 조정 */
-  .middle-section.no-asset-section {
-    margin-top: 10px;
-  }
-
-  .ad-component {
-    height: 150px;
-    font-size: 14px;
-    border-radius: 0 20px 20px 0; /* border-radius 유지 */
-    margin-left: 0; /* 좌우 패딩이 0이므로 음수 마진 필요 없음 */
-    width: 100%; /* 부모 너비에 꽉 채움 */
-  }
-
-  .right-section {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .quiz-component,
-  .notice-component {
-    min-height: 100px;
-    font-size: 12px;
-  }
-
-  .service-title-section {
-    height: 60px;
-    font-size: 14px;
-  }
-
-  .service-title {
-    font-size: 20px;
-  }
-
-  .service-content {
-    font-size: 12px;
-    margin-top: 5px;
-  }
-
-  .nav-card {
-    height: 160px;
-    font-size: 11px;
-    border-radius: 10px;
-  }
-
-  .bottom-navigation-section {
-    gap: 8px;
-  }
-
-  .scroll-top-btn {
-    width: 44px;
-    height: 44px;
-    bottom: 15px;
-    right: 15px;
-  }
-
-  .scroll-top-icon {
-    font-size: 16px;
   }
 }
 </style>

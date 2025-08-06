@@ -68,25 +68,18 @@ const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
   eager: true,
   import: 'default',
 });
-const defaultIcon = new URL(
-  '@/assets/images/bankIcon/default.png',
-  import.meta.url
-).href;
+const defaultIcon = new URL('@/assets/images/bankIcon/default.png', import.meta.url).href;
 const getBankIcon = (bankName) => {
   const english = bankNameMap[bankName];
   if (!english) return defaultIcon;
-  const match = Object.entries(iconModules).find(([path]) =>
-    path.includes(`/${english}.png`)
-  );
+  const match = Object.entries(iconModules).find(([path]) => path.includes(`/${english}.png`));
   return match ? match[1] : defaultIcon;
 };
 
 // 🔽 정렬
 const sortedProducts = computed(() => {
   return [...products.value].sort((a, b) =>
-    sortKey.value === 'max'
-      ? b.intrRate2 - a.intrRate2
-      : b.intrRate - a.intrRate
+    sortKey.value === 'max' ? b.intrRate2 - a.intrRate2 : b.intrRate - a.intrRate
   );
 });
 
@@ -120,13 +113,7 @@ function handlePageChange(page) {
 
     <hr />
 
-    <div
-      v-for="product in sortedProducts"
-      :key="product.finPrdtCd"
-      class="product"
-      @click="goToDetail(product)"
-      style="cursor: pointer"
-    >
+    <div v-for="product in sortedProducts" :key="product.finPrdtCd" class="product" @click="goToDetail(product)">
       <div class="left">
         <img :src="getBankIcon(product.bankName)" class="bank-icon" />
         <div class="info">
@@ -156,10 +143,10 @@ function handlePageChange(page) {
 
 <style scoped>
 .product-list-wrapper {
-  background: white;
+  background: #ffffff;
   padding: 2rem;
-  border-radius: 1.5rem;
-  box-shadow: inset 0 0 12px #ddd;
+  border-radius: 20px;
+  box-shadow: inset 0 0 12px #3573ee;
 }
 
 .header-row {
@@ -188,6 +175,10 @@ function handlePageChange(page) {
   align-items: center;
   border-bottom: 1px solid #eee;
   padding: 1rem 0;
+}
+
+.product:hover {
+  cursor: pointer;
 }
 
 .left {

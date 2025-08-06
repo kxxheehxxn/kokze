@@ -157,7 +157,7 @@ onMounted(() => {
 .custom-box-wrapper {
   display: flex;
   justify-content: center;
-  padding-top: 70px;
+  padding-top: 60px;
   padding-bottom: 30px;
   margin: 0px 30px;
 }
@@ -252,5 +252,14 @@ onMounted(() => {
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+/* 또는 뷰포트 기반으로 유연하게 */
+@media (max-width: 1024px) and (orientation: portrait) {
+  .custom-box {
+    min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
+  }
+  .textarea-input {
+    height: 50vh;
+  }
 }
 </style>

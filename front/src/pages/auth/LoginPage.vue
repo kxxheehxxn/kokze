@@ -13,14 +13,16 @@ const user = reactive({
 });
 
 const error = ref('');
-const disableSubmit = computed(() => !(user.email && user.password));
+const disableSubmit = computed(
+  () => !(user.email.trim() && user.password.trim())
+);
 
 const handleLogin = async () => {
-  if (!user.email) {
+  if (!user.email.trim()) {
     alert('이메일을 입력해주세요.');
     return;
   }
-  if (!user.password) {
+  if (!user.password.trim()) {
     alert('비밀번호를 입력해주세요.');
     return;
   }
@@ -47,13 +49,13 @@ const handleSignup = () => {
 
 <template>
   <div class="container">
-    <router-link to="/" class="logo-section text-decoration-none">
-      <div class="logo d-flex align-items-center">
+    <router-link to="/" class="logo-section" aria-label="홈으로 이동">
+      <div class="logo">
         <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
       </div>
     </router-link>
 
-    <div class="login-box">
+    <div class="login-box" role="form" aria-label="로그인 폼">
       <div class="title">로그인</div>
 
       <div class="form-group">
@@ -63,6 +65,8 @@ const handleSignup = () => {
           type="email"
           v-model="user.email"
           placeholder="이메일을 입력하세요"
+          autocomplete="username"
+          aria-required="true"
         />
       </div>
 
@@ -73,6 +77,8 @@ const handleSignup = () => {
           type="password"
           v-model="user.password"
           placeholder="비밀번호를 입력하세요"
+          autocomplete="current-password"
+          aria-required="true"
         />
       </div>
 
@@ -80,17 +86,29 @@ const handleSignup = () => {
         <router-link to="/find-password">비밀번호를 잊으셨나요?</router-link>
       </div>
 
-      <button class="login-button button-like" @click="handleLogin">
+      <button
+        class="login-button button-like"
+        :disabled="disableSubmit"
+        @click="handleLogin"
+        :aria-disabled="disableSubmit"
+      >
         로그인
       </button>
+
       <div
         class="kakao-login button-like"
-        alt="Kakao login"
+        role="button"
+        tabindex="0"
         @click="handleKakaoLogin"
+        @keyup.enter="handleKakaoLogin"
+        aria-label="카카오 로그인"
       >
-        <img :src="kakaoLogin" width="40px" class="kakao-logo" />
+        <div class="kakao-logo-wrapper">
+          <img :src="kakaoLogin" alt="Kakao 로고" class="kakao-logo" />
+        </div>
         <span class="kakao-login-text">카카오 로그인</span>
       </div>
+
       <p class="sign-up-prompt">
         <span>아직 콕재 회원이 아닌가요?&nbsp;</span>
         <span class="sign-up" @click="handleSignup">가입하기</span>
@@ -100,201 +118,161 @@ const handleSignup = () => {
 </template>
 
 <style>
+:root {
+  --radius: 12px;
+  --shadow: 0 0 20px rgba(133, 133, 133, 0.25);
+  --primary: #3573ee;
+  --text-default: #2a2a2a;
+  --muted: #686868;
+  --bg: #fafafa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  color: var(--text-default);
+}
+
 .container {
-  background-color: #fafafa;
+  background-color: var(--bg);
+  min-height: 100vh;
+  padding: 0 1rem 2.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-  padding: 0 16px 40px 16px;
   position: relative;
 }
-
-/* header */
-.header {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-}
-
-.logo {
-  height: 50px;
-  width: 50px;
-  object-fit: cover;
-}
-
-.logo-section {
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  background-color: transparent;
-  flex-shrink: 0;
-  margin-left: 20px;
-  margin-top: 10px;
-  margin-bottom: 0;
-  align-self: flex-start;
-}
-.logo-section:hover {
-  transform: scale(1.05);
-}
-.logo {
-  background-color: transparent;
-}
-.logo-icon {
-  width: 54px;
-  height: 54px;
-  background: transparent !important;
-  border-radius: 50%;
-  padding: 2px;
-  object-fit: contain;
-}
-
-/* login-box */
 .login-box {
   background-color: #fff;
   width: 100%;
   max-width: 900px;
-  padding: 90px 140px;
+  padding: 70px 40px 50px;
   border-radius: 28px;
-  box-shadow: 0 0 20px #85858540;
+  box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
+  margin-top: 10px;
 }
 
 .title {
-  background-color: #fff;
   font-size: 24px;
   font-weight: 600;
-  text-align: left;
+  margin-bottom: 4px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
 }
-
 .form-group label {
-  color: #686868;
   font-size: 14px;
   margin-bottom: 6px;
+  color: var(--muted);
 }
-
 .form-group input {
-  background-color: #fff;
-  border-radius: 12px;
   border: 1px solid #d9d9d9;
+  border-radius: var(--radius);
   padding: 14px 16px;
   font-size: 16px;
+  background: #fff;
+  outline: none;
   box-shadow: inset 0 0 5px #eee;
+  width: 100%;
+}
+.form-group input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(53, 115, 238, 0.2);
 }
 
 .forgot-password {
-  background-color: #fff;
   text-align: right;
-  color: #3573ee;
   font-size: 14px;
-  cursor: pointer;
+  margin-top: 4px;
+}
+.forgot-password a {
+  color: var(--primary);
+  text-decoration: none;
+}
+.forgot-password a:hover {
+  text-decoration: underline;
 }
 
 .button-like {
   width: 100%;
-  height: 60px;
-  border-radius: 12px;
-  display: block;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition: opacity 0.2s ease;
 }
 
 .login-button {
-  background-color: #3573ee;
-  color: white;
-  padding: 0;
-  border: none;
+  background-color: var(--primary);
+  color: #fff;
   font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
+  height: 56px;
+}
+.login-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .kakao-login {
-  display: flex;
-  align-items: center;
   position: relative;
-  cursor: pointer;
-  border: none;
-  background-color: #fee500;
-  font-size: 18px;
-  color: #181600;
-  border-radius: 12px;
-  width: 100%;
-  height: 60px;
-  padding: 0; /* 내부 여백은 로고/텍스트에서 조절 */
-  box-sizing: border-box;
-}
-
-.kakao-login {
-  position: relative; /* 텍스트 절대 위치 기준 */
   display: flex;
   align-items: center;
-  cursor: pointer;
-  border: none;
+  justify-content: center;
   background-color: #fee500;
-  font-size: 18px;
   color: #181600;
-  border-radius: 12px;
-  width: 100%;
-  height: 60px;
+  font-size: 18px;
+  height: 56px;
+  gap: 8px;
+  padding: 0 16px;
+  margin-top: 4px;
 }
-
-.kakao-logo {
+.kakao-logo-wrapper {
   position: absolute;
-  left: 20px; /* 왼쪽 여백 */
-  width: 40px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.kakao-logo {
+  width: 32px;
   height: auto;
   object-fit: contain;
 }
-
 .kakao-login-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   font-weight: 600;
   white-space: nowrap;
 }
-.sign-up-prompt {
-  background-color: #fff;
-  text-align: center;
-  font-size: 16px;
-}
 
+.sign-up-prompt {
+  text-align: center;
+  font-size: 15px;
+  margin-top: 4px;
+}
 .sign-up {
-  color: #3573ee;
+  color: var(--primary);
   text-decoration: underline;
   cursor: pointer;
 }
-
-/* 모바일 화면 대응 */
-@media (max-width: 768px) {
+.sign-up:hover {
+  opacity: 0.9;
+}
+@media (max-width: 1024px) and (orientation: portrait) {
   .login-box {
-    max-width: 100%;
-    padding: 40px 30px;
-    border-radius: 20px;
-  }
-
-  .title {
-    font-size: 22px;
-  }
-
-  .login-button,
-  .button-like {
-    height: 50px;
-    font-size: 16px;
-  }
-
-  .form-group input {
-    font-size: 15px;
-    padding: 12px 14px;
-  }
-
-  .sign-up-prompt {
-    font-size: 14px;
+    min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
+    width: 90vw;
   }
 }
 </style>

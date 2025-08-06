@@ -112,7 +112,7 @@ function clearInput() {
         @input="onInputChange"
         placeholder="예치금액을 입력해주세요"
       />
-      <span class="unit">원</span>
+      <span>원</span>
       <button class="clear-btn" @click="clearInput">×</button>
     </div>
 
@@ -203,8 +203,8 @@ function clearInput() {
 }
 .amount-input {
   position: relative;
-  display: inline-block;
-  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
   width: 100%;
 }
 .amount-input input {
@@ -216,16 +216,15 @@ function clearInput() {
   border-radius: 0.5rem;
   font-weight: bold;
 }
-.amount-input .unit {
+.amount-input span {
   position: absolute;
-  right: 1.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #333;
+  right: 1rem;
+  font-size: 1rem;
+  color: #555;
 }
 .amount-input .clear-btn {
   position: absolute;
-  right: 0.2rem;
+  right: 2.2rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;

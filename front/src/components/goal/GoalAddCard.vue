@@ -60,20 +60,29 @@ export default {
 
 <style scoped>
 .goal-add-card {
-  background: #ffffff;
+  background: #fff;
+  border-radius: 1rem;
   border: 2px dashed #007bff;
-  border-radius: 12px;
   padding: 2rem 1rem;
   text-align: center;
   color: #007bff;
   cursor: pointer;
-  transition: background 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  height: 100%;
+  min-height: 150px;
+  box-sizing: border-box;
 }
+
 .goal-add-card:hover {
   background: #f0f8ff;
 }
 .plus-icon {
   font-size: 2rem;
+  font-weight: bold;
   margin-bottom: 0.5rem;
 }
 </style>

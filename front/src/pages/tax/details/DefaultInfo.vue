@@ -12,9 +12,7 @@
       <li>최종 정산 결과는 반드시 사용자가 직접 확인해야 합니다.</li>
     </ul>
 
-    <button class="info-button" @click="showModal = true">
-      작년 연말정산 조회하기
-    </button>
+    <button class="info-button" @click="showModal = true">작년 연말정산 조회하기</button>
 
     <div v-if="showModal" class="popup-overlay">
       <div class="popup-content agreement-popup">
@@ -38,8 +36,8 @@
           <section class="popup-section agree-section">
             <p>위 개인정보 수집·이용에 동의하십니까?</p>
             <div class="radio-group">
-              <label><input type="radio" value="Y" v-model="agree"> 동의함</label>
-              <label><input type="radio" value="N" v-model="agree"> 동의안함</label>
+              <label><input type="radio" value="Y" v-model="agree" /> 동의함</label>
+              <label><input type="radio" value="N" v-model="agree" /> 동의안함</label>
             </div>
           </section>
 
@@ -68,43 +66,43 @@
 </template>
 
 <script>
-  export default {
-    name: "DefaultInfo",
-    data() {
-      return {
-        showModal: false,
-        step: "agreement",
-        selectedYear: "",
-        yearOptions: [2022, 2023, 2024],
-        agree: ""
-      };
-    },
-    methods: {
-      startVerification() {
-        if (!this.selectedYear) {
-          alert("연도를 선택해주세요.");
-          return;
-        }
-        if (this.agree !== "Y") {
-          alert("동의해야 진행 가능합니다.");
-          return;
-        }
-
-        this.step = "verifying";
-      },
-      goToCompleted() {
-          this.step = 'completed';
-      },
-      confirmVerification() {
-        alert("인증이 완료되어 조회를 시작합니다.");
-        this.closePopup();
-      },
-      closePopup() {
-        this.showModal = false;
-        this.step = "agreement";
+export default {
+  name: 'DefaultInfo',
+  data() {
+    return {
+      showModal: false,
+      step: 'agreement',
+      selectedYear: '',
+      yearOptions: [2022, 2023, 2024],
+      agree: '',
+    };
+  },
+  methods: {
+    startVerification() {
+      if (!this.selectedYear) {
+        alert('연도를 선택해주세요.');
+        return;
       }
-    }
-  };
+      if (this.agree !== 'Y') {
+        alert('동의해야 진행 가능합니다.');
+        return;
+      }
+
+      this.step = 'verifying';
+    },
+    goToCompleted() {
+      this.step = 'completed';
+    },
+    confirmVerification() {
+      alert('인증이 완료되어 조회를 시작합니다.');
+      this.closePopup();
+    },
+    closePopup() {
+      this.showModal = false;
+      this.step = 'agreement';
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -156,7 +154,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -282,5 +280,4 @@
   border: none;
   cursor: pointer;
 }
-
 </style>

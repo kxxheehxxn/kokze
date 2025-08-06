@@ -1,64 +1,60 @@
 <template>
-  <div class="tax-info">
-    <h2 class="section-title">🐘 세금 정보 서비스</h2>
-    <p class="section-desc">
-      2024년 귀속 연말정산 PDF 자료를 기반으로, 항목별 작년 금액과 세금 관련 안내를 제공합니다.
-    </p>
+  <h2 class="section-title">🐘 세금 정보 서비스</h2>
+  <p class="section-desc">2024년 귀속 연말정산 PDF 자료를 기반으로, 항목별 작년 금액과 세금 관련 안내를 제공합니다.</p>
 
-    <ul class="info-list">
-      <li>정보는 사용자가 홈택스 등에 제출한 자료를 바탕으로 하며, 실제와 다를 수 있습니다.</li>
-      <li>금액·항목이 사실과 다를 경우 원천 기관(카드사·의료기관 등)에 확인하세요.</li>
-      <li>절세 방안은 일반적인 안내이며, 개인 상황에 따라 적용 여부가 다를 수 있습니다.</li>
-      <li>최종 정산 결과는 반드시 사용자가 직접 확인해야 합니다.</li>
-    </ul>
+  <ul class="info-list">
+    <li>정보는 사용자가 홈택스 등에 제출한 자료를 바탕으로 하며, 실제와 다를 수 있습니다.</li>
+    <li>금액·항목이 사실과 다를 경우 원천 기관(카드사·의료기관 등)에 확인하세요.</li>
+    <li>절세 방안은 일반적인 안내이며, 개인 상황에 따라 적용 여부가 다를 수 있습니다.</li>
+    <li>최종 정산 결과는 반드시 사용자가 직접 확인해야 합니다.</li>
+  </ul>
 
-    <button class="info-button" @click="showModal = true">작년 연말정산 조회하기</button>
+  <button class="info-button" @click="showModal = true">작년 연말정산 조회하기</button>
 
-    <div v-if="showModal" class="popup-overlay">
-      <div class="popup-content agreement-popup">
-        <button class="popup-close" @click="closePopup">✕</button>
+  <div v-if="showModal" class="popup-overlay">
+    <div class="popup-content agreement-popup">
+      <button class="popup-close" @click="closePopup">✕</button>
 
-        <div v-if="step === 'agreement'">
-          <h2 class="popup-title">개인(신용)정보 수집·이용 동의</h2>
-          <p class="popup-desc">
-            [필수] 전자금융거래 정보처리 동의<br />
-            전자금융거래 서비스 제공·관리·개선 등을 목적으로 합니다.
-          </p>
+      <div v-if="step === 'agreement'">
+        <h2 class="popup-title">개인(신용)정보 수집·이용 동의</h2>
+        <p class="popup-desc">
+          [필수] 전자금융거래 정보처리 동의<br />
+          전자금융거래 서비스 제공·관리·개선 등을 목적으로 합니다.
+        </p>
 
-          <section class="popup-section year-section">
-            <label class="popup-label">연도 :</label>
-            <select v-model="selectedYear" class="popup-select">
-              <option disabled value="">연도를 선택하세요</option>
-              <option v-for="year in yearOptions" :key="year" :value="year">{{ year }}</option>
-            </select>
-          </section>
+        <section class="popup-section year-section">
+          <label class="popup-label">연도 :</label>
+          <select v-model="selectedYear" class="popup-select">
+            <option disabled value="">연도를 선택하세요</option>
+            <option v-for="year in yearOptions" :key="year" :value="year">{{ year }}</option>
+          </select>
+        </section>
 
-          <section class="popup-section agree-section">
-            <p>위 개인정보 수집·이용에 동의하십니까?</p>
-            <div class="radio-group">
-              <label><input type="radio" value="Y" v-model="agree" /> 동의함</label>
-              <label><input type="radio" value="N" v-model="agree" /> 동의안함</label>
-            </div>
-          </section>
-
-          <div class="popup-actions">
-            <button class="agree-btn" @click="startVerification">동의</button>
+        <section class="popup-section agree-section">
+          <p>위 개인정보 수집·이용에 동의하십니까?</p>
+          <div class="radio-group">
+            <label><input type="radio" value="Y" v-model="agree" /> 동의함</label>
+            <label><input type="radio" value="N" v-model="agree" /> 동의안함</label>
           </div>
+        </section>
+
+        <div class="popup-actions">
+          <button class="agree-btn" @click="startVerification">동의</button>
         </div>
+      </div>
 
-        <div v-else-if="step === 'verifying'" class="center-content">
-          <p class="verify-text">🔐 인증중입니다...<br />인증이 완료되면 "인증완료" 버튼을 눌러주세요.</p>
-          <div class="popup-actions">
-            <button class="close-btn" @click="closePopup">닫기</button>
-            <button class="confirm-btn" @click="goToCompleted">인증완료</button>
-          </div>
+      <div v-else-if="step === 'verifying'" class="center-content">
+        <p class="verify-text">🔐 인증중입니다...<br />인증이 완료되면 "인증완료" 버튼을 눌러주세요.</p>
+        <div class="popup-actions">
+          <button class="close-btn" @click="closePopup">닫기</button>
+          <button class="confirm-btn" @click="goToCompleted">인증완료</button>
         </div>
+      </div>
 
-        <div v-else-if="step === 'completed'" class="center-content">
-          <p class="verify-complete">✅ 인증이 완료되었습니다.</p>
-          <div class="popup-actions">
-            <button class="close-btn" @click="closePopup">닫기</button>
-          </div>
+      <div v-else-if="step === 'completed'" class="center-content">
+        <p class="verify-complete">✅ 인증이 완료되었습니다.</p>
+        <div class="popup-actions">
+          <button class="close-btn" @click="closePopup">닫기</button>
         </div>
       </div>
     </div>
@@ -106,13 +102,6 @@ export default {
 </script>
 
 <style scoped>
-.tax-info {
-  font-family: 'Noto Sans KR', sans-serif;
-  padding: 24px;
-  background-color: #ffffff;
-  color: #1f2937;
-}
-
 .section-title {
   font-size: 20px;
   font-weight: bold;

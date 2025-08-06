@@ -41,7 +41,7 @@ export const userAuthStore = defineStore('auth', () => {
     } catch (error) {
       console.error('localStorage 파싱 오류:', error);
     }
-    
+
     const name = state.value.user.userName;
     return name || '';
   });
@@ -98,9 +98,9 @@ export const userAuthStore = defineStore('auth', () => {
   const getToken = () => state.value.token;
 
   const setToken = (token) => {
-    state.value.token = token
-    localStorage.setItem('auth', JSON.stringify(state.value))
-  }
+    state.value.token = token;
+    localStorage.setItem('auth', JSON.stringify(state.value));
+  };
 
   const load = () => {
     const auth = localStorage.getItem('auth');

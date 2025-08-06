@@ -186,4 +186,9 @@ onMounted(() => {
   opacity: 0.6;
   cursor: not-allowed;
 }
+@media (max-width: 1024px) and (orientation: portrait) {
+  .custom-box {
+    min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
+  }
+}
 </style>

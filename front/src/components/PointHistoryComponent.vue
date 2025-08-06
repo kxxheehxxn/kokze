@@ -34,19 +34,29 @@
             v-for="item in filteredHistory"
             :key="item.pointId"
             class="history-item"
-            :class="{ 'deposit': item.type === 1, 'withdraw': item.type === 2 }"
+            :class="{ deposit: item.type === 1, withdraw: item.type === 2 }"
           >
             <div class="item-header">
-              <span class="item-type">{{ item.type === 1 ? '적립' : '출금' }}</span>
+              <span class="item-type">{{
+                item.type === 1 ? '적립' : '출금'
+              }}</span>
               <span class="item-date">{{ formatDate(item.createdAt) }}</span>
             </div>
             <div class="item-detail">{{ item.typeDetail }}</div>
             <div class="item-amount">
-              <span :class="{ 'positive': item.type === 1, 'negative': item.type === 2 }">
-                {{ item.type === 1 ? '+' : '-' }}{{ item.pointAmount.toLocaleString() }} P
+              <span
+                :class="{
+                  positive: item.type === 1,
+                  negative: item.type === 2,
+                }"
+              >
+                {{ item.type === 1 ? '+' : '-'
+                }}{{ item.pointAmount.toLocaleString() }} P
               </span>
             </div>
-            <div class="item-total">총 {{ item.totalAmount.toLocaleString() }} P</div>
+            <div class="item-total">
+              총 {{ item.totalAmount.toLocaleString() }} P
+            </div>
           </div>
         </div>
       </div>
@@ -69,21 +79,21 @@ const filteredHistory = computed(() => {
     return history.value;
   }
   const typeInt = selectedFilter.value === '적립' ? 1 : 2;
-  return history.value.filter(item => item.type === typeInt);
+  return history.value.filter((item) => item.type === typeInt);
 });
 
 const formatDate = (dateString) => {
   if (!dateString) {
     return '날짜 없음';
   }
-  
+
   try {
     let date;
-    
+
     if (Array.isArray(dateString)) {
       if (dateString.length >= 5) {
         const [year, month, day, hour, minute] = dateString;
-        date = new Date(year, month - 1, day, hour, minute); 
+        date = new Date(year, month - 1, day, hour, minute);
       } else {
         return '날짜 오류';
       }
@@ -96,17 +106,17 @@ const formatDate = (dateString) => {
     } else {
       date = new Date(dateString);
     }
-    
+
     if (isNaN(date.getTime())) {
       return '날짜 오류';
     }
-    
+
     return date.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   } catch (error) {
     return '날짜 오류';
@@ -120,7 +130,7 @@ const loadPointHistory = async () => {
   try {
     const [pointsData, historyData] = await Promise.all([
       getMyPoints(),
-      getMyPointHistory()
+      getMyPointHistory(),
     ]);
 
     if (pointsData.success) {
@@ -140,8 +150,7 @@ const loadPointHistory = async () => {
   }
 };
 
-const filterHistory = () => {
-};
+const filterHistory = () => {};
 
 onMounted(() => {
   loadPointHistory();
@@ -173,7 +182,7 @@ onMounted(() => {
 .point-amount {
   font-size: 32px;
   font-weight: bold;
-  color: #189eff;
+  color: #3573ee;
 }
 
 .history-section {
@@ -196,7 +205,9 @@ onMounted(() => {
   min-height: 200px;
 }
 
-.loading, .error, .empty {
+.loading,
+.error,
+.empty {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -209,21 +220,25 @@ onMounted(() => {
   width: 32px;
   height: 32px;
   border: 3px solid #f3f3f3;
-  border-top: 3px solid #189eff;
+  border-top: 3px solid #3573ee;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 12px;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .retry-btn {
   margin-top: 12px;
   padding: 8px 16px;
-  background: #189eff;
+  background: #3573ee;
   color: white;
   border: none;
   border-radius: 6px;
@@ -292,4 +307,4 @@ onMounted(() => {
   font-size: 12px;
   color: #666;
 }
-</style> 
+</style>

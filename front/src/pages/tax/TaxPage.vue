@@ -326,7 +326,7 @@ export default {
   /* tax-info 스타일 조정 */
   .tax-info {
     flex: none;
-    min-width: auto;
+    width: 100%; /* 전체 너비 사용 */
     padding: 16px;
   }
 

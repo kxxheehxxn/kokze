@@ -5,7 +5,7 @@
       <h3 class="card-title">목표</h3>
     </div>
     <div class="card-content">
-      <img src="@/assets/images/goal_logo.svg" alt="목표 로고" class="logo" />
+      <img src="@/assets/images/goal_logo.svg" alt="목표 로고" />
     </div>
   </div>
 </template>

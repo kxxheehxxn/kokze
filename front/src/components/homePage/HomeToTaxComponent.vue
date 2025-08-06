@@ -5,7 +5,7 @@
       <h3 class="card-title">세금 관리</h3>
     </div>
     <div class="card-content">
-      <img src="@/assets/images/duty_logo.svg" alt="세금 관리 로고" class="logo" />
+      <img src="@/assets/images/duty_logo.svg" alt="세금 관리 로고" />
     </div>
   </div>
 </template>

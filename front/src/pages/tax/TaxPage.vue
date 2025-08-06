@@ -332,21 +332,17 @@ export default {
 
   /* 스크롤바 스타일링 (웹킷 브라우저) */
   .tax-grid::-webkit-scrollbar {
-    height: 6px;
+    height: 8px;
   }
 
   .tax-grid::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #f0f0f0;
     border-radius: 3px;
   }
 
   .tax-grid::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #3573ee;
     border-radius: 3px;
-  }
-
-  .tax-grid::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
   }
 }
 </style>

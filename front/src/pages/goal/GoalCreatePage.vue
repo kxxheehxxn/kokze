@@ -101,10 +101,28 @@ export default {
       return Number(this.targetAmount).toLocaleString();
     },
   },
+mounted() {
+  const { amount, start, end } = this.$route.query;
+
+  if (amount && start && end) {
+    this.targetAmount = parseInt(amount);
+    this.startDate = this.toDateInputFormat(start);
+    this.endDate = this.toDateInputFormat(end);
+  }
+},
   methods: {
     onCancel() {
       this.$router.back();
     },
+     toDateInputFormat(dateStr) {
+    // 예: '2025-08-07' → 그대로 쓰고, 혹시 객체나 이상값이면 처리
+    if (typeof dateStr === 'string' && dateStr.includes('-')) {
+      return dateStr;
+    }
+
+    const date = new Date(dateStr);
+    return date.toISOString().split('T')[0]; // yyyy-MM-dd
+  },
     async onSubmit() {
       const auth = userAuthStore();
       const userId = auth.state.user.userId;

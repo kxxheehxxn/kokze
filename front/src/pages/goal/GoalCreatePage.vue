@@ -1,75 +1,97 @@
 <template>
   <div class="goal-create-page">
-    <h2>목표 추가하기</h2>
+    <div class="goal-create-card">
+      <h2 class="title">목표 추가하기</h2>
 
-    <!-- 목표 이름 -->
-    <div class="form-group">
-      <label>목표 이름</label>
-      <input type="text" v-model="goalName" placeholder="예: 내 집 마련" />
-    </div>
+      <hr />
 
-    <!-- 목표 기간 -->
-    <div class="form-group">
-      <label>목표 기간</label>
-      <div class="date-range">
-        <input type="date" v-model="startDate" />
-        <span>~</span>
-        <input type="date" v-model="endDate" />
-      </div>
-    </div>
-
-    <!-- 목표 금액 -->
-    <div class="form-group">
-      <label>목표 금액</label>
-      <div class="amount-input">
-        <input type="number" v-model="targetAmount" />
-        <span>원</span>
-      </div>
-      <p class="helper-text">{{ formattedAmount }}원</p>
-    </div>
-
-    <!-- 입금 날짜 -->
-    <div class="form-group">
-      <label>입금 날짜 (매월 몇 일)</label>
-      <input type="number" v-model="depositDate" min="1" max="28" />
-      <p class="helper-text">1~28 사이의 숫자 입력</p>
-    </div>
-
-    <!-- 금융 상품 연결 -->
-    <div class="form-group">
-      <label>금융 상품 연결하기</label>
-      <p class="subtext">
-        기존에 가입한 금융 상품이 있다면 연동해서 더 쉽게 관리하세요.
-      </p>
-
-      <div class="product-card" v-if="selectedAccount">
-        <span class="product-icon">💳</span>
-        <div class="product-text">
-          {{ selectedAccount.bank_name }} - {{ selectedAccount.account_num }}
+      <div class="input-form">
+        <!-- 목표 이름 -->
+        <div class="form-group">
+          <label>목표 이름</label>
+          <input type="text" v-model="goalName" placeholder="예: 내 집 마련" />
         </div>
 
-        <button class="remove-btn" @click="selectedAccount = null">－</button>
+        <!-- 목표 기간 -->
+        <div class="form-group">
+          <label>목표 기간</label>
+          <div class="date-range">
+            <input type="date" v-model="startDate" />
+            <span>~</span>
+            <input type="date" v-model="endDate" :min="endDateMin" />
+          </div>
+        </div>
+
+        <!-- 목표 금액 -->
+        <div class="form-group">
+          <label>목표 금액</label>
+          <div class="amount-input">
+            <input
+              type="text"
+              v-model="targetAmount"
+              @input="onInputChange"
+              placeholder="금액을 입력하세요"
+            />
+            <span>원</span>
+            <button
+              v-if="parsedAmount > 0"
+              class="clear-btn"
+              @click="clearInput"
+            >
+              ×
+            </button>
+          </div>
+          <p class="helper-text">{{ formatKoreanCurrency(parsedAmount) }}</p>
+        </div>
+
+        <!-- 입금 날짜 -->
+        <div class="form-group">
+          <label>입금 날짜 (매월 몇 일)</label>
+          <input type="number" v-model="depositDate" min="1" max="28" />
+          <p class="helper-text">1~28 사이의 숫자 입력</p>
+        </div>
+
+        <!-- 금융 상품 연결 -->
+        <div class="form-group">
+          <label>금융 상품 연결하기</label>
+          <p class="subtext">
+            기존에 가입한 금융 상품이 있다면 연동해서 더 쉽게 관리하세요.
+          </p>
+
+          <div class="product-card" v-if="selectedAccount">
+            <span class="product-icon">💳</span>
+            <div class="product-text">
+              {{ selectedAccount.bank_name }} -
+              {{ selectedAccount.account_num }}
+            </div>
+
+            <button class="remove-btn" @click="selectedAccount = null">
+              －
+            </button>
+          </div>
+
+          <div class="product-placeholder" v-else @click="fetchAccounts">
+            ＋
+          </div>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="btn-row">
+          <button class="btn cancel" @click="onCancel">취소하기</button>
+          <button class="btn submit" @click="onSubmit">목표 추가하기</button>
+        </div>
       </div>
 
-      <div class="product-placeholder" v-else @click="fetchAccounts">
-        <span>＋</span>
-      </div>
+      <ProductModal
+        v-if="showProductModal"
+        :accounts="accounts"
+        @close="showProductModal = false"
+        @connect="handleProductConnect"
+      />
     </div>
-
-    <!-- 버튼 -->
-    <div class="btn-row">
-      <button class="btn cancel" @click="onCancel">취소하기</button>
-      <button class="btn submit" @click="onSubmit">목표 추가하기</button>
-    </div>
-
-    <ProductModal
-      v-if="showProductModal"
-      :accounts="accounts"
-      @close="showProductModal = false"
-      @connect="handleProductConnect"
-    />
   </div>
 </template>
+
 <script>
 import {
   getAccountsByUserId,
@@ -97,13 +119,45 @@ export default {
     };
   },
   computed: {
+    parsedAmount() {
+      return Number(String(this.targetAmount).replace(/\D/g, '')) || 0;
+    },
     formattedAmount() {
-      return Number(this.targetAmount).toLocaleString();
+      if (!this.parsedAmount) return '';
+      return this.parsedAmount.toLocaleString();
+    },
+    today() {
+      const now = new Date();
+      return now.toISOString().split('T')[0];
+    },
+    endDateMin() {
+      if (!this.startDate) return this.today;
+      return this.startDate > this.today ? this.startDate : this.today;
     },
   },
   methods: {
     onCancel() {
       this.$router.back();
+    },
+    onInputChange(e) {
+      this.targetAmount = e.target.value.replace(/\D/g, '');
+    },
+    clearInput() {
+      this.targetAmount = '';
+    },
+    formatKoreanCurrency(num) {
+      if (isNaN(num) || num <= 0) return '0원';
+      const jo = Math.floor(num / 1_0000_0000_0000);
+      const uk = Math.floor((num % 1_0000_0000_0000) / 1_0000_0000);
+      const man = Math.floor((num % 1_0000_0000) / 10000);
+      const rest = num % 10000;
+
+      let result = '';
+      if (jo > 0) result += `${jo}조`;
+      if (uk > 0) result += `${uk}억`;
+      if (man > 0) result += `${man}만`;
+      if (rest > 0) result += rest.toLocaleString();
+      return result + '원';
     },
     async onSubmit() {
       const auth = userAuthStore();
@@ -178,16 +232,19 @@ export default {
 
 <style scoped>
 .goal-create-page {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-  font-family: 'Noto Sans KR', sans-serif;
+  padding: 2rem;
 }
 
-h2 {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
+.goal-create-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+}
+
+.input-form {
+  padding: 1rem 10rem;
 }
 
 .form-group {
@@ -208,6 +265,7 @@ input[type='date'] {
   border: 1px solid #ccc;
   border-radius: 12px;
   font-size: 1rem;
+  box-shadow: inset 0 0 5px #eee;
 }
 
 .date-range {
@@ -220,6 +278,19 @@ input[type='date'] {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  position: relative;
+}
+
+.amount-input .clear-btn {
+  position: absolute;
+  right: 2.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #aaa;
 }
 
 .helper-text {
@@ -283,8 +354,8 @@ input[type='date'] {
 }
 
 .btn {
-  padding: 0.7rem 2rem;
-  border-radius: 24px;
+  border-radius: 20px;
+  padding: 0.5rem 3rem;
   font-weight: bold;
   font-size: 1rem;
   border: none;
@@ -300,5 +371,11 @@ input[type='date'] {
 .submit {
   background: #296bff;
   color: white;
+}
+
+@media (max-width: 1024px) {
+  .input-form {
+    padding: 1rem;
+  }
 }
 </style>

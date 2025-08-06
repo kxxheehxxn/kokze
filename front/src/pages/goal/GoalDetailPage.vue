@@ -208,7 +208,7 @@ export default {
 .back-link {
   color: #007bff;
   text-decoration: none;
-  margin-left: 1rem;
+  margin: 1rem;
   display: inline-block;
 }
 
@@ -218,7 +218,6 @@ export default {
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-top: 1rem;
 }
 
 /* 타이틀 */
@@ -230,7 +229,7 @@ export default {
 .progress-area,
 .details,
 .button-row {
-  margin: auto 4rem;
+  padding: 1rem 10rem;
 }
 
 .progress-area {
@@ -341,6 +340,11 @@ export default {
 }
 
 @media (max-width: 1024px) {
+  .progress-area,
+  .details,
+  .button-row {
+    padding: 1rem;
+  }
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
   }

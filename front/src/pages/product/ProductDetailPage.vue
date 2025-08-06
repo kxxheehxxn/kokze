@@ -35,6 +35,7 @@ function goBackToList() {
   router.back();
 }
 </script>
+
 <template>
   <div class="product-detail-page">
     <!-- 🔙 목록으로 돌아가기 -->

@@ -172,7 +172,7 @@ const onSubmit = async () => {
     </router-link>
 
     <div class="signup-box">
-      <div class="top">
+      <div class="sign-top">
         <div class="title">
           콕재 서비스를 이용하려면<br />회원 가입이 필요해요
         </div>
@@ -230,26 +230,6 @@ const onSubmit = async () => {
   padding: 0 16px 40px 16px;
   position: relative;
 }
-
-.logo-section {
-  cursor: pointer;
-  margin: 15px 0 0 20px;
-  align-self: flex-start;
-  transition: transform 0.2s ease;
-}
-
-.logo-section:hover {
-  transform: scale(1.05);
-}
-
-.logo-icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  padding: 2px;
-  object-fit: contain;
-}
-
 .signup-box {
   background-color: #fff;
   width: 100%;
@@ -261,14 +241,6 @@ const onSubmit = async () => {
   flex-direction: column;
   gap: 20px;
 }
-
-.top {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-}
-
 .title {
   font-size: 24px;
   font-weight: 600;
@@ -376,33 +348,5 @@ const onSubmit = async () => {
   text-align: center;
   white-space: pre-line;
   margin-bottom: 24px;
-}
-
-@media (max-width: 768px) {
-  .signup-box {
-    padding: 40px 30px;
-  }
-
-  .title {
-    font-size: 22px;
-  }
-
-  .choices {
-    flex-direction: column;
-    align-items: center;
-    flex-wrap: nowrap;
-    gap: 24px;
-  }
-
-  .choice {
-    width: 100%;
-    max-width: 320px;
-  }
-
-  .cancel-button,
-  .next-button {
-    font-size: 14px;
-    padding: 12px 16px;
-  }
 }
 </style>

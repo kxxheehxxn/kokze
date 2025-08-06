@@ -129,9 +129,25 @@ export default {
       return this.startDate > this.today ? this.startDate : this.today;
     },
   },
+  mounted() {
+    const { amount, start, end } = this.$route.query;
+
+    if (amount && start && end) {
+      this.targetAmount = parseInt(amount);
+      this.startDate = this.toDateInputFormat(start);
+      this.endDate = this.toDateInputFormat(end);
+    }
+  },
   methods: {
     onCancel() {
       this.$router.back();
+    },
+    toDateInputFormat(dateStr) {
+      if (typeof dateStr === 'string' && dateStr.includes('-')) {
+        return dateStr;
+      }
+      const date = new Date(dateStr);
+      return date.toISOString().split('T')[0]; // yyyy-MM-dd
     },
     onInputChange(e) {
       this.targetAmount = e.target.value.replace(/\D/g, '');

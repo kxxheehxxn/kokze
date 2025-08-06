@@ -7,6 +7,7 @@
         id="mobile-category"
         v-model="selectedCategory"
         aria-label="카테고리 선택"
+        class="mt-4"
       >
         <option v-for="cat in categories" :key="cat" :value="cat">
           {{ cat }}
@@ -296,7 +297,7 @@ const scrollToTop = () => {
 }
 
 /* -------- 반응형 -------- */
-@media (max-width: 1100px) {
+@media (max-width: 1024px) {
   .terms-content {
     padding: 24px 20px 0 16px;
   }

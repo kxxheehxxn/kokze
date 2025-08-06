@@ -1,9 +1,7 @@
 <template>
   <div class="sidebar-wrapper">
-    <!-- 어두운 배경 오버레이 -->
     <div class="overlay" @click="$emit('close')"></div>
 
-    <!-- 사이드바 본체 -->
     <div class="sidebar">
       <div class="sidebar-header">
         <h3>🌟 김콕재님의 지난 목표 리스트 🌟</h3>
@@ -18,10 +16,10 @@
           <div class="title">목표 : {{ goal.title }}</div>
           <hr />
           <div class="period">
-            {{ goal.period1 }}<br />
-            {{ goal.period2 }}
+            {{ formatDate(goal.startDate) }}<br />
+            {{ formatDate(goal.endDate) }}
           </div>
-          <div class="amount">{{ goal.amount }}</div>
+          <div class="amount">{{ formatAmount(goal.targetAmount) }}</div>
           <div :class="['status', goal.success ? 'success' : 'fail']">
             {{ goal.success ? '성공' : '실패' }}
           </div>
@@ -29,48 +27,47 @@
       </div>
 
       <div class="close-bottom-wrapper">
-        <button class="close-btn" @click="$emit('close')">[닫기 ✕]</button>
+        <button class="close-btn" @click="$emit('close')">[ 닫기 ✕ ]</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { fetchPastGoals } from '@/api/goalApi';
+import { userAuthStore } from '@/stores/auth'; // Pinia 사용자 스토어 (또는 다른 경로)
+
 export default {
   name: 'PastGoalSidebar',
   data() {
     return {
-      pastGoals: [
-        {
-          title: '노후준비',
-          period1: '2025년 07월 15일 ~',
-          period2: '2100년 01월 01일 (약 75년)',
-          amount: '100억 원',
-          success: false,
-        },
-        {
-          title: '노후준비',
-          period1: '2025년 07월 15일 ~',
-          period2: '2100년 01월 01일 (약 75년)',
-          amount: '100억 원',
-          success: true,
-        },
-        {
-          title: '노후준비',
-          period1: '2025년 07월 15일 ~',
-          period2: '2100년 01월 01일 (약 75년)',
-          amount: '100억 원',
-          success: true,
-        },
-        {
-          title: '노후준비',
-          period1: '2025년 07월 15일 ~',
-          period2: '2100년 01월 01일 (약 75년)',
-          amount: '100억 원',
-          success: false,
-        },
-      ],
+      pastGoals: [],
     };
+  },
+  methods: {
+    async loadPastGoals() {
+      try {
+        const userId = userAuthStore().state.user.userId;
+        const goals = await fetchPastGoals(userId);
+        this.pastGoals = goals;
+      } catch (e) {
+        console.error('지난 목표 조회 실패:', e);
+      }
+    },
+    formatDate(arr) {
+      if (!arr || arr.length !== 3) return '';
+      const [y, m, d] = arr;
+      return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
+        2,
+        '0'
+      )}일`;
+    },
+    formatAmount(amount) {
+      return `${amount.toLocaleString()}원`;
+    },
+  },
+  mounted() {
+    this.loadPastGoals();
   },
 };
 </script>
@@ -105,8 +102,8 @@ export default {
   width: 500px;
   height: 100%;
   background: #f9f9f9;
-  border-left: 3px solid #a2c3ff;
   padding: 1.5rem 1rem 4rem;
+  border-radius: 12px;
   box-shadow: -3px 0 6px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   z-index: 1001;
@@ -143,6 +140,12 @@ export default {
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
+
+.period,
+.amount {
+  text-align: left;
+}
+
 .period {
   margin: 0.5rem 0;
   line-height: 1.4;
@@ -174,7 +177,7 @@ export default {
   background: #666;
   color: white;
   padding: 0.5rem 1rem;
-  border-radius: 16px;
+  border-radius: 18px;
   border: none;
   font-size: 0.85rem;
   font-weight: bold;

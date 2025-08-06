@@ -1,19 +1,62 @@
 <template>
-  <div class="goal-add-card" @click="goToCreate">
+  <div class="goal-add-card" @click="loadRecommendedGoal">
     <div class="plus-icon">+</div>
     <p>목표 추가하기</p>
+
+    <GoalRecommendModal
+      v-if="showModal"
+      :recommendData="recommendData"
+      @accept="goToRecommended"
+      @reject="goToManual"
+      @close="showModal = false"
+    />
   </div>
 </template>
 
 <script>
+import GoalRecommendModal from '@/components/GoalRecommendModal.vue';
+import { fetchRecommendedGoal } from '@/api/goalApi';
+import { userAuthStore } from '@/stores/auth';
+
 export default {
+  components: { GoalRecommendModal },
+  data() {
+    return {
+      showModal: false,
+      recommendData: null,
+    };
+  },
   methods: {
-    goToCreate() {
+    async loadRecommendedGoal() {
+      try {
+        const userId = userAuthStore().state.user.userId;
+        const data = await fetchRecommendedGoal(userId);
+        this.recommendData = data;
+        this.showModal = true;
+      } catch (err) {
+        console.error('추천 목표 불러오기 실패:', err);
+        this.$router.push({ name: 'GoalCreatePage' });
+      }
+    },
+    goToRecommended() {
+      const r = this.recommendData;
+      this.$router.push({
+        name: 'GoalCreatePage',
+        query: {
+          amount: r.recommendedAmount,
+          start: r.recommendedStartDate,
+          end: r.recommendedEndDate,
+        },
+      });
+    },
+    goToManual() {
       this.$router.push({ name: 'GoalCreatePage' });
     },
   },
 };
 </script>
+
+
 
 <style scoped>
 .goal-add-card {

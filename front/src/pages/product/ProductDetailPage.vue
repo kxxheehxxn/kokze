@@ -32,13 +32,13 @@ onMounted(loadProduct);
 
 // 🔙 목록으로 돌아가기
 function goBackToList() {
-  router.push('/product');
+  router.back();
 }
 </script>
 <template>
   <div class="product-detail-page">
     <!-- 🔙 목록으로 돌아가기 -->
-    <div class="back-button" @click="goBackToList">＜ 목록으로 돌아가기</div>
+    <div class="back-button" @click="goBackToList">← 목록으로 돌아가기</div>
 
     <template v-if="isLoading">
       <p>로딩 중...</p>
@@ -64,22 +64,10 @@ function goBackToList() {
 }
 
 .back-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1.25rem;
-  background-color: #e5e5e5;
-  border: none;
-  border-radius: 1.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #111;
+  color: #007bff;
+  text-decoration: none;
+  margin: 1rem;
+  display: inline-block;
   cursor: pointer;
-  transition: background-color 0.2s;
-  margin: 1rem 0;
-}
-
-.back-button:hover {
-  background-color: #d4d4d4;
 }
 </style>

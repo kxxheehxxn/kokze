@@ -5,6 +5,7 @@ import ProductSummaryCard from '@/components/product/detail/ProductSummaryCard.v
 import ProductSummaryNote from '@/components/product/detail/ProductSummaryNote.vue';
 import ProductInfoBox from '@/components/product/detail/ProductInfo.vue';
 import ProductRateBox from '@/components/product/detail/ProductRate.vue';
+import ScrollTopButton from '@/components/layouts/ScrollTopButton.vue';
 import { fetchProductDetail } from '@/api/productApi';
 
 const props = defineProps({
@@ -38,30 +39,40 @@ function goBackToList() {
 
 <template>
   <div class="product-detail-page">
-    <!-- 🔙 목록으로 돌아가기 -->
-    <div class="back-button" @click="goBackToList">← 목록으로 돌아가기</div>
+    <div class="product-detail-wrapper">
+      <!-- 🔙 목록으로 돌아가기 -->
+      <div class="back-button" @click="goBackToList"><i class="fa-solid fa-arrow-left"></i> 목록으로 돌아가기</div>
 
-    <template v-if="isLoading">
-      <p>로딩 중...</p>
-    </template>
+      <template v-if="isLoading">
+        <p>로딩 중...</p>
+      </template>
 
-    <template v-else-if="product">
-      <ProductSummaryCard :product="product" />
-      <ProductSummaryNote :product="product" />
-      <ProductInfoBox :product="product" />
-      <ProductRateBox :product="product" />
-    </template>
+      <template v-else-if="product">
+        <ProductSummaryCard :product="product" />
+        <ProductSummaryNote :product="product" />
+        <ProductInfoBox :product="product" />
+        <ProductRateBox :product="product" />
+      </template>
 
-    <div v-else class="not-found">해당 상품을 찾을 수 없습니다.</div>
+      <div v-else class="not-found">해당 상품을 찾을 수 없습니다.</div>
+    </div>
+    <ScrollTopButton />
   </div>
 </template>
 
 <style scoped>
 .product-detail-page {
-  max-width: 1024px;
   margin: 0 auto;
-  padding: 2rem 1rem 3rem;
+  padding: 60px 100px 40px;
   box-sizing: border-box;
+  width: 100%;
+  background-color: #fbfbfb;
+}
+
+.product-detail-wrapper {
+  padding: 0 12px;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .back-button {
@@ -70,5 +81,17 @@ function goBackToList() {
   margin: 1rem;
   display: inline-block;
   cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+  .product-detail-page {
+    padding: 60px 70px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-detail-page {
+    padding: 60px 30px 40px;
+  }
 }
 </style>

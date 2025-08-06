@@ -11,17 +11,12 @@ const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
   eager: true,
   import: 'default',
 });
-const defaultIcon = new URL(
-  '@/assets/images/bankIcon/default.png',
-  import.meta.url
-).href;
+const defaultIcon = new URL('@/assets/images/bankIcon/default.png', import.meta.url).href;
 
 const getBankIcon = (bankName) => {
   const english = bankNameMap[bankName];
   if (!english) return defaultIcon;
-  const match = Object.entries(iconModules).find(([path]) =>
-    path.includes(`/${english}.png`)
-  );
+  const match = Object.entries(iconModules).find(([path]) => path.includes(`/${english}.png`));
   return match ? match[1] : defaultIcon;
 };
 
@@ -62,13 +57,9 @@ const openBankHomepage = () => {
       <span class="term">(12개월, 세전)</span>
     </div>
 
-    <button class="cta-button" @click="openBankHomepage">
-      공식 홈페이지 더 알아보기
-    </button>
+    <button class="cta-button" @click="openBankHomepage">공식 홈페이지 더 알아보기</button>
 
-    <div class="footer-note">
-      금융 상품 가입 후 ‘홈에서 자산 조회’를 클릭하여 금융 상품을 연결하세요!
-    </div>
+    <div class="footer-note">금융 상품 가입 후 ‘홈에서 자산 조회’를 클릭하여 금융 상품을 연결하세요!</div>
   </div>
 </template>
 
@@ -77,7 +68,7 @@ const openBankHomepage = () => {
   background: white;
   padding: 3rem 4rem 2rem 4rem;
   border-radius: 1.5rem;
-  box-shadow: inset 0 0 12px #3573ee;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -155,6 +146,12 @@ const openBankHomepage = () => {
   border-radius: 0.5rem;
   cursor: pointer;
   margin-top: 1rem;
+}
+
+.cta-button:active {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
 }
 
 .footer-note {

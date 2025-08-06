@@ -114,9 +114,7 @@ const chips = computed(() => {
 function removeChip(chip) {
   const f = localFilters.value;
   f.banks = f.banks.filter((b) => b !== chip);
-  const periodKey = Object.entries(periodMap).find(
-    ([, label]) => label === chip
-  )?.[0];
+  const periodKey = Object.entries(periodMap).find(([, label]) => label === chip)?.[0];
   if (periodKey) f.period = 0;
   if (chip === formatKoreanCurrency(Number(f.amount))) f.amount = '';
   f.type = f.type.filter((t) => t !== chip);
@@ -151,7 +149,7 @@ function resetFilters() {
         :class="['filter-toggle', { active: activeFilter === 'period' }]"
       >
         기간·금액
-        <span>{{ activeFilter === 'period' ? '▲' : '▼' }}</span>
+        <span><i :class="activeFilter === 'period' ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i></span>
       </button>
       <button
         @click="
@@ -160,7 +158,8 @@ function resetFilters() {
         "
         :class="['filter-toggle', { active: activeFilter === 'type' }]"
       >
-        상품유형 <span>{{ activeFilter === 'type' ? '▲' : '▼' }}</span>
+        상품유형
+        <span><i :class="activeFilter === 'type' ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i></span>
       </button>
       <button
         @click="
@@ -170,8 +169,9 @@ function resetFilters() {
         :class="['filter-toggle', { active: activeFilter === 'condition' }]"
       >
         우대조건
-        <span>{{ activeFilter === 'condition' ? '▲' : '▼' }}</span>
+        <span><i :class="activeFilter === 'condition' ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i></span>
       </button>
+      <button @click="resetFilters" class="reset-btn">필터 초기화</button>
     </div>
 
     <!-- 세부 필터 -->
@@ -188,13 +188,9 @@ function resetFilters() {
         <TypeFilter v-model="localFilters.type" @change="emitFilterDto" />
       </div>
       <div v-if="activeFilter === 'condition'" class="dropdown-panel">
-        <ConditionFilter
-          v-model="localFilters.conditions"
-          @change="emitFilterDto"
-        />
+        <ConditionFilter v-model="localFilters.conditions" @change="emitFilterDto" />
       </div>
     </div>
-
     <hr />
 
     <!-- 필터 chips -->
@@ -204,20 +200,17 @@ function resetFilters() {
         <button @click="removeChip(chip)">×</button>
       </span>
     </div>
-    <div style="margin-top: 1rem">
-      <button @click="resetFilters" class="reset-btn">필터 초기화</button>
-    </div>
   </div>
 </template>
 
 <style scoped>
 .filter-bar-wrapper {
-  background: white;
-  padding: 2rem;
-  border-radius: 1.5rem;
-  box-shadow: inset 0 0 12px #ddd;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: inset 0 0 12px #3573ee;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
 }
 
 .filter-toggle-row {
@@ -229,8 +222,8 @@ function resetFilters() {
 
 .filter-toggle {
   border: 1px solid #ccc;
-  border-radius: 2rem;
-  padding: 0.6rem 1rem;
+  border-radius: 20px;
+  padding: 5px 12px;
   background: white;
   font-weight: 600;
   cursor: pointer;
@@ -261,7 +254,7 @@ function resetFilters() {
 }
 
 .chip {
-  background: #316be7;
+  background: #0d3a95;
   color: white;
   padding: 0.4rem 0.8rem;
   border-radius: 2rem;
@@ -275,11 +268,50 @@ function resetFilters() {
   cursor: pointer;
 }
 .reset-btn {
-  padding: 0.5rem 1rem;
-  background: #e0e0e0;
+  padding: 5px 12px;
+  background: #ef4444;
+  color: #ffffff;
   border: none;
-  border-radius: 1rem;
-  cursor: pointer;
+  border-radius: 20px;
   font-weight: 600;
+  transition: all 0.2s ease;
+}
+.reset-btn:hover {
+  cursor: pointer;
+}
+.reset-btn:active {
+  background: #b91c1c; /* 누르고 있을 때 더욱 진한 빨강 */
+}
+
+@media (max-width: 1024px) {
+  .filter-bar-wrapper {
+    margin: 0 0 24px;
+  }
+
+  .filter-toggle {
+    font-size: 13px;
+  }
+
+  .reset-btn {
+    font-size: 13px;
+  }
+
+  .chip {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-toggle {
+    font-size: 12px;
+  }
+
+  .reset-btn {
+    font-size: 12px;
+  }
+
+  .chip {
+    font-size: 12px;
+  }
 }
 </style>

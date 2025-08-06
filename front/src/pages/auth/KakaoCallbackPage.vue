@@ -26,6 +26,7 @@ onMounted(async () => {
             return;
         }
         
+        // 실제 카카오 엔드포인트 사용
         const response = await fetch(
             `http://localhost:8080/api/auth/kakao/callback?code=${code}`,
             {
@@ -37,25 +38,30 @@ onMounted(async () => {
         );
 
         const result = await response.json();
+        console.log('카카오 로그인 응답:', result);
 
-        if (response.status === 200 && result.accessToken && result.user) {
-            if (result.newUser === true) {
+        if (response.status === 200 && result.success && result.data) {
+            const authData = result.data;
+            
+            if (authData.newUser === true) {
                 auth.setAllUserInfo({
-                    name: result.user.username || '카카오 사용자',
-                    email: result.user.email || '',
+                    name: authData.user.username || '카카오 사용자',
+                    email: authData.user.email || '',
                 });
                 auth.isKakao = true;
-                auth.setToken(result.accessToken);
+                auth.setToken(authData.accessToken);
 
+                console.log('신규 사용자 - 회원가입 페이지로 이동');
                 router.push('/signup/step1');
             } else {
                 auth.login({
-                    email: result.user.email,
-                    token: result.accessToken,
-                    userId: result.user.userId,
-                    userName: result.user.username,
+                    email: authData.user.email,
+                    token: authData.accessToken,
+                    userId: authData.user.userId,
+                    userName: authData.user.username,
                 });
 
+                console.log('기존 사용자 - 메인 페이지로 이동');
                 router.push('/');
             }
         } else {

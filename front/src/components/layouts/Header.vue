@@ -92,7 +92,9 @@ onBeforeUnmount(() => {
   left: 0;
   right: 0;
   z-index: 1000;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.3); /* 기존 #fff를 반투명으로 변경 */
+  backdrop-filter: blur(8px); /* 안개 효과 추가 */
+  -webkit-backdrop-filter: blur(8px); /* Safari 지원 */
   width: 100%;
   padding: 0;
   margin: 0;
@@ -105,7 +107,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #fff;
+  background-color: transparent;
   position: relative;
 }
 /* 로고 영역 (왼쪽 고정) */

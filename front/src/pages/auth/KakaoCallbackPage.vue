@@ -33,6 +33,9 @@ onMounted(async () => {
         );
         const result = await response.json();
         console.log('카카오 로그인 응답:', result);
+        console.log('응답 상태:', response.status);
+        console.log('응답 헤더:', response.headers);
+        
         if (response.status === 200 && result.success && result.data) {
             const authData = result.data;
             console.log('authData 구조:', authData);
@@ -58,7 +61,9 @@ onMounted(async () => {
             }
         } else {
             console.error('Kakao login failed:', result);
-            alert('카카오 로그인에 실패했습니다.');
+            console.error('응답 상태:', response.status);
+            console.error('응답 데이터:', result);
+            alert('카카오 로그인에 실패했습니다. 응답: ' + JSON.stringify(result));
             router.push('/auth/login');
         }
     } catch (error) {

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { bankNameMap } from '@/utils/bankMap';
 import { fetchRecommendedProducts } from '@/api/productApi';
 import { userAuthStore } from '@/stores/auth';
@@ -11,6 +11,8 @@ function goToDetail(finPrdtCd) {
 const currentPage = ref(0);
 const itemsPerPage = 2;
 const products = ref([]);
+const windowWidth = ref(window.innerWidth); // 반응형을 위한 상태
+
 const auth = userAuthStore();
 const userId = auth.state.user.userId;
 const userName = auth.state.user.userName || '김콕재';
@@ -25,19 +27,49 @@ const getBankIcon = (bankName) => {
   const match = Object.entries(iconModules).find(([path]) => path.includes(`/${english}.png`));
   return match ? match[1] : defaultIcon;
 };
+
+// 화면 크기 변경 감지
+const handleResize = () => {
+  windowWidth.value = window.innerWidth;
+  // 화면 크기가 변경되면 현재 페이지 초기화
+  currentPage.value = 0;
+};
+
 onMounted(async () => {
   try {
     const result = await fetchRecommendedProducts(userId);
-    products.value = result;
+    // 최대 4개 표시
+    products.value = result.slice(0, 4);
   } catch (error) {
     console.error('추천 상품 불러오기 실패:', error);
   }
+  // 리사이즈 이벤트 리스너 추가
+  window.addEventListener('resize', handleResize);
 });
+
+onUnmounted(() => {
+  // 리사이즈 이벤트 리스너 제거
+  window.removeEventListener('resize', handleResize);
+});
+
+// 데스크탑에서는 모든 카드 표시, 모바일에서는 페이징
 const visibleProducts = computed(() => {
+  // 데스크탑 (1025px 이상)에서는 모든 상품 표시
+  if (windowWidth.value > 1024) {
+    return products.value;
+  }
+
+  // 모바일에서는 페이징
   const start = currentPage.value * itemsPerPage;
   const end = start + itemsPerPage;
   return products.value.slice(start, end);
 });
+
+// 네비게이션 버튼 표시 여부
+const showNavButtons = computed(() => {
+  return windowWidth.value <= 1024 && products.value.length > itemsPerPage;
+});
+
 const endOfSlide = computed(() => {
   return (currentPage.value + 1) * itemsPerPage >= products.value.length;
 });
@@ -52,7 +84,8 @@ function nextSlide() {
   <div class="carousel-wrapper">
     <div class="title">✨ {{ userName }}님의 맞춤 추천 상품 ✨</div>
     <div class="carousel-container">
-      <button class="nav-button" @click="prevSlide" :disabled="currentPage === 0">
+      <!-- 태블릿에서만 네비게이션 버튼 표시 -->
+      <button v-if="showNavButtons" class="nav-button" @click="prevSlide" :disabled="currentPage === 0">
         <i class="fa-solid fa-angle-left"></i>
       </button>
       <div class="carousel-cards">
@@ -75,7 +108,9 @@ function nextSlide() {
           <div class="highlight">✨ {{ product.reason }} ✨</div>
         </div>
       </div>
-      <button class="nav-button" @click="nextSlide" :disabled="endOfSlide">
+
+      <!-- 태블릿에서만 네비게이션 버튼 표시 -->
+      <button v-if="showNavButtons" class="nav-button" @click="nextSlide" :disabled="endOfSlide">
         <i class="fa-solid fa-angle-right"></i>
       </button>
     </div>
@@ -84,7 +119,7 @@ function nextSlide() {
 <style scoped>
 .carousel-wrapper {
   height: 360px;
-  background: transparent;
+  background: #ffffff;
   padding: 48px 0 36px;
   border-radius: 20px;
   box-shadow: inset 0 0 12px #3573ee;
@@ -129,10 +164,10 @@ function nextSlide() {
 /* 금융 상품 */
 .carousel-cards {
   display: flex;
-  gap: 1.5rem;
+  gap: 8px;
 }
 .card {
-  width: 320px;
+  width: clamp(180px, calc(180px + (320 - 180) * ((100vw - 1024px) / (1920 - 1024))), 320px);
   background: white;
   border: 1px solid #ddd;
   border-radius: 12px;
@@ -155,16 +190,16 @@ function nextSlide() {
   border: none;
 }
 .bank-icon {
-  width: 45px;
-  height: 45px;
+  width: clamp(25.3px, calc(25.3px + (45 - 25.3) * ((100vw - 1024px) / (1920 - 1024))), 45px);
+  height: clamp(25.3px, calc(25.3px + (45 - 25.3) * ((100vw - 1024px) / (1920 - 1024))), 45px);
   object-fit: contain;
 }
 .product-name {
   font-weight: bold;
-  font-size: 18px;
+  font-size: clamp(10px, calc(10px + (18 - 10) * ((100vw - 1024px) / (1920 - 1024))), 18px);
 }
 .bank-name {
-  font-size: 13px;
+  font-size: clamp(7.3px, calc(7.3px + (13 - 7.3) * ((100vw - 1024px) / (1920 - 1024))), 13px);
   color: #666;
   margin-top: 0.2rem;
 }
@@ -172,14 +207,14 @@ function nextSlide() {
   margin: 0.5rem 0 1rem;
   font-weight: normal;
   color: #222;
-  font-size: 15px;
+  font-size: clamp(8.4px, calc(8.4px + (15 - 8.4) * ((100vw - 1024px) / (1920 - 1024))), 15px);
   text-align: center;
 }
 .highlight {
   list-style: none;
   margin: 0;
   font-weight: bold;
-  font-size: 15px;
+  font-size: clamp(8.4px, calc(8.4px + (15 - 8.4) * ((100vw - 1024px) / (1920 - 1024))), 15px);
   text-align: center;
 }
 @media (max-width: 1024px) {

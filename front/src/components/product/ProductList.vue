@@ -28,7 +28,7 @@ const isFiltering = computed(() => {
     f.maxSaveTrm ||
     f.minAmount ||
     f.maxAmount ||
-    f.hasSpclCnd === true
+    f.spclCndKeywords?.length > 0
   );
 });
 
@@ -57,6 +57,7 @@ watch(currentPage, () => {
 watch(
   () => props.filters,
   () => {
+    console.log('🔥 필터 객체:', props.filters); // ← 추가해서 콘솔 확인
     currentPage.value = 1; // 필터 적용 시 첫 페이지로 초기화
     loadProducts();
   }
@@ -68,18 +69,25 @@ const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
   eager: true,
   import: 'default',
 });
-const defaultIcon = new URL('@/assets/images/bankIcon/default.png', import.meta.url).href;
+const defaultIcon = new URL(
+  '@/assets/images/bankIcon/default.png',
+  import.meta.url
+).href;
 const getBankIcon = (bankName) => {
   const english = bankNameMap[bankName];
   if (!english) return defaultIcon;
-  const match = Object.entries(iconModules).find(([path]) => path.includes(`/${english}.png`));
+  const match = Object.entries(iconModules).find(([path]) =>
+    path.includes(`/${english}.png`)
+  );
   return match ? match[1] : defaultIcon;
 };
 
 // 🔽 정렬
 const sortedProducts = computed(() => {
   return [...products.value].sort((a, b) =>
-    sortKey.value === 'max' ? b.intrRate2 - a.intrRate2 : b.intrRate - a.intrRate
+    sortKey.value === 'max'
+      ? b.intrRate2 - a.intrRate2
+      : b.intrRate - a.intrRate
   );
 });
 
@@ -113,7 +121,12 @@ function handlePageChange(page) {
 
     <hr />
 
-    <div v-for="product in sortedProducts" :key="product.finPrdtCd" class="product" @click="goToDetail(product)">
+    <div
+      v-for="product in sortedProducts"
+      :key="product.finPrdtCd"
+      class="product"
+      @click="goToDetail(product)"
+    >
       <div class="left">
         <img :src="getBankIcon(product.bankName)" class="bank-icon" />
         <div class="info">

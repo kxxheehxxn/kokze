@@ -1,6 +1,7 @@
 <script setup>
 import { bankNameMap } from '@/utils/bankMap';
 import { bankUriMap } from '@/utils/bankUriMap'; // 🔽 새로 추가
+import { computed } from 'vue';
 
 const props = defineProps({
   product: Object,
@@ -11,12 +12,17 @@ const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
   eager: true,
   import: 'default',
 });
-const defaultIcon = new URL('@/assets/images/bankIcon/default.png', import.meta.url).href;
+const defaultIcon = new URL(
+  '@/assets/images/bankIcon/default.png',
+  import.meta.url
+).href;
 
 const getBankIcon = (bankName) => {
   const english = bankNameMap[bankName];
   if (!english) return defaultIcon;
-  const match = Object.entries(iconModules).find(([path]) => path.includes(`/${english}.png`));
+  const match = Object.entries(iconModules).find(([path]) =>
+    path.includes(`/${english}.png`)
+  );
   return match ? match[1] : defaultIcon;
 };
 
@@ -32,6 +38,15 @@ const openBankHomepage = () => {
     alert('해당 은행의 공식 홈페이지 주소가 등록되지 않았습니다.');
   }
 };
+const bestOption = computed(() => {
+  const options = props.product.options || [];
+  if (options.length === 0) return null;
+
+  // 우대금리 높은 옵션 선택
+  return options.reduce((max, option) =>
+    (option.intrRate2 || 0) > (max.intrRate2 || 0) ? option : max
+  );
+});
 </script>
 
 <template>
@@ -44,22 +59,30 @@ const openBankHomepage = () => {
       <img :src="getBankIcon(product.bankName)" alt="은행 로고" class="logo" />
     </div>
 
-    <div class="rates">
+    <div v-if="bestOption" class="rates">
       <div class="rate-item">
         <div class="label">최고</div>
-        <div class="value">연 {{ product.intrRate2 }}%</div>
+        <div class="value">연 {{ bestOption.intrRate2 }}%</div>
       </div>
       <div class="divider" />
       <div class="rate-item">
         <div class="label">기본</div>
-        <div class="value">연 {{ product.intrRate }}%</div>
+        <div class="value">연 {{ bestOption.intrRate }}%</div>
       </div>
-      <span class="term">(12개월, 세전)</span>
+      <span class="term">({{ bestOption.saveTrm }}개월, 세전)</span>
     </div>
 
-    <button class="cta-button" @click="openBankHomepage">공식 홈페이지 더 알아보기</button>
+    <div v-else class="rates">
+      <p class="label">금리 정보가 없습니다</p>
+    </div>
 
-    <div class="footer-note">금융 상품 가입 후 ‘홈에서 자산 조회’를 클릭하여 금융 상품을 연결하세요!</div>
+    <button class="cta-button" @click="openBankHomepage">
+      공식 홈페이지 더 알아보기
+    </button>
+
+    <div class="footer-note">
+      금융 상품 가입 후 ‘홈에서 자산 조회’를 클릭하여 금융 상품을 연결하세요!
+    </div>
   </div>
 </template>
 

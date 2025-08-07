@@ -30,26 +30,24 @@ watch(
       banks: newVal.bankNames || [],
       period: getPeriodFromRange(newVal.minSaveTrm, newVal.maxSaveTrm),
       amount: newVal.minAmount?.toString() || '',
-      type: newVal.productType ? [newVal.productType] : [],
-      conditions: newVal.joinMembers || [],
+      type: newVal.productType || [],
+      conditions: newVal.spclCndKeywords || [],
     };
     activeFilter.value = newVal.__active || null;
   },
   { immediate: true }
 );
 
-// 필터 DTO로 변환해서 emit
 function emitFilterDto() {
   const f = localFilters.value;
   emit('update:filters', {
-    bankNames: f.banks || [],
-    joinMembers: f.conditions || [],
-    productType: f.type?.[0] || null,
+    bankNames: f.banks || [], // 은행 필터
+    productType: f.type || [],
     minSaveTrm: getMinSaveTrm(f.period),
     maxSaveTrm: getMaxSaveTrm(f.period),
     minAmount: parseAmount(f.amount),
     maxAmount: null,
-    hasSpclCnd: f.conditions.includes('우대조건'),
+    spclCndKeywords: f.conditions || [], // 우대조건 필터
     __active: activeFilter.value,
   });
 }
@@ -114,7 +112,9 @@ const chips = computed(() => {
 function removeChip(chip) {
   const f = localFilters.value;
   f.banks = f.banks.filter((b) => b !== chip);
-  const periodKey = Object.entries(periodMap).find(([, label]) => label === chip)?.[0];
+  const periodKey = Object.entries(periodMap).find(
+    ([, label]) => label === chip
+  )?.[0];
   if (periodKey) f.period = 0;
   if (chip === formatKoreanCurrency(Number(f.amount))) f.amount = '';
   f.type = f.type.filter((t) => t !== chip);
@@ -149,7 +149,15 @@ function resetFilters() {
         :class="['filter-toggle', { active: activeFilter === 'period' }]"
       >
         기간·금액
-        <span><i :class="activeFilter === 'period' ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i></span>
+        <span
+          ><i
+            :class="
+              activeFilter === 'period'
+                ? 'fa-solid fa-angle-up'
+                : 'fa-solid fa-angle-down'
+            "
+          ></i
+        ></span>
       </button>
       <button
         @click="
@@ -159,7 +167,15 @@ function resetFilters() {
         :class="['filter-toggle', { active: activeFilter === 'type' }]"
       >
         상품유형
-        <span><i :class="activeFilter === 'type' ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i></span>
+        <span
+          ><i
+            :class="
+              activeFilter === 'type'
+                ? 'fa-solid fa-angle-up'
+                : 'fa-solid fa-angle-down'
+            "
+          ></i
+        ></span>
       </button>
       <button
         @click="
@@ -169,7 +185,15 @@ function resetFilters() {
         :class="['filter-toggle', { active: activeFilter === 'condition' }]"
       >
         우대조건
-        <span><i :class="activeFilter === 'condition' ? 'fa-solid fa-angle-up' : 'fa-solid fa-angle-down'"></i></span>
+        <span
+          ><i
+            :class="
+              activeFilter === 'condition'
+                ? 'fa-solid fa-angle-up'
+                : 'fa-solid fa-angle-down'
+            "
+          ></i
+        ></span>
       </button>
       <button @click="resetFilters" class="reset-btn">필터 초기화</button>
     </div>
@@ -188,7 +212,10 @@ function resetFilters() {
         <TypeFilter v-model="localFilters.type" @change="emitFilterDto" />
       </div>
       <div v-if="activeFilter === 'condition'" class="dropdown-panel">
-        <ConditionFilter v-model="localFilters.conditions" @change="emitFilterDto" />
+        <ConditionFilter
+          v-model="localFilters.conditions"
+          @change="emitFilterDto"
+        />
       </div>
     </div>
     <hr />

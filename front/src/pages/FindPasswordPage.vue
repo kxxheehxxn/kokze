@@ -11,7 +11,7 @@
           @input="formatPhoneNumber"
         />
       </div>
-      <div class="form-group">
+      <div class="form-group mt-3">
         <label>이메일</label>
         <div class="input-row">
           <input
@@ -30,7 +30,7 @@
           사용자 정보 확인 완료
         </div>
       </div>
-      <div v-if="userVerified === true" class="form-group">
+      <div v-if="userVerified === true" class="form-group mt-3">
         <label>인증번호</label>
         <div class="input-row">
           <input

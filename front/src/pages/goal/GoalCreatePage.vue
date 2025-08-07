@@ -2,9 +2,7 @@
   <div class="goal-create-page">
     <div class="goal-create-card">
       <h2 class="title">목표 추가하기</h2>
-
       <hr />
-
       <div class="input-form">
         <!-- 목표 이름 -->
         <div class="form-group">
@@ -214,7 +212,7 @@ export default {
         this.$router.push('/goals');
       } catch (error) {
         console.error('❌ 등록 실패:', error);
-        alert('등록에 실패했습니다.');
+        alert('기간에 비해 금액이 너무 많습니다.');
       }
     },
     async fetchAccounts() {

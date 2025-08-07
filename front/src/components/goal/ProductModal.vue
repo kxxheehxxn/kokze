@@ -12,7 +12,6 @@
           {{ account.bank_name }} - {{ account.account_num }}
         </option>
       </select>
-
       <div class="btn-row">
         <button class="btn cancel" @click="$emit('close')">취소</button>
         <button
@@ -26,7 +25,6 @@
     </div>
   </div>
 </template>
-
 <script>
 export default {
   name: 'ProductModal',
@@ -37,23 +35,22 @@ export default {
     return {
       selectedAccountId: null,
       selectedBank: null,
-    };
+    }
   },
   methods: {
     onBankSelected(bank) {
-      this.selectedBank = bank;
+      this.selectedBank = bank
     },
     onConnect() {
       if (!this.selectedAccountId) {
-        alert('계좌를 선택하세요!');
-        return;
+        alert('계좌를 선택하세요!')
+        return
       }
-      this.$emit('connect', this.selectedAccountId);
+      this.$emit('connect', this.selectedAccountId)
     },
   },
-};
+}
 </script>
-
 <style scoped>
 .modal-overlay {
   position: fixed;
@@ -67,7 +64,6 @@ export default {
   justify-content: center;
   z-index: 2000;
 }
-
 .modal-content {
   background: white;
   padding: 2rem;
@@ -77,34 +73,28 @@ export default {
   overflow-y: auto;
   color: #333;
 }
-
 .modal-content h3 {
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
 }
-
 .bank-selection {
   margin-bottom: 1.5rem;
 }
-
 .bank-selection label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
   color: #333;
 }
-
 .account-selection {
   margin-bottom: 1.5rem;
 }
-
 .account-selection label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
   color: #333;
 }
-
 select {
   width: 100%;
   margin: 0.5rem 0;
@@ -113,14 +103,12 @@ select {
   border-radius: 6px;
   font-size: 14px;
 }
-
 .btn-row {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1.5rem;
 }
-
 .btn {
   padding: 0.6rem 1.2rem;
   font-weight: bold;
@@ -129,26 +117,21 @@ select {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
-
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 .cancel {
   background: #eee;
   color: #333;
 }
-
 .cancel:hover {
   background: #ddd;
 }
-
 .confirm {
   background: #296bff;
   color: white;
 }
-
 .confirm:hover:not(:disabled) {
   background: #1e5ae6;
 }

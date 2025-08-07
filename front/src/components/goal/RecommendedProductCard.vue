@@ -20,10 +20,8 @@
     </div>
   </div>
 </template>
-
 <script>
 import { bankNameMap } from '@/utils/bankMap';
-
 const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
   eager: true,
   import: 'default',
@@ -32,7 +30,6 @@ const defaultIcon = new URL(
   '@/assets/images/bankIcon/default.png',
   import.meta.url
 ).href;
-
 export default {
   name: 'RecommendedProductCard',
   props: {
@@ -53,7 +50,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .card {
   width: 350px;
@@ -69,7 +65,6 @@ export default {
 .card:hover {
   box-shadow: 0 0 15px #3573ee;
 }
-
 .card-header {
   display: flex;
   align-items: center;
@@ -77,18 +72,15 @@ export default {
   background: white;
   border-bottom: none;
 }
-
 .card-header > div {
   flex: 1;
   min-width: 0;
 }
-
 .bank-icon {
   width: 45px;
   height: 45px;
   object-fit: contain;
 }
-
 .product-name {
   font-weight: bold;
   font-size: 1.2rem;
@@ -96,17 +88,14 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .bank-name {
   font-size: 0.85rem;
   color: #666;
   margin-top: 0.2rem;
 }
-
 .highlight {
   font-weight: bold;
 }
-
 .rate {
   margin: 0.5rem;
   font-weight: normal;

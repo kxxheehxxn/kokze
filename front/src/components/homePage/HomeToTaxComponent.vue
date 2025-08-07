@@ -9,13 +9,10 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { useRouter } from 'vue-router';
-
 const router = useRouter();
 </script>
-
 <style scoped>
 .home-to-tax-card {
   background-color: #0d3a95;
@@ -32,71 +29,58 @@ const router = useRouter();
   display: flex;
   flex-direction: column;
 }
-
 .card-header {
   margin-bottom: 20px;
 }
-
 .card-title {
   font-size: 20px;
   font-weight: 700;
   margin: 0;
   color: white;
 }
-
 .card-content {
   height: 150px;
   width: 100%;
   display: flex;
   justify-content: center;
 }
-
 .card-header,
 .card-content {
   position: relative;
   z-index: 1;
 }
-
 @media (max-width: 1024px) {
   .home-to-tax-card {
     padding: 20px;
   }
-
   .card-title {
     font-size: 18px;
   }
-
   .card-content {
     height: 120px;
     width: 100%;
   }
 }
-
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .home-to-tax-card {
     padding: 20px;
   }
-
   .card-title {
     font-size: 18px;
   }
-
   .card-content {
     height: 100px;
     width: 100%;
   }
 }
-
 @media (max-width: 480px) {
   .home-to-tax-card {
     padding: 16px;
   }
-
   .card-title {
     font-size: 16px;
   }
-
   .card-content {
     height: 50px;
     width: 100%;

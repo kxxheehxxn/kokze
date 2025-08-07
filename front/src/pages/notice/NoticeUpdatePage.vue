@@ -3,32 +3,25 @@ import api from '@/api/noticeApi';
 import { computed, ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
-
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
-
 const auth = userAuthStore();
 const router = useRouter();
 const route = useRoute();
-
 const orgArticle = ref({});
 const noticeId = route.params.no;
 const article = reactive({});
-
 const disableSubmit = computed(() => !article.title);
-
 const back = () => {
   router.back();
 };
 const submit = async () => {
   if (!confirm('수정할까요?')) return;
-
   const updatedFields = {};
   updatedFields.noticeId = article.noticeId;
   updatedFields.title = article.title;
   updatedFields.content = article.content;
   await api.update(updatedFields);
-
   router.replace({
     name: 'noticeDetail',
     params: { no: article.noticeId },
@@ -42,10 +35,8 @@ const load = async () => {
     router.replace('/notice/list');
     return;
   }
-
   try {
     const data = await api.get(noticeId);
-
     if (!data || !data.noticeId) {
       throw new Error(
         'API 응답 데이터가 유효하지 않거나 게시글을 찾을 수 없습니다.'
@@ -62,7 +53,6 @@ const load = async () => {
     router.replace('/notice/list');
   }
 };
-
 onMounted(() => {
   if (auth.role.toLowerCase() !== 'admin') {
     alert('권한이 없습니다.');
@@ -126,7 +116,6 @@ load();
     </div>
   </div>
 </template>
-
 <style scoped>
 .custom-box-wrapper {
   display: flex;

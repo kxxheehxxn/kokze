@@ -98,30 +98,24 @@
     <div v-if="error" class="error-msg">{{ error }}</div>
   </UserCardLayout>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import UserCardLayout from '@/components/UserCardLayout.vue';
 import { userAuthStore } from '@/stores/auth.js';
 import { withdrawUser } from '@/api/userApi';
-
 const agree = ref(false);
 const loading = ref(false);
 const error = ref('');
 const router = useRouter();
 const auth = userAuthStore();
-
 async function onWithdraw() {
   if (!agree.value) return;
-
   loading.value = true;
   error.value = '';
-
   try {
     // 회원탈퇴 처리
     const result = await withdrawUser();
-
     if (result.success) {
       alert('탈퇴가 처리되었습니다.');
       auth.logout();
@@ -139,7 +133,6 @@ async function onWithdraw() {
   }
 }
 </script>
-
 <style scoped>
 .title {
   font-size: 28px;

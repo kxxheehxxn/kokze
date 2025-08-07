@@ -10,7 +10,6 @@
     </button>
   </div>
 </template>
-
 <script setup>
 defineProps({
   label: String,

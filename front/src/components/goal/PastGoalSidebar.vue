@@ -1,12 +1,10 @@
 <template>
   <div class="sidebar-wrapper">
     <div class="overlay" @click="$emit('close')"></div>
-
     <div class="sidebar">
       <div class="sidebar-header">
         <h3>✨ {{ userName }}님의 지난 목표 리스트 ✨</h3>
       </div>
-
       <div class="past-goals">
         <div v-if="pastGoals.length === 0" class="empty-message">
           지난 목표가 없습니다.
@@ -40,77 +38,74 @@
           </button>
         </div>
       </div>
-
       <div class="close-bottom-wrapper">
         <button class="close-btn" @click="$emit('close')">[ 닫기 ✕ ]</button>
       </div>
     </div>
   </div>
 </template>
-
 <script>
-import { fetchPastGoals } from '@/api/goalApi';
-import { userAuthStore } from '@/stores/auth';
+import { fetchPastGoals } from '@/api/goalApi'
+import { userAuthStore } from '@/stores/auth'
 
 export default {
   name: 'PastGoalSidebar',
   data() {
-    const auth = userAuthStore();
+    const auth = userAuthStore()
 
     return {
       pastGoals: [],
       userName: auth.state.user.userName || '김콕재',
       userId: auth.state.user.userId,
-    };
+    }
   },
   methods: {
     async loadPastGoals() {
       try {
-        const goals = await fetchPastGoals(this.userId);
-        this.pastGoals = goals;
+        const goals = await fetchPastGoals(this.userId)
+        this.pastGoals = goals
       } catch (e) {
-        console.error('지난 목표 조회 실패:', e);
+        console.error('지난 목표 조회 실패:', e)
       }
     },
     formatDate(arr) {
-      if (!arr || arr.length !== 3) return '';
-      const [y, m, d] = arr;
+      if (!arr || arr.length !== 3) return ''
+      const [y, m, d] = arr
       return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
         2,
-        '0'
-      )}일`;
+        '0',
+      )}일`
     },
     formatAmount(amount) {
-      return `${amount.toLocaleString()}원`;
+      return `${amount.toLocaleString()}원`
     },
     getPeriodDiff(start, end) {
-      if (!start || !end) return '';
-      const startDate = new Date(start);
-      const endDate = new Date(end);
+      if (!start || !end) return ''
+      const startDate = new Date(start)
+      const endDate = new Date(end)
 
       let diffMonths =
         (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-        (endDate.getMonth() - startDate.getMonth());
+        (endDate.getMonth() - startDate.getMonth())
 
       // 일(day) 차이가 양수면 한 달 추가
       if (endDate.getDate() > startDate.getDate()) {
-        diffMonths += 1;
+        diffMonths += 1
       }
 
       if (diffMonths < 24) {
-        return `${diffMonths}개월`;
+        return `${diffMonths}개월`
       } else {
-        const diffYears = diffMonths / 12;
-        return `${Math.round(diffYears)}년`;
+        const diffYears = diffMonths / 12
+        return `${Math.round(diffYears)}년`
       }
     },
   },
   mounted() {
-    this.loadPastGoals();
+    this.loadPastGoals()
   },
-};
+}
 </script>
-
 <style scoped>
 .sidebar-wrapper {
   position: fixed;
@@ -122,7 +117,6 @@ export default {
   pointer-events: none;
   z-index: 1000;
 }
-
 .overlay {
   position: fixed;
   top: 0;
@@ -134,7 +128,6 @@ export default {
   pointer-events: auto;
   z-index: 999;
 }
-
 .sidebar {
   width: 500px;
   height: 100%;
@@ -148,14 +141,12 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
 .sidebar-header {
   margin-bottom: 1rem;
   text-align: center;
   font-size: 1.3rem;
   font-weight: bold;
 }
-
 .past-goals {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -181,7 +172,6 @@ export default {
   flex-direction: column;
   gap: 0.5rem;
 }
-
 .title {
   display: flex;
   align-items: center;
@@ -200,12 +190,10 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .period,
 .amount {
   text-align: left;
 }
-
 .period {
   margin: 0.5rem 0;
   line-height: 1.4;

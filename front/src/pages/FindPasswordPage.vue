@@ -48,7 +48,6 @@
     </form>
   </UserCardLayout>
 </template>
-
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -59,7 +58,6 @@ import {
   verifyCode,
   changePassword,
 } from '@/api/passwordApi.js'
-
 const step = ref(1)
 const phoneNum = ref('')
 const email = ref('')
@@ -69,47 +67,38 @@ const passwordCheck = ref('')
 const userVerified = ref(null)
 const codeChecked = ref(null)
 const router = useRouter()
-
 async function onVerifyUser() {
   if (!phoneNum.value || !email.value) {
     alert('전화번호와 이메일을 모두 입력해주세요.')
     return
   }
-  
   userVerified.value = await verifyUserInfo(phoneNum.value, email.value)
   if (userVerified.value) {
     await sendVerificationCode(email.value)
   }
 }
-
 async function onCodeCheck() {
   codeChecked.value = await verifyCode(code.value, email.value)
 }
-
 const canNext = computed(
   () => phoneNum.value && email.value && userVerified.value && codeChecked.value,
 )
-
 function onNext() {
   if (canNext.value) step.value = 2
 }
-
 const canChange = computed(
   () => password.value && password.value === passwordCheck.value,
 )
-
 async function onChangePassword() {
   if (!canChange.value) return
   await changePassword(email.value, password.value)
   alert('비밀번호가 변경되었습니다!')
   router.push('/auth/login')
 }
-
 function onCancel() {
   router.back()
 }
 </script>
-
 <style scoped>
 .title {
   background-color: #fff;
@@ -164,7 +153,7 @@ function onCancel() {
   box-shadow: 0 2px 8px 0 #e5e7eb;
   transition: background 0.2s;
 }
-.error-msg { 
+.error-msg {
   background-color: #fff;
   color: #e74c3c; font-size: 15px; margin-top: 6px; }
 .success-msg { color: #2573ee; font-size: 15px; margin-top: 6px; }

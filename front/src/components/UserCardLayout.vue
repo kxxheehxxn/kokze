@@ -5,7 +5,6 @@
     </div>
   </div>
 </template>
-
 <style scoped>
 .container {
   background-color: #fbfbfb;

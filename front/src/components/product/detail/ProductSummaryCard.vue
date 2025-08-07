@@ -1,54 +1,50 @@
 <script setup>
-import { bankNameMap } from '@/utils/bankMap';
-import { bankUriMap } from '@/utils/bankUriMap'; // 🔽 새로 추가
-import { computed } from 'vue';
+import { bankNameMap } from '@/utils/bankMap'
+import { bankUriMap } from '@/utils/bankUriMap' // 🔽 새로 추가
+import { computed } from 'vue'
 
 const props = defineProps({
   product: Object,
-});
-
+})
 // 은행 아이콘 처리
 const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
   eager: true,
   import: 'default',
-});
+})
 const defaultIcon = new URL(
   '@/assets/images/bankIcon/default.png',
-  import.meta.url
-).href;
+  import.meta.url,
+).href
 
-const getBankIcon = (bankName) => {
-  const english = bankNameMap[bankName];
-  if (!english) return defaultIcon;
+const getBankIcon = bankName => {
+  const english = bankNameMap[bankName]
+  if (!english) return defaultIcon
   const match = Object.entries(iconModules).find(([path]) =>
-    path.includes(`/${english}.png`)
-  );
-  return match ? match[1] : defaultIcon;
-};
-
+    path.includes(`/${english}.png`),
+  )
+  return match ? match[1] : defaultIcon
+}
 // 🔽 은행 URI 찾기
-const getBankUri = (bankName) => bankUriMap[bankName] || null;
-
+const getBankUri = bankName => bankUriMap[bankName] || null
 // 🔽 버튼 클릭 시 이동
 const openBankHomepage = () => {
-  const url = getBankUri(props.product.bankName);
+  const url = getBankUri(props.product.bankName)
   if (url) {
-    window.open(url, '_blank');
+    window.open(url, '_blank')
   } else {
-    alert('해당 은행의 공식 홈페이지 주소가 등록되지 않았습니다.');
+    alert('해당 은행의 공식 홈페이지 주소가 등록되지 않았습니다.')
   }
-};
+}
 const bestOption = computed(() => {
-  const options = props.product.options || [];
-  if (options.length === 0) return null;
+  const options = props.product.options || []
+  if (options.length === 0) return null
 
   // 우대금리 높은 옵션 선택
   return options.reduce((max, option) =>
-    (option.intrRate2 || 0) > (max.intrRate2 || 0) ? option : max
-  );
-});
+    (option.intrRate2 || 0) > (max.intrRate2 || 0) ? option : max,
+  )
+})
 </script>
-
 <template>
   <div class="summary-card">
     <div class="header">
@@ -85,7 +81,6 @@ const bestOption = computed(() => {
     </div>
   </div>
 </template>
-
 <style scoped>
 .summary-card {
   background: white;
@@ -96,31 +91,26 @@ const bestOption = computed(() => {
   flex-direction: column;
   gap: 1rem;
 }
-
 /* 타이틀 + 은행 + 로고 */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
-
 .title {
   font-size: 1.6rem;
   font-weight: 800;
 }
-
 .bank {
   font-size: 1.2rem;
   color: #999;
   margin-top: 0.2rem;
 }
-
 .logo {
   width: 70px;
   height: 70px;
   object-fit: contain;
 }
-
 /* 금리 */
 .rates {
   display: flex;
@@ -129,35 +119,29 @@ const bestOption = computed(() => {
   font-size: 1rem;
   align-items: flex-end;
 }
-
 .rate-item {
   display: flex;
   flex-direction: column;
   align-items: left;
 }
-
 .label {
   color: #666;
   font-weight: 600;
 }
-
 .value {
   font-weight: bold;
   font-size: 1.5rem;
   color: #22c55e;
 }
-
 .divider {
   width: 1px;
   height: 2rem;
   background: #999;
 }
-
 .term {
   font-size: 0.95rem;
   color: #666;
 }
-
 /* 버튼 */
 .cta-button {
   background: #2563eb;
@@ -170,13 +154,11 @@ const bestOption = computed(() => {
   cursor: pointer;
   margin-top: 1rem;
 }
-
 .cta-button:active {
   background: #ffffff;
   color: #000000;
   border: 1px solid #000000;
 }
-
 .footer-note {
   font-size: 0.9rem;
   color: #555;

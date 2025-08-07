@@ -4,7 +4,6 @@
     <p class="section-desc">
       국가가 지원하는 <strong>조건부 투자 상품</strong>으로, <strong>세액공제 또는 비과세 혜택</strong>을 받을 수 있습니다.
     </p>
-
     <h3 class="sub-title">장기집합투자증권저축 세액공제</h3>
     <ul class="info-list">
       <li><strong>공제 대상</strong>: 총급여 5,000만원 이하 근로자</li>
@@ -12,7 +11,6 @@
       <li><strong>공제한도</strong>: 연 600만원 납입 기준, 최대 240만원 세액공제</li>
       <li><strong>요건</strong>: 3년 이상 유지 필요, 중도 해지 시 공제액 추징</li>
     </ul>
-
     <h3 class="sub-title">벤처기업투자신탁 비과세 혜택</h3>
     <ul class="info-list">
       <li><strong>대상</strong>: 소득 제한 없이 누구나 가능</li>
@@ -23,13 +21,11 @@
     </ul>
   </div>
 </template>
-
 <script>
 export default {
   name: 'FunVentureDetail'
 }
 </script>
-
 <style scoped>
 .funventure-detail {
   font-family: 'Noto Sans KR', sans-serif;
@@ -37,25 +33,21 @@ export default {
   background-color: #ffffff;
   color: #1f2937;
 }
-
 .section-title {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 12px;
 }
-
 .sub-title {
   font-size: 16px;
   font-weight: 700;
   margin: 16px 0 8px;
 }
-
 .section-desc {
   font-size: 14px;
   margin-bottom: 12px;
   color: #4b5563;
 }
-
 .info-list {
   list-style-type: disc;
   padding-left: 20px;

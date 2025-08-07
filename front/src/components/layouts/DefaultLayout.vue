@@ -2,17 +2,15 @@
 import Header from './Header.vue';
 import Footer from './Footer.vue';
 </script>
-
 <template>
   <div class="container">
-    <Header></Header>
-    <div class="content mt-5">
-      <slot></slot>
-    </div>
-    <Footer></Footer>
+    <Header />
+    <main class="content mt-5">
+      <slot />
+    </main>
+    <Footer />
   </div>
 </template>
-
 <style scoped>
 .container {
   min-height: 100vh;

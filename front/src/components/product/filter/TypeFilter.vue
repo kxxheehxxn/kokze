@@ -1,9 +1,10 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch } from 'vue'
 const props = defineProps({
   modelValue: Array,
-});
-const emit = defineEmits(['update:modelValue']);
+})
+const emit = defineEmits(['update:modelValue', 'change'])
+
 const types = [
   '예금',
   '적금',
@@ -14,24 +15,26 @@ const types = [
   '자유적금',
   '정기적금',
   '청년도약계좌',
-];
-const selectedTypes = ref([...props.modelValue]);
-// 외부 변경 감지
+]
+const selectedTypes = ref([...props.modelValue])
+
+// 외부 바인딩 감지
 watch(
   () => props.modelValue,
-  (val) => {
-    selectedTypes.value = [...val];
-  }
-);
-// 클릭 시 토글
+  val => {
+    selectedTypes.value = [...val]
+  },
+)
+
+// 클릭 시 toggle
 function toggleType(type) {
   if (selectedTypes.value.includes(type)) {
-    selectedTypes.value = selectedTypes.value.filter((t) => t !== type);
+    selectedTypes.value = selectedTypes.value.filter(t => t !== type)
   } else {
-    selectedTypes.value.push(type);
+    selectedTypes.value.push(type)
   }
-  emit('update:modelValue', selectedTypes.value);
-  emit('change');
+  emit('update:modelValue', selectedTypes.value)
+  emit('change')
 }
 </script>
 <template>

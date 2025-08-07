@@ -79,9 +79,9 @@ import {
   getAccountsByUserId,
   createGoal,
   linkAccountToGoal,
-} from '@/api/goalApi';
-import ProductModal from '@/components/ProductModal.vue';
-import { userAuthStore } from '@/stores/auth';
+} from '@/api/goalApi'
+import ProductModal from '@/components/goal/ProductModal.vue'
+import { userAuthStore } from '@/stores/auth'
 export default {
   name: 'GoalCreatePage',
   components: {
@@ -97,75 +97,75 @@ export default {
       showProductModal: false,
       selectedAccount: null,
       accounts: [], // ✅ 서버에서 불러올 수도 있음
-    };
+    }
   },
   computed: {
     parsedAmount() {
-      return Number(String(this.targetAmount).replace(/\D/g, '')) || 0;
+      return Number(String(this.targetAmount).replace(/\D/g, '')) || 0
     },
     formattedAmount() {
-      if (!this.parsedAmount) return '';
-      return this.parsedAmount.toLocaleString();
+      if (!this.parsedAmount) return ''
+      return this.parsedAmount.toLocaleString()
     },
     today() {
-      const now = new Date();
-      return now.toISOString().split('T')[0];
+      const now = new Date()
+      return now.toISOString().split('T')[0]
     },
     endDateMin() {
-      if (!this.startDate) return this.today;
-      return this.startDate > this.today ? this.startDate : this.today;
+      if (!this.startDate) return this.today
+      return this.startDate > this.today ? this.startDate : this.today
     },
   },
   mounted() {
-    const { amount, start, end } = this.$route.query;
+    const { amount, start, end } = this.$route.query
     if (amount && start && end) {
-      this.targetAmount = parseInt(amount);
-      this.startDate = this.toDateInputFormat(start);
-      this.endDate = this.toDateInputFormat(end);
+      this.targetAmount = parseInt(amount)
+      this.startDate = this.toDateInputFormat(start)
+      this.endDate = this.toDateInputFormat(end)
     }
   },
   methods: {
     onCancel() {
-      this.$router.back();
+      this.$router.back()
     },
     toDateInputFormat(dateStr) {
       if (typeof dateStr === 'string' && dateStr.includes('-')) {
-        return dateStr;
+        return dateStr
       }
-      const date = new Date(dateStr);
-      return date.toISOString().split('T')[0]; // yyyy-MM-dd
+      const date = new Date(dateStr)
+      return date.toISOString().split('T')[0] // yyyy-MM-dd
     },
     onInputChange(e) {
-      this.targetAmount = e.target.value.replace(/\D/g, '');
+      this.targetAmount = e.target.value.replace(/\D/g, '')
     },
     clearInput() {
-      this.targetAmount = '';
+      this.targetAmount = ''
     },
     formatKoreanCurrency(num) {
-      if (isNaN(num) || num <= 0) return '0원';
-      const jo = Math.floor(num / 1_0000_0000_0000);
-      const uk = Math.floor((num % 1_0000_0000_0000) / 1_0000_0000);
-      const man = Math.floor((num % 1_0000_0000) / 10000);
-      const rest = num % 10000;
-      let result = '';
-      if (jo > 0) result += `${jo}조`;
-      if (uk > 0) result += `${uk}억`;
-      if (man > 0) result += `${man}만`;
-      if (rest > 0) result += rest.toLocaleString();
-      return result + '원';
+      if (isNaN(num) || num <= 0) return '0원'
+      const jo = Math.floor(num / 1_0000_0000_0000)
+      const uk = Math.floor((num % 1_0000_0000_0000) / 1_0000_0000)
+      const man = Math.floor((num % 1_0000_0000) / 10000)
+      const rest = num % 10000
+      let result = ''
+      if (jo > 0) result += `${jo}조`
+      if (uk > 0) result += `${uk}억`
+      if (man > 0) result += `${man}만`
+      if (rest > 0) result += rest.toLocaleString()
+      return result + '원'
     },
     async onSubmit() {
-      const auth = userAuthStore();
-      const userId = auth.state.user.userId;
-      const token = auth.getToken();
+      const auth = userAuthStore()
+      const userId = auth.state.user.userId
+      const token = auth.getToken()
       if (
         !this.goalName ||
         !this.startDate ||
         !this.endDate ||
         !this.targetAmount
       ) {
-        alert('모든 필드를 입력해주세요.');
-        return;
+        alert('모든 필드를 입력해주세요.')
+        return
       }
       const requestBody = {
         goal_name: this.goalName,
@@ -174,46 +174,44 @@ export default {
         start_date: this.startDate,
         end_date: this.endDate,
         deposit_date: this.depositDate,
-      };
+      }
       try {
-        const res = await createGoal(userId, requestBody, token);
-        const goalId = res.data.goal_id;
+        const res = await createGoal(userId, requestBody, token)
+        const goalId = res.data.goal_id
         if (this.selectedAccount) {
           await linkAccountToGoal(
             goalId,
             this.selectedAccount.account_id,
-            token
-          );
-          alert('목표와 계좌가 성공적으로 연동되었습니다!');
+            token,
+          )
+          alert('목표와 계좌가 성공적으로 연동되었습니다!')
         } else {
-          alert('목표가 성공적으로 등록되었습니다!');
+          alert('목표가 성공적으로 등록되었습니다!')
         }
-        this.$router.push('/goals');
+        this.$router.push('/goals')
       } catch (error) {
-        console.error('Registration failed:', error);
-        alert('등록에 실패했습니다.');
+        console.error('❌ 등록 실패:', error)
+        alert('기간에 비해 금액이 너무 많습니다.')
       }
     },
     async fetchAccounts() {
-      const auth = userAuthStore();
-      const userId = auth.state.user.userId;
-      const token = auth.getToken();
+      const auth = userAuthStore()
+      const userId = auth.state.user.userId
+      const token = auth.getToken()
       try {
-        const res = await getAccountsByUserId(userId, token);
-        this.accounts = res.data;
-        this.showProductModal = true;
+        const res = await getAccountsByUserId(userId, token)
+        this.accounts = res.data
+        this.showProductModal = true
       } catch (err) {
-        alert('계좌를 불러오지 못했습니다.');
+        alert('계좌를 불러오지 못했습니다.')
       }
     },
     handleProductConnect(accountId) {
-      this.selectedAccount = this.accounts.find(
-        (a) => a.account_id === accountId
-      );
-      this.showProductModal = false;
+      this.selectedAccount = this.accounts.find(a => a.account_id === accountId)
+      this.showProductModal = false
     },
   },
-};
+}
 </script>
 <style scoped>
 .goal-create-page {

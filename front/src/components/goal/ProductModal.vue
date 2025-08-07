@@ -26,12 +26,8 @@
   </div>
 </template>
 <script>
-import BankListComponent from './BankListComponent.vue'
 export default {
   name: 'ProductModal',
-  components: {
-    BankListComponent,
-  },
   props: {
     accounts: Array,
   },
@@ -75,10 +71,10 @@ export default {
   width: 600px;
   max-height: 80vh;
   overflow-y: auto;
+  color: #333;
 }
 .modal-content h3 {
   margin: 0 0 1.5rem 0;
-  color: #333;
   font-size: 1.5rem;
 }
 .bank-selection {

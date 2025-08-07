@@ -1,0 +1,243 @@
+<template>
+  <div class="sidebar-wrapper">
+    <div class="overlay" @click="$emit('close')"></div>
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h3>✨ {{ userName }}님의 지난 목표 리스트 ✨</h3>
+      </div>
+      <div class="past-goals">
+        <div v-if="pastGoals.length === 0" class="empty-message">
+          지난 목표가 없습니다.
+        </div>
+
+        <div
+          v-for="(goal, index) in pastGoals"
+          :key="index"
+          class="past-goal-card"
+        >
+          <div class="title" :title="goal.title">
+            <span class="label">목표 : </span>
+            <span class="text">{{ goal.title }}</span>
+          </div>
+          <hr />
+          <div class="period">
+            {{ formatDate(goal.startDate) }} ~<br />
+            {{ formatDate(goal.endDate) }}<br />
+            ( 약 {{ getPeriodDiff(goal.startDate, goal.endDate) }} )
+          </div>
+          <div class="amount">
+            {{ formatAmount(goal.targetAmount) }}
+          </div>
+
+          <div :class="['status', goal.success ? 'success' : 'fail']">
+            {{ goal.success ? '성공' : '실패' }}
+          </div>
+
+          <button class="btn btn-danger" @click="onDelete(goal.id)">
+            삭제
+          </button>
+        </div>
+      </div>
+      <div class="close-bottom-wrapper">
+        <button class="close-btn" @click="$emit('close')">[ 닫기 ✕ ]</button>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import { fetchPastGoals } from '@/api/goalApi'
+import { userAuthStore } from '@/stores/auth'
+
+export default {
+  name: 'PastGoalSidebar',
+  data() {
+    const auth = userAuthStore()
+
+    return {
+      pastGoals: [],
+      userName: auth.state.user.userName || '김콕재',
+      userId: auth.state.user.userId,
+    }
+  },
+  methods: {
+    async loadPastGoals() {
+      try {
+        const goals = await fetchPastGoals(this.userId)
+        this.pastGoals = goals
+      } catch (e) {
+        console.error('지난 목표 조회 실패:', e)
+      }
+    },
+    formatDate(arr) {
+      if (!arr || arr.length !== 3) return ''
+      const [y, m, d] = arr
+      return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
+        2,
+        '0',
+      )}일`
+    },
+    formatAmount(amount) {
+      return `${amount.toLocaleString()}원`
+    },
+    getPeriodDiff(start, end) {
+      if (!start || !end) return ''
+      const startDate = new Date(start)
+      const endDate = new Date(end)
+
+      let diffMonths =
+        (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+        (endDate.getMonth() - startDate.getMonth())
+
+      // 일(day) 차이가 양수면 한 달 추가
+      if (endDate.getDate() > startDate.getDate()) {
+        diffMonths += 1
+      }
+
+      if (diffMonths < 24) {
+        return `${diffMonths}개월`
+      } else {
+        const diffYears = diffMonths / 12
+        return `${Math.round(diffYears)}년`
+      }
+    },
+  },
+  mounted() {
+    this.loadPastGoals()
+  },
+}
+</script>
+<style scoped>
+.sidebar-wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+  z-index: 1000;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(1px);
+  pointer-events: auto;
+  z-index: 999;
+}
+.sidebar {
+  width: 500px;
+  height: 100%;
+  padding: 1.5rem 1rem 4rem;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: -3px 0 6px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  z-index: 1001;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-header {
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+.past-goals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.empty-message {
+  grid-column: span 2;
+  text-align: center;
+  color: #999;
+  margin-top: 2rem;
+}
+
+.past-goal-card {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #a2c3ff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  font-size: 1rem;
+  box-shadow: 0 0 6px rgba(0, 120, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.label {
+  flex-shrink: 0;
+  font-weight: bold;
+}
+
+.text {
+  min-width: 0;
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.period,
+.amount {
+  text-align: left;
+}
+.period {
+  margin: 0.5rem 0;
+  line-height: 1.4;
+}
+
+.amount {
+  margin-bottom: 0.3rem;
+}
+
+.status {
+  font-weight: bold;
+  text-align: right;
+}
+
+.success {
+  color: green;
+  background: #e6ffe6;
+}
+
+.fail {
+  color: red;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.btn {
+  border-radius: 18px;
+}
+
+.close-bottom-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.close-btn {
+  background: #666;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 18px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>

@@ -31,11 +31,12 @@
   </div>
 </template>
 <script>
-import { fetchGoals } from '@/api/goalApi';
-import { userAuthStore } from '@/stores/auth';
-import GoalCard from '@/components/goal/GoalCard.vue';
-import GoalAddCard from '@/components/goal/GoalAddCard.vue';
-import PastGoalSidebar from '@/components/PastGoalSidebar.vue';
+import { fetchGoals } from '@/api/goalApi'
+import { userAuthStore } from '@/stores/auth'
+import GoalCard from '@/components/goal/GoalCard.vue'
+import GoalAddCard from '@/components/goal/GoalAddCard.vue'
+import PastGoalSidebar from '@/components/goal/PastGoalSidebar.vue'
+
 export default {
   name: 'GoalPage',
   components: {
@@ -48,54 +49,54 @@ export default {
       goals: [],
       maxGoals: 5,
       showSidebar: false,
-    };
+    }
   },
   computed: {
     emptySlots() {
-      return this.maxGoals - this.goals.length;
+      return this.maxGoals - this.goals.length
     },
     averageProgress() {
-      if (!this.goals.length) return 0;
-      const total = this.goals.reduce((sum, g) => sum + g.progress, 0);
-      return Math.floor(total / this.goals.length);
+      if (!this.goals.length) return 0
+      const total = this.goals.reduce((sum, g) => sum + g.progress, 0)
+      return Math.floor(total / this.goals.length)
     },
   },
   created() {
-    this.fetchGoals();
+    this.fetchGoals()
   },
   methods: {
     async fetchGoals() {
-      const auth = userAuthStore();
-      const userId = auth.state.user.userId;
-      const token = auth.getToken();
+      const auth = userAuthStore()
+      const userId = auth.state.user.userId
+      const token = auth.getToken()
       try {
-        const response = await fetchGoals(userId, token);
+        const response = await fetchGoals(userId, token)
         if (!Array.isArray(response.data)) {
-                      console.error('Response is not an array:', response.data);
-          return;
+          console.error('Response is not an array:', response.data)
+          return
         }
-        this.goals = response.data.map((goal) => ({
+        this.goals = response.data.map(goal => ({
           id: goal.goal_id,
           title: goal.goal_name,
           amount: `${goal.target_amount.toLocaleString()} 원`,
           progress: this.calculateProgress(
             goal.save_amount,
-            goal.target_amount
+            goal.target_amount,
           ),
           product: '-',
           period1: goal.start_date ?? '',
           period2: goal.end_date ?? '',
-        }));
+        }))
       } catch (error) {
-        console.error('Failed to load goals:', error);
+        console.error('Failed to load goals:', error)
       }
     },
     calculateProgress(saved, target) {
-      if (!saved || !target) return 0;
-      return Math.floor((saved / target) * 100);
+      if (!saved || !target) return 0
+      return Math.floor((saved / target) * 100)
     },
   },
-};
+}
 </script>
 <style scoped>
 /* 동일한 스타일 유지 */

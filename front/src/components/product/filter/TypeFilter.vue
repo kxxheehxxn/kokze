@@ -4,7 +4,7 @@ import { ref, watch } from 'vue';
 const props = defineProps({
   modelValue: Array,
 });
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'change']);
 
 const types = [
   '예금',
@@ -20,7 +20,7 @@ const types = [
 
 const selectedTypes = ref([...props.modelValue]);
 
-// 외부 변경 감지
+// 외부 바인딩 감지
 watch(
   () => props.modelValue,
   (val) => {
@@ -28,7 +28,7 @@ watch(
   }
 );
 
-// 클릭 시 토글
+// 클릭 시 toggle
 function toggleType(type) {
   if (selectedTypes.value.includes(type)) {
     selectedTypes.value = selectedTypes.value.filter((t) => t !== type);

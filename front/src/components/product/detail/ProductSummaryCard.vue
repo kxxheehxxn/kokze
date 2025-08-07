@@ -72,13 +72,9 @@ const bestOption = computed(() => {
       <p class="label">금리 정보가 없습니다</p>
     </div>
 
-    <button class="cta-button" @click="openBankHomepage">
-      공식 홈페이지 더 알아보기
-    </button>
+    <button class="cta-button" @click="openBankHomepage">공식 홈페이지 더 알아보기</button>
 
-    <div class="footer-note">
-      금융 상품 가입 후 ‘홈에서 자산 조회’를 클릭하여 금융 상품을 연결하세요!
-    </div>
+    <div class="footer-note">금융 상품 가입 후 ‘홈에서 자산 조회’를 클릭하여 금융 상품을 연결하세요!</div>
   </div>
 </template>
 <style scoped>
@@ -114,19 +110,19 @@ const bestOption = computed(() => {
 /* 금리 */
 .rates {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 1.2rem;
   font-size: 1rem;
-  align-items: flex-end;
 }
 .rate-item {
   display: flex;
   flex-direction: column;
-  align-items: left;
+  align-items: flex-start;
 }
 .label {
   color: #666;
   font-weight: 600;
+  margin-bottom: 0.2rem;
 }
 .value {
   font-weight: bold;
@@ -137,10 +133,12 @@ const bestOption = computed(() => {
   width: 1px;
   height: 2rem;
   background: #999;
+  flex-shrink: 0;
 }
 .term {
   font-size: 0.95rem;
   color: #666;
+  margin-left: auto;
 }
 /* 버튼 */
 .cta-button {

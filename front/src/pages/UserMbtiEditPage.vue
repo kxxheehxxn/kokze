@@ -15,10 +15,10 @@
           <div>{{ choice.text }}</div>
         </div>
       </div>
-      <div class="button-row">
-        <button class="cancel-btn" @click="onCancel">취소하기</button>
+      <div class="text-center">
+        <button class="btn cancel-btn" @click="onCancel">취소하기</button>
         <button
-          class="submit-btn"
+          class="btn submit-btn ms-4"
           :disabled="selected === null"
           @click="onNext"
         >
@@ -30,19 +30,21 @@
       <h2 class="title">{{ userName }} 님의 금융 MBTI는</h2>
       <div class="mbti-type">{{ mbtiResult }}</div>
       <div class="mbti-desc">{{ mbtiDesc }}</div>
-      <div class="button-row">
-        <button class="cancel-btn" @click="onRetry">다시하기</button>
-        <button class="submit-btn" @click="saveMbtiResult">저장하기</button>
+      <div class="mt-5 text-center">
+        <button class="btn cancel-btn" @click="onRetry">다시하기</button>
+        <button class="btn submit-btn ms-4" @click="saveMbtiResult">
+          저장하기
+        </button>
       </div>
     </template>
   </UserCardLayout>
 </template>
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import UserCardLayout from '@/components/UserCardLayout.vue';
-import { updateMbti } from '@/api/userApi';
-const userName = '김콕재';
+import { updateMbti, getUserInfo } from '@/api/userApi';
+
 const questions = [
   {
     question: '월급을 받았을 때 나는?',
@@ -87,6 +89,8 @@ const questions = [
     ],
   },
 ];
+
+const userName = ref('');
 const step = ref(0);
 const selected = ref(null);
 const scores = ref({ fast: 0, slow: 0, high: 0, low: 0 });
@@ -148,13 +152,22 @@ async function saveMbtiResult() {
     console.error('MBTI 저장 실패:', error);
   }
 }
+
+onMounted(async () => {
+  try {
+    const userInfo = await getUserInfo();
+    userName.value = userInfo.name;
+  } catch (error) {
+    console.error('사용자 이름 가져오기 실패:', error);
+  }
+});
 </script>
 <style scoped>
 .title {
   background-color: #fff;
   font-size: 28px;
   font-weight: bold;
-  margin: 0 auto 32px auto;
+  margin: 0 auto 22px auto;
   text-align: center;
   width: 100%;
 }
@@ -166,6 +179,7 @@ async function saveMbtiResult() {
   margin-bottom: 32px;
 }
 .choices {
+  height: 130px;
   background-color: #fff;
   display: flex;
   justify-content: center;
@@ -184,34 +198,30 @@ async function saveMbtiResult() {
   font-weight: 500;
   text-align: center;
   cursor: pointer;
-  transition: box-shadow 0.2s, border 0.2s;
+  transition:
+    box-shadow 0.2s,
+    border 0.2s;
   border: 2px solid transparent;
   min-width: 260px;
   max-width: 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 .choice.selected {
   border: 2px solid #2573ee;
   box-shadow: 0 4px 16px 0 #bcdcff;
 }
-.button-row {
-  background-color: #fff;
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  width: 100%;
-}
-.cancel-btn,
-.submit-btn {
+.btn {
   width: 180px;
   height: 48px;
-  border-radius: 18px;
-  font-size: 18px;
-  font-weight: 500;
-  border: none;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
 }
 .cancel-btn {
   background: #fafbfc;
@@ -238,9 +248,6 @@ async function saveMbtiResult() {
 }
 @media (max-width: 1024px) and (orientation: portrait) {
   .choices {
-    margin-top: 40px;
-  }
-  .button-row {
     margin-top: 40px;
   }
 }

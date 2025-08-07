@@ -67,7 +67,9 @@ onBeforeUnmount(() => {
         </div>
       </router-link>
       <!-- 네비게이션 컴포넌트 공간 (중앙) -->
-      <div class="navigation-space d-flex justify-content-center align-items-center">
+      <div
+        class="navigation-space d-flex justify-content-center align-items-center"
+      >
         <NavBar />
       </div>
       <!-- 햄버거 메뉴 버튼 (오른쪽 고정) -->
@@ -77,13 +79,20 @@ onBeforeUnmount(() => {
           :class="{ active: isHamburgerOpen }"
           @click.stop="toggleHamburger"
         >
-          <i class="fa-solid fa-bars" style="background-color: transparent; color: white"></i>
+          <i
+            class="fa-solid fa-bars"
+            style="background-color: transparent; color: white"
+          ></i>
         </button>
       </div>
     </div>
   </header>
   <!-- Sidebar 컴포넌트 -->
-  <HamburgerButton :is-open="isHamburgerOpen" @close="closeHamburger" @menu-click="handleHamburgerMenuClick" />
+  <HamburgerButton
+    :is-open="isHamburgerOpen"
+    @close="closeHamburger"
+    @menu-click="handleHamburgerMenuClick"
+  />
 </template>
 <style scoped>
 .header {
@@ -92,7 +101,9 @@ onBeforeUnmount(() => {
   left: 0;
   right: 0;
   z-index: 1000;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.3); /* 기존 #fff를 반투명으로 변경 */
+  backdrop-filter: blur(8px); /* 안개 효과 추가 */
+  -webkit-backdrop-filter: blur(8px); /* Safari 지원 */
   width: 100%;
   padding: 0;
   margin: 0;
@@ -105,7 +116,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #fff;
+  background-color: transparent;
   position: relative;
 }
 /* 로고 영역 (왼쪽 고정) */
@@ -119,9 +130,7 @@ onBeforeUnmount(() => {
 .logo {
   background-color: transparent;
 }
-.logo-section:hover {
-  transform: scale(1.05);
-}
+
 .logo-icon {
   width: 54px;
   height: 54px;

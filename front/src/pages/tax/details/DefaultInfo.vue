@@ -52,6 +52,8 @@
   </div>
 </template>
 <script>
+import { userAuthStore } from '@/stores/auth';
+import { storeToRefs } from 'pinia';
 export default {
   name: 'DefaultInfo',
   data() {
@@ -61,10 +63,11 @@ export default {
       selectedYear: '',
       yearOptions: [2022, 2023, 2024],
       agree: '',
+      isVerified: false,
     };
   },
   methods: {
-    startVerification() {
+    async startVerification() {
       if (!this.selectedYear) {
         alert('연도를 선택해주세요.');
         return;
@@ -74,13 +77,48 @@ export default {
         return;
       }
       this.step = 'verifying';
+      try {
+        const authStore = userAuthStore();
+        const { userId } = storeToRefs(userAuthStore());
+        const uid = userId.value; // :흰색_확인_표시: ref에서 값 꺼내기
+        if (!userId.value) {
+          alert('로그인 후 이용해주세요.');
+          this.step = 'agreement';
+          return;
+        }
+        const res = await fetch(`/tax/auth?userId=${encodeURIComponent(uid)}&year=${this.selectedYear}`);
+        if (!res.ok) {
+          const text = await res.text(); // JSON 아닌 경우 대비
+          console.error('서버 오류 응답:', text);
+          alert('서버 오류 발생');
+          this.step = 'agreement';
+          return;
+        }
+        const data = await res.json();
+        console.log('카카오 인증 응답:', data);
+        if (data.result?.code === 'CF-00000') {
+          alert('카카오 인증 성공!');
+          this.isVerified = true;
+          this.$emit('update-tax-data', data.data);
+        } else {
+          alert(`인증 실패: ${data.result?.message || '알 수 없는 오류'}`);
+          this.step = 'verifying';
+          this.isVerified = false;
+        }
+        // 3초마다 인증 상태 확인
+      } catch (err) {
+        console.error(err);
+        alert('서버 요청 중 오류 발생');
+        this.isVerified = false;
+        this.step = 'agreement';
+      }
     },
     goToCompleted() {
-      this.step = 'completed';
-    },
-    confirmVerification() {
-      alert('인증이 완료되어 조회를 시작합니다.');
-      this.closePopup();
+      if (!this.isVerified) {
+        alert('인증을 완료해주세요.'); // :흰색_확인_표시: 인증 안 됐으면 알림
+        return; // 화면 유지
+      }
+      this.step = 'completed'; // :흰색_확인_표시: 인증 완료 시에만 완료 화면으로 이동
     },
     closePopup() {
       this.showModal = false;
@@ -90,6 +128,12 @@ export default {
 };
 </script>
 <style scoped>
+.tax-info {
+  font-family: 'Noto Sans KR', sans-serif;
+  padding: 24px;
+  background-color: #ffffff;
+  color: #1f2937;
+}
 .section-title {
   font-size: 20px;
   font-weight: bold;

@@ -65,17 +65,24 @@
         </button>
       </div>
     </section>
-    <section class="recommendation-section" v-if="recommended.length">
-      <h4>✨ {{ userName }}님에게 추천하는 맞춤 금융 상품 ✨</h4>
-      <div class="product-grid">
-        <RecommendedProductCard
-          v-for="(product, idx) in recommended"
-          :key="idx"
-          :product="product"
-          @click="$router.push(`/product/${product.finPrdtCd}`)"
-        />
-      </div>
-    </section>
+    <section class="recommendation-section">
+  <h4>✨ {{ userName }}님에게 추천하는 맞춤 금융 상품 ✨</h4>
+
+  <!-- 추천 상품이 있는 경우 -->
+  <div v-if="recommended.length" class="product-grid">
+    <RecommendedProductCard
+      v-for="(product, idx) in recommended"
+      :key="idx"
+      :product="product"
+      @click="$router.push(`/product/${product.finPrdtCd}`)"
+    />
+  </div>
+
+  <div v-else class="no-recommendation-message">
+    😢 기간과 금액이 충분하지 않아서 추천드릴 수 있는 상품이 없습니다.
+  </div>
+</section>
+
   </div>
 </template>
 <script>

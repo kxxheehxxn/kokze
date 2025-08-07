@@ -19,9 +19,20 @@
           class="input"
           placeholder="새 비밀번호를 입력하세요."
         />
-        <div v-if="password && !passwordStrength.valid" class="error-msg">
-          {{ passwordStrength.message }}
-        </div>
+        <ul class="password-rules">
+          <li :class="passwordStrength.hasLength ? 'success' : 'hint'">
+            8자 이상
+          </li>
+          <li :class="passwordStrength.hasLetter ? 'success' : 'hint'">
+            영문자 포함
+          </li>
+          <li :class="passwordStrength.hasNumber ? 'success' : 'hint'">
+            숫자 포함
+          </li>
+          <li :class="passwordStrength.hasSpecial ? 'success' : 'hint'">
+            특수문자 포함
+          </li>
+        </ul>
       </div>
       <div class="form-group">
         <label class="label">새 비밀번호 확인</label>
@@ -38,13 +49,13 @@
           비밀번호가 일치하지 않습니다!
         </div>
       </div>
-      <div class="button-row">
-        <button type="button" class="cancel-btn" @click="onCancel">
+      <div class="mt-5 text-center">
+        <button type="button" class="btn cancel-btn" @click="onCancel">
           취소하기
         </button>
         <button
           type="submit"
-          class="submit-btn"
+          class="btn submit-btn ms-4"
           :disabled="!canSubmit || loading"
         >
           {{ loading ? '수정 중...' : '수정' }}
@@ -55,10 +66,12 @@
   </UserCardLayout>
 </template>
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import UserCardLayout from '@/components/UserCardLayout.vue';
 import { updatePassword } from '@/api/userApi';
+import { userAuthStore } from '@/stores/auth';
+const auth = userAuthStore();
 const currentPassword = ref('');
 const password = ref('');
 const passwordCheck = ref('');
@@ -67,16 +80,20 @@ const error = ref('');
 const router = useRouter();
 const passwordStrength = computed(() => {
   const pwd = password.value;
-  if (!pwd) return { valid: false, message: '' };
+
   const hasLength = pwd.length >= 8;
-  const hasUpper = /[A-Z]/.test(pwd);
-  const hasLower = /[a-z]/.test(pwd);
+  const hasLetter = /[a-zA-Z]/.test(pwd);
   const hasNumber = /\d/.test(pwd);
   const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd);
-  const valid = hasLength && hasUpper && hasLower && hasNumber && hasSpecial;
+
+  const valid = hasLength && hasLetter && hasNumber && hasSpecial;
+
   return {
+    hasLength,
+    hasLetter,
+    hasNumber,
+    hasSpecial,
     valid,
-    message: valid ? '' : '8자 이상, 대소문자, 숫자, 특수문자 포함 필요',
   };
 });
 const canSubmit = computed(
@@ -110,6 +127,12 @@ async function onSubmit() {
     loading.value = false;
   }
 }
+onMounted(() => {
+  if (auth.state.user.kakao) {
+    alert('카카오 로그인 사용자는 비밀번호를 수정할 수 없습니다.');
+    router.back();
+  }
+});
 </script>
 <style scoped>
 .title {
@@ -142,7 +165,7 @@ async function onSubmit() {
   border-radius: 24px;
   background: #f6f6f6;
   box-shadow: 0 2px 8px 0 #e5e7eb inset;
-  font-size: 20px;
+  font-size: 16px;
   padding: 12px 24px;
   outline: none;
   margin: 0 8px 0 0;
@@ -153,23 +176,15 @@ async function onSubmit() {
   margin-top: 8px;
   margin-left: 8px;
 }
-.button-row {
-  background-color: #fff;
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  margin-top: 32px;
-  width: 100%;
-}
-.cancel-btn,
-.submit-btn {
+.btn {
   width: 180px;
   height: 48px;
-  border-radius: 18px;
-  font-size: 18px;
-  font-weight: 500;
-  border: none;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
 }
 .cancel-btn {
   background: #fafbfc;
@@ -181,9 +196,18 @@ async function onSubmit() {
   color: #fff;
   border: none;
 }
-@media (max-width: 1024px) and (orientation: portrait) {
-  .button-row {
-    margin-top: 100px;
-  }
+.password-rules {
+  margin-top: 6px;
+  font-size: 13px;
+  padding-left: 16px;
+  list-style: disc;
+}
+.hint {
+  font-size: 13px;
+  color: gray;
+}
+.success {
+  font-size: 13px;
+  color: green;
 }
 </style>

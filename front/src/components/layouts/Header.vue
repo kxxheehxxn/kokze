@@ -67,7 +67,9 @@ onBeforeUnmount(() => {
         </div>
       </router-link>
       <!-- 네비게이션 컴포넌트 공간 (중앙) -->
-      <div class="navigation-space d-flex justify-content-center align-items-center">
+      <div
+        class="navigation-space d-flex justify-content-center align-items-center"
+      >
         <NavBar />
       </div>
       <!-- 햄버거 메뉴 버튼 (오른쪽 고정) -->
@@ -77,13 +79,20 @@ onBeforeUnmount(() => {
           :class="{ active: isHamburgerOpen }"
           @click.stop="toggleHamburger"
         >
-          <i class="fa-solid fa-bars" style="background-color: transparent; color: white"></i>
+          <i
+            class="fa-solid fa-bars"
+            style="background-color: transparent; color: white"
+          ></i>
         </button>
       </div>
     </div>
   </header>
   <!-- Sidebar 컴포넌트 -->
-  <HamburgerButton :is-open="isHamburgerOpen" @close="closeHamburger" @menu-click="handleHamburgerMenuClick" />
+  <HamburgerButton
+    :is-open="isHamburgerOpen"
+    @close="closeHamburger"
+    @menu-click="handleHamburgerMenuClick"
+  />
 </template>
 <style scoped>
 .header {
@@ -121,9 +130,7 @@ onBeforeUnmount(() => {
 .logo {
   background-color: transparent;
 }
-.logo-section:hover {
-  transform: scale(1.05);
-}
+
 .logo-icon {
   width: 54px;
   height: 54px;

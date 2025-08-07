@@ -88,15 +88,15 @@ const back = () => {
             </div>
           </div>
           <div class="mt-5 text-center">
+            <button type="button" class="btn fw-bold back" @click="back">
+              취소하기
+            </button>
             <button
               type="submit"
-              class="btn fw-bold create"
+              class="btn fw-bold create ms-3"
               :disabled="disableSubmit"
             >
               확인
-            </button>
-            <button type="button" class="btn ms-3 fw-bold back" @click="back">
-              취소
             </button>
           </div>
         </form>

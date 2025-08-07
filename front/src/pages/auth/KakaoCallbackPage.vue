@@ -1,10 +1,10 @@
 <template>
-    <div class="callback-container">
-        <div class="loading-spinner">
-            <div class="spinner"></div>
-            <p>카카오 로그인 처리 중...</p>
-        </div>
+  <div class="callback-container">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>카카오 로그인 처리 중...</p>
     </div>
+  </div>
 </template>
 <script setup>
 import { onMounted } from 'vue';
@@ -70,34 +70,34 @@ onMounted(async () => {
 </script>
 <style scoped>
 .callback-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #fafafa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #fafafa;
 }
 .loading-spinner {
-    text-align: center;
+  text-align: center;
 }
 .spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3573ee;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 20px;
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3573ee;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
 }
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 p {
-    color: #666;
-    font-size: 16px;
+  color: #666;
+  font-size: 16px;
 }
 </style>

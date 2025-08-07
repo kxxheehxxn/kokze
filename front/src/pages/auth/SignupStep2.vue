@@ -65,11 +65,13 @@ const goNext = () => {
 </script>
 <template>
   <div class="container">
-    <router-link to="/" class="logo-section text-decoration-none">
-      <div class="logo d-flex align-items-center">
-        <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
-      </div>
-    </router-link>
+    <div class="no-nav-header">
+      <router-link to="/" class="logo-section text-decoration-none">
+        <div class="logo d-flex align-items-center">
+          <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
+        </div>
+      </router-link>
+    </div>
     <div class="signup-box">
       <div class="sign-top">
         <div class="title">
@@ -211,7 +213,7 @@ const goNext = () => {
   margin-top: 20px;
 }
 .cancel-button {
-  background: #f2f2f2;
+  background: #fafbfc;
   color: #222;
   border: none;
   border-radius: 30px;
@@ -219,6 +221,7 @@ const goNext = () => {
   font-size: 16px;
   font-weight: 500;
   min-width: 200px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
 .next-button {
@@ -230,6 +233,7 @@ const goNext = () => {
   font-size: 16px;
   font-weight: 500;
   min-width: 200px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
 .next-button:disabled {

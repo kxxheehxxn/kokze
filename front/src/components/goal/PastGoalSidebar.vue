@@ -33,7 +33,7 @@
             {{ goal.success ? '성공' : '실패' }}
           </div>
 
-          <button class="btn btn-danger" @click="onDelete(goal.id)">
+          <button class="btn btn-danger" @click="handleDeleteGoal(goal.goalId)">
             삭제
           </button>
         </div>
@@ -45,7 +45,7 @@
   </div>
 </template>
 <script>
-import { fetchPastGoals } from '@/api/goalApi'
+import { fetchPastGoals, deleteGoalById } from '@/api/goalApi'
 import { userAuthStore } from '@/stores/auth'
 
 export default {
@@ -68,6 +68,21 @@ export default {
         console.error('지난 목표 조회 실패:', e)
       }
     },
+    async handleDeleteGoal(goalId) {
+  const confirmDelete = confirm('정말로 이 목표를 삭제하시겠습니까?');
+  if (!confirmDelete) return;
+  const auth = userAuthStore();
+  const token = auth.getToken();
+  try {
+    await deleteGoalById(goalId, token); // ✅ 넘겨받은 goalId 사용
+    alert('목표가 삭제되었습니다.');
+    this.loadPastGoals(); // 삭제 후 새로고침
+  } catch (error) {
+    console.error('Failed to delete goal:', error);
+    alert('삭제 중 오류가 발생했습니다.');
+  }
+},
+
     formatDate(arr) {
       if (!arr || arr.length !== 3) return ''
       const [y, m, d] = arr
@@ -210,7 +225,6 @@ export default {
 
 .success {
   color: green;
-  background: #e6ffe6;
 }
 
 .fail {

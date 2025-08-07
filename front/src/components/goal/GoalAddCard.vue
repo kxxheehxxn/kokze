@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import GoalRecommendModal from '@/components/GoalRecommendModal.vue';
+import GoalRecommendModal from '@/components/goal/GoalRecommendModal.vue';
 import { fetchRecommendedGoal } from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth';
 
@@ -55,8 +55,6 @@ export default {
   },
 };
 </script>
-
-
 
 <style scoped>
 .goal-add-card {

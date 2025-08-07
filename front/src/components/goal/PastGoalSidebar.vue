@@ -4,25 +4,40 @@
 
     <div class="sidebar">
       <div class="sidebar-header">
-        <h3>🌟 김콕재님의 지난 목표 리스트 🌟</h3>
+        <h3>✨ {{ userName }}님의 지난 목표 리스트 ✨</h3>
       </div>
 
       <div class="past-goals">
+        <div v-if="pastGoals.length === 0" class="empty-message">
+          지난 목표가 없습니다.
+        </div>
+
         <div
           v-for="(goal, index) in pastGoals"
           :key="index"
           class="past-goal-card"
         >
-          <div class="title">목표 : {{ goal.title }}</div>
+          <div class="title" :title="goal.title">
+            <span class="label">목표 : </span>
+            <span class="text">{{ goal.title }}</span>
+          </div>
           <hr />
           <div class="period">
-            {{ formatDate(goal.startDate) }}<br />
-            {{ formatDate(goal.endDate) }}
+            {{ formatDate(goal.startDate) }} ~<br />
+            {{ formatDate(goal.endDate) }}<br />
+            ( 약 {{ getPeriodDiff(goal.startDate, goal.endDate) }} )
           </div>
-          <div class="amount">{{ formatAmount(goal.targetAmount) }}</div>
+          <div class="amount">
+            {{ formatAmount(goal.targetAmount) }}
+          </div>
+
           <div :class="['status', goal.success ? 'success' : 'fail']">
             {{ goal.success ? '성공' : '실패' }}
           </div>
+
+          <button class="btn btn-danger" @click="onDelete(goal.id)">
+            삭제
+          </button>
         </div>
       </div>
 
@@ -35,20 +50,23 @@
 
 <script>
 import { fetchPastGoals } from '@/api/goalApi';
-import { userAuthStore } from '@/stores/auth'; // Pinia 사용자 스토어 (또는 다른 경로)
+import { userAuthStore } from '@/stores/auth';
 
 export default {
   name: 'PastGoalSidebar',
   data() {
+    const auth = userAuthStore();
+
     return {
       pastGoals: [],
+      userName: auth.state.user.userName || '김콕재',
+      userId: auth.state.user.userId,
     };
   },
   methods: {
     async loadPastGoals() {
       try {
-        const userId = userAuthStore().state.user.userId;
-        const goals = await fetchPastGoals(userId);
+        const goals = await fetchPastGoals(this.userId);
         this.pastGoals = goals;
       } catch (e) {
         console.error('지난 목표 조회 실패:', e);
@@ -65,6 +83,27 @@ export default {
     formatAmount(amount) {
       return `${amount.toLocaleString()}원`;
     },
+    getPeriodDiff(start, end) {
+      if (!start || !end) return '';
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+
+      let diffMonths =
+        (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+        (endDate.getMonth() - startDate.getMonth());
+
+      // 일(day) 차이가 양수면 한 달 추가
+      if (endDate.getDate() > startDate.getDate()) {
+        diffMonths += 1;
+      }
+
+      if (diffMonths < 24) {
+        return `${diffMonths}개월`;
+      } else {
+        const diffYears = diffMonths / 12;
+        return `${Math.round(diffYears)}년`;
+      }
+    },
   },
   mounted() {
     this.loadPastGoals();
@@ -77,12 +116,11 @@ export default {
   position: fixed;
   top: 0;
   right: 0;
-  width: auto;
   height: 100vh;
-  z-index: 1000;
   display: flex;
   justify-content: flex-end;
-  pointer-events: none; /* 클릭 막음 */
+  pointer-events: none;
+  z-index: 1000;
 }
 
 .overlay {
@@ -91,18 +129,17 @@ export default {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.08); /* 💡 약간 어두운 정도 */
-  backdrop-filter: blur(1px); /* 💡 흐림 효과 */
-  z-index: 999;
+  background: rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(1px);
   pointer-events: auto;
-  transition: none; /* 💡 즉시 흐려지게 */
+  z-index: 999;
 }
 
 .sidebar {
   width: 500px;
   height: 100%;
-  background: #f9f9f9;
   padding: 1.5rem 1rem 4rem;
+  background: #f9f9f9;
   border-radius: 12px;
   box-shadow: -3px 0 6px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
@@ -120,25 +157,48 @@ export default {
 }
 
 .past-goals {
-  margin-top: 1rem;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
 }
 
+.empty-message {
+  grid-column: span 2;
+  text-align: center;
+  color: #999;
+  margin-top: 2rem;
+}
+
 .past-goal-card {
+  width: 100%;
   background: #fff;
   border: 1px solid #a2c3ff;
   border-radius: 12px;
-  padding: 1.2rem;
-  text-align: center;
+  padding: 1.5rem;
   font-size: 1rem;
   box-shadow: 0 0 6px rgba(0, 120, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .title {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.label {
+  flex-shrink: 0;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+}
+
+.text {
+  min-width: 0;
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .period,
@@ -150,29 +210,38 @@ export default {
   margin: 0.5rem 0;
   line-height: 1.4;
 }
+
 .amount {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
+
 .status {
-  margin-top: 0.5rem;
   font-weight: bold;
-  padding: 0.4rem;
-  border-radius: 4px;
+  text-align: right;
 }
+
 .success {
   color: green;
   background: #e6ffe6;
 }
+
 .fail {
   color: red;
-  background: #ffeaea;
+  font-weight: bold;
+  font-size: 1.1rem;
 }
+
+.btn {
+  border-radius: 18px;
+}
+
 .close-bottom-wrapper {
   display: flex;
   justify-content: flex-end;
   margin-top: auto;
   padding-top: 1.5rem;
 }
+
 .close-btn {
   background: #666;
   color: white;

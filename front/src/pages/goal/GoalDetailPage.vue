@@ -99,6 +99,8 @@ import RecommendedProductCard from '@/components/goal/RecommendedProductCard.vue
 export default {
   name: 'GoalDetailPage',
   data() {
+    const auth = userAuthStore();
+
     return {
       goal: {
         id: '',
@@ -113,7 +115,8 @@ export default {
         linked_accounts: [],
       },
       recommended: [],
-      userName: '김콕재',
+      userName: auth.state.user.userName || '김콕재',
+      userId: auth.state.user.userId,
     };
   },
   components: {
@@ -170,11 +173,12 @@ export default {
       }
     },
     formatDate(dateStr) {
-      if (!dateStr) return '';
-      const date = new Date(dateStr);
-      return `${date.getFullYear()}년 ${
-        date.getMonth() + 1
-      }월 ${date.getDate()}일`;
+      if (!dateStr || dateStr.length !== 3) return '';
+      const [y, m, d] = dateStr;
+      return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
+        2,
+        '0'
+      )}일`;
     },
     getPeriodDiff(start, end) {
       if (!start || !end) return '';

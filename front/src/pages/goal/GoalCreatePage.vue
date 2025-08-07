@@ -92,7 +92,7 @@ import {
   createGoal,
   linkAccountToGoal,
 } from '@/api/goalApi';
-import ProductModal from '@/components/ProductModal.vue';
+import ProductModal from '@/components/goal/ProductModal.vue';
 import { userAuthStore } from '@/stores/auth';
 
 export default {

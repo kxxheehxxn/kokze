@@ -39,7 +39,7 @@ import { fetchGoals } from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth';
 import GoalCard from '@/components/goal/GoalCard.vue';
 import GoalAddCard from '@/components/goal/GoalAddCard.vue';
-import PastGoalSidebar from '@/components/PastGoalSidebar.vue';
+import PastGoalSidebar from '@/components/goal/PastGoalSidebar.vue';
 
 export default {
   name: 'GoalPage',

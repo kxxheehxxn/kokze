@@ -162,7 +162,7 @@ onMounted(() => {
   padding: 0;
   margin: 0;
   color: #222;
-  font-size: 24px;
+  font-size: 22px;
 }
 .user-menu li {
   background-color: #fff;

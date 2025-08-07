@@ -94,8 +94,7 @@
     padding: 0 10px;
   }
 
-  .footer-logo-section {
-  .logo-section {
+  .footer-logo-section  {
     margin-right: 12px !important;
   }
 }

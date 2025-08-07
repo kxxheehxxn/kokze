@@ -19,11 +19,8 @@
           class="input"
           placeholder="새 비밀번호를 입력하세요."
         />
-        <!-- <div v-if="password && !passwordStrength.valid" class="error-msg">
-          {{ passwordStrength.message }}
-        </div> -->
         <ul class="password-rules">
-          <li :class="passwordStrength.length ? 'success' : 'hint'">
+          <li :class="passwordStrength.hasLength ? 'success' : 'hint'">
             8자 이상
           </li>
           <li :class="passwordStrength.hasLetter ? 'success' : 'hint'">
@@ -69,10 +66,12 @@
   </UserCardLayout>
 </template>
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import UserCardLayout from '@/components/UserCardLayout.vue';
 import { updatePassword } from '@/api/userApi';
+import { userAuthStore } from '@/stores/auth';
+const auth = userAuthStore();
 const currentPassword = ref('');
 const password = ref('');
 const passwordCheck = ref('');
@@ -81,7 +80,6 @@ const error = ref('');
 const router = useRouter();
 const passwordStrength = computed(() => {
   const pwd = password.value;
-  if (!pwd) return { valid: false };
 
   const hasLength = pwd.length >= 8;
   const hasLetter = /[a-zA-Z]/.test(pwd);
@@ -89,7 +87,12 @@ const passwordStrength = computed(() => {
   const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd);
 
   const valid = hasLength && hasLetter && hasNumber && hasSpecial;
+
   return {
+    hasLength,
+    hasLetter,
+    hasNumber,
+    hasSpecial,
     valid,
   };
 });
@@ -124,6 +127,12 @@ async function onSubmit() {
     loading.value = false;
   }
 }
+onMounted(() => {
+  if (auth.state.user.kakao) {
+    alert('카카오 로그인 사용자는 비밀번호를 수정할 수 없습니다.');
+    router.back();
+  }
+});
 </script>
 <style scoped>
 .title {
@@ -156,7 +165,7 @@ async function onSubmit() {
   border-radius: 24px;
   background: #f6f6f6;
   box-shadow: 0 2px 8px 0 #e5e7eb inset;
-  font-size: 20px;
+  font-size: 16px;
   padding: 12px 24px;
   outline: none;
   margin: 0 8px 0 0;
@@ -192,5 +201,13 @@ async function onSubmit() {
   font-size: 13px;
   padding-left: 16px;
   list-style: disc;
+}
+.hint {
+  font-size: 13px;
+  color: gray;
+}
+.success {
+  font-size: 13px;
+  color: green;
 }
 </style>

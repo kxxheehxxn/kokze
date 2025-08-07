@@ -15,7 +15,7 @@
           <div>{{ choice.text }}</div>
         </div>
       </div>
-      <div class="mt-5 text-center">
+      <div class="text-center">
         <button class="btn cancel-btn" @click="onCancel">취소하기</button>
         <button
           class="btn submit-btn ms-4"
@@ -167,7 +167,7 @@ onMounted(async () => {
   background-color: #fff;
   font-size: 28px;
   font-weight: bold;
-  margin: 0 auto 32px auto;
+  margin: 0 auto 22px auto;
   text-align: center;
   width: 100%;
 }
@@ -179,6 +179,7 @@ onMounted(async () => {
   margin-bottom: 32px;
 }
 .choices {
+  height: 130px;
   background-color: #fff;
   display: flex;
   justify-content: center;
@@ -197,13 +198,16 @@ onMounted(async () => {
   font-weight: 500;
   text-align: center;
   cursor: pointer;
-  transition: box-shadow 0.2s, border 0.2s;
+  transition:
+    box-shadow 0.2s,
+    border 0.2s;
   border: 2px solid transparent;
   min-width: 260px;
   max-width: 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 .choice.selected {
   border: 2px solid #2573ee;

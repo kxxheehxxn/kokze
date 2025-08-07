@@ -362,7 +362,7 @@ const goNext = () => {
         </div>
       </div>
       <div class="button-group">
-        <button class="btn cancel-button" @click="router.push('/')">
+        <button class="btn cancel-button" @click="router.push('/auth/login')">
           취소하기
         </button>
         <button

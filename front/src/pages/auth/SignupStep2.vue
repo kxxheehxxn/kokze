@@ -213,7 +213,7 @@ const goNext = () => {
   margin-top: 20px;
 }
 .cancel-button {
-  background: #f2f2f2;
+  background: #fafbfc;
   color: #222;
   border: none;
   border-radius: 30px;
@@ -221,6 +221,7 @@ const goNext = () => {
   font-size: 16px;
   font-weight: 500;
   min-width: 200px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
 .next-button {
@@ -232,6 +233,7 @@ const goNext = () => {
   font-size: 16px;
   font-weight: 500;
   min-width: 200px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
 .next-button:disabled {

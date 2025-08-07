@@ -68,7 +68,21 @@
           placeholder="비밀번호를 입력하세요."
         />
       </div>
-      <div class="form-group">
+      <ul class="password-rules">
+        <li :class="passwordStrength.hasLength ? 'success' : 'hint'">
+          8자 이상
+        </li>
+        <li :class="passwordStrength.hasLetter ? 'success' : 'hint'">
+          영문자 포함
+        </li>
+        <li :class="passwordStrength.hasNumber ? 'success' : 'hint'">
+          숫자 포함
+        </li>
+        <li :class="passwordStrength.hasSpecial ? 'success' : 'hint'">
+          특수문자 포함
+        </li>
+      </ul>
+      <div class="form-group mt-4">
         <label>비밀번호 확인</label>
         <input
           v-model="passwordCheck"
@@ -107,22 +121,22 @@ import {
   sendVerificationCode,
   verifyCode,
   changePassword,
-} from '@/api/passwordApi.js'
-const step = ref(1)
-const phoneNum = ref('')
-const email = ref('')
-const code = ref('')
-const password = ref('')
-const passwordCheck = ref('')
-const userVerified = ref(null)
-const codeChecked = ref(null)
-const router = useRouter()
+} from '@/api/passwordApi.js';
+const step = ref(1);
+const phoneNum = ref('');
+const email = ref('');
+const code = ref('');
+const password = ref('');
+const passwordCheck = ref('');
+const userVerified = ref(null);
+const codeChecked = ref(null);
+const router = useRouter();
 async function onVerifyUser() {
   if (!phoneNum.value || !email.value) {
     alert('전화번호와 이메일을 모두 입력해주세요.');
     return;
   }
-  userVerified.value = await verifyUserInfo(phoneNum.value, email.value)
+  userVerified.value = await verifyUserInfo(phoneNum.value, email.value);
   if (userVerified.value) {
     await sendVerificationCode(email.value);
   }
@@ -131,14 +145,35 @@ async function onCodeCheck() {
   codeChecked.value = await verifyCode(code.value, email.value);
 }
 const canNext = computed(
-  () => phoneNum.value && email.value && userVerified.value && codeChecked.value,
-)
+  () => phoneNum.value && email.value && userVerified.value && codeChecked.value
+);
 function onNext() {
   if (canNext.value) step.value = 2;
 }
 const canChange = computed(
-  () => password.value && password.value === passwordCheck.value,
-)
+  () =>
+    password.value &&
+    password.value === passwordCheck.value &&
+    passwordStrength.value.valid
+);
+const passwordStrength = computed(() => {
+  const pwd = password.value;
+
+  const hasLength = pwd.length >= 8;
+  const hasLetter = /[a-zA-Z]/.test(pwd);
+  const hasNumber = /\d/.test(pwd);
+  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd);
+
+  const valid = hasLength && hasLetter && hasNumber && hasSpecial;
+
+  return {
+    hasLength,
+    hasLetter,
+    hasNumber,
+    hasSpecial,
+    valid,
+  };
+});
 async function onChangePassword() {
   if (!canChange.value) return;
   await changePassword(email.value, password.value);
@@ -147,26 +182,12 @@ async function onChangePassword() {
 }
 function formatPhoneNumber(e) {
   let digits = e.target.value.replace(/\D/g, ''); // 숫자만 추출
-
-  if (digits.startsWith('02')) {
-    // 서울 번호 예외 처리 (예: 02-1234-5678)
-    if (digits.length > 2 && digits.length <= 5) {
-      digits = digits.replace(/^(\d{2})(\d{1,3})$/, '$1-$2');
-    } else if (digits.length > 5 && digits.length <= 9) {
-      digits = digits.replace(/^(\d{2})(\d{3,4})(\d{0,4})$/, '$1-$2-$3');
-    }
+  if (digits.length <= 3) {
+  } else if (digits.length <= 7) {
+    digits = digits.replace(/^(\d{3})(\d{0,4})$/, '$1-$2');
   } else {
-    // 일반적인 휴대폰 번호 (예: 010-1234-5678)
-    if (digits.length <= 3) {
-      // 010
-      // do nothing
-    } else if (digits.length <= 7) {
-      digits = digits.replace(/^(\d{3})(\d{0,4})$/, '$1-$2');
-    } else {
-      digits = digits.replace(/^(\d{3})(\d{3,4})(\d{0,4})$/, '$1-$2-$3');
-    }
+    digits = digits.replace(/^(\d{3})(\d{3,4})(\d{0,4})$/, '$1-$2-$3');
   }
-
   phoneNum.value = digits;
 }
 function onCancel() {
@@ -188,7 +209,6 @@ function onCancel() {
 }
 .form-group {
   background-color: #fff;
-  margin-bottom: 32px;
 }
 .form-group label {
   background-color: #fff;
@@ -207,7 +227,7 @@ function onCancel() {
   border-radius: 24px;
   background: #f6f6f6;
   box-shadow: 0 2px 8px 0 #e5e7eb inset;
-  font-size: 20px;
+  font-size: 16px;
   padding: 12px 24px;
   outline: none;
   margin: 0 8px 0 0;
@@ -255,5 +275,19 @@ function onCancel() {
   background: #2573ee;
   color: #fff;
   border: none;
+}
+.password-rules {
+  margin-top: 6px;
+  font-size: 13px;
+  padding-left: 16px;
+  list-style: disc;
+}
+.hint {
+  font-size: 13px;
+  color: gray;
+}
+.success {
+  font-size: 13px;
+  color: green;
 }
 </style>

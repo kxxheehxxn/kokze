@@ -165,12 +165,13 @@ const onSubmit = async () => {
 
 <template>
   <div class="container">
-    <router-link to="/" class="logo-section text-decoration-none">
-      <div class="logo d-flex align-items-center">
-        <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
-      </div>
-    </router-link>
-
+    <div class="no-nav-header">
+      <router-link to="/" class="logo-section text-decoration-none">
+        <div class="logo d-flex align-items-center">
+          <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
+        </div>
+      </router-link>
+    </div>
     <div class="signup-box">
       <div class="sign-top">
         <div class="title">

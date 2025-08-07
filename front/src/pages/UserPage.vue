@@ -143,7 +143,7 @@ onMounted(() => {
 .user-mbti {
   background-color: #fff;
   color: #222;
-  font-size: 24px;
+  font-size: 20px;
   margin-bottom: 24px;
   font-weight: 400;
   text-align: left;
@@ -151,7 +151,7 @@ onMounted(() => {
 
 .user-name {
   background-color: #fff;
-  font-size: 48px;
+  font-size: 45px;
   font-weight: bold;
   margin-bottom: 48px;
   display: flex;
@@ -162,9 +162,9 @@ onMounted(() => {
 .user-point {
   background: #e8f0ff;
   color: #3573ee;
-  border-radius: 23px;
+  border-radius: 28px;
   padding: 8px 24px;
-  font-size: 25px;
+  font-size: 23px;
   font-weight: 500;
   margin-left: 12px;
   cursor: pointer;

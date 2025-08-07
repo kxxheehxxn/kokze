@@ -49,11 +49,13 @@ const handleSignup = () => {
 
 <template>
   <div class="container">
-    <router-link to="/" class="logo-section" aria-label="홈으로 이동">
-      <div class="logo">
-        <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
-      </div>
-    </router-link>
+    <div class="no-nav-header">
+      <router-link to="/" class="logo-section" aria-label="홈으로 이동">
+        <div class="logo">
+          <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
+        </div>
+      </router-link>
+    </div>
 
     <div class="login-box" role="form" aria-label="로그인 폼">
       <div class="title">로그인</div>
@@ -157,7 +159,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  margin-top: 10px;
 }
 
 .title {

@@ -10,7 +10,7 @@ const route = useRoute();
 const router = useRouter();
 const page = ref({});
 const notices = computed(() => page.value?.list || []);
-const isAdmin = computed(() => auth.role?.toLowerCase() === 'admin');
+const isAdmin = computed(() => (auth.role ?? '').toLowerCase() === 'admin');
 const totalCount = computed(() => page.value?.totalCount || 0);
 const pageRequest = reactive({
   page: parseInt(route.query.page ?? 1),
@@ -139,10 +139,10 @@ load(pageRequest);
             </template>
           </vue-awesome-paginate>
         </div>
-        <div class="text-end" v-if="isAdmin">
+        <div class="d-flex justify-content-end" v-if="isAdmin">
           <router-link
             :to="{ name: 'noticeCreate', query: route.query }"
-            class="btn fw-bold"
+            class="btn d-flex align-items-center justify-content-center"
             >공지 작성
           </router-link>
         </div>
@@ -184,6 +184,7 @@ td {
   border-radius: 20px;
   text-align: center;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
 }
 .ellipsis-title {
   overflow: hidden;

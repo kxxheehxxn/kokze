@@ -28,9 +28,11 @@
           <span class="unit">원</span>
         </div>
       </div>
-      <div class="button-row">
-        <button type="button" class="cancel-btn" @click="onCancel">취소</button>
-        <button type="submit" class="submit-btn" :disabled="loading">
+      <div class="mt-5 text-center">
+        <button type="button" class="btn cancel-btn" @click="onCancel">
+          취소하기
+        </button>
+        <button type="submit" class="btn submit-btn ms-4" :disabled="loading">
           수정
         </button>
       </div>
@@ -179,24 +181,16 @@ function onCancel() {
 }
 
 /* 버튼 영역 */
-.button-row {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 40px;
-  width: 100%;
-}
-.cancel-btn,
-.submit-btn {
-  width: 100%;
+.btn {
+  width: 180px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
   font-size: 16px;
   font-weight: 500;
-  border: none;
-  cursor: pointer;
 }
-
 .cancel-btn {
   background: #fafbfc;
   color: #222;

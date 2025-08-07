@@ -45,7 +45,8 @@ const handleClickOutside = (event) => {
   const btnEl = hamburgerBtnRef.value;
   const menuEl =
     // HamburgerButton이 Vue 컴포넌트라면 $el, 아니면 직접 DOM
-    (hamburgerRef.value && (hamburgerRef.value.$el || hamburgerRef.value)) || null;
+    (hamburgerRef.value && (hamburgerRef.value.$el || hamburgerRef.value)) ||
+    null;
 
   // 클릭이 버튼 안이거나 메뉴 안이면 아무것도 안 함
   if (
@@ -79,7 +80,9 @@ onBeforeUnmount(() => {
       </router-link>
 
       <!-- 네비게이션 컴포넌트 공간 (중앙) -->
-      <div class="navigation-space d-flex justify-content-center align-items-center">
+      <div
+        class="navigation-space d-flex justify-content-center align-items-center"
+      >
         <NavBar />
       </div>
 
@@ -90,14 +93,21 @@ onBeforeUnmount(() => {
           :class="{ active: isHamburgerOpen }"
           @click.stop="toggleHamburger"
         >
-          <i class="fa-solid fa-bars" style="background-color: transparent; color: white"></i>
+          <i
+            class="fa-solid fa-bars"
+            style="background-color: transparent; color: white"
+          ></i>
         </button>
       </div>
     </div>
   </header>
 
   <!-- Sidebar 컴포넌트 -->
-  <HamburgerButton :is-open="isHamburgerOpen" @close="closeHamburger" @menu-click="handleHamburgerMenuClick" />
+  <HamburgerButton
+    :is-open="isHamburgerOpen"
+    @close="closeHamburger"
+    @menu-click="handleHamburgerMenuClick"
+  />
 </template>
 
 <style scoped>
@@ -136,10 +146,6 @@ onBeforeUnmount(() => {
 
 .logo {
   background-color: transparent;
-}
-
-.logo-section:hover {
-  transform: scale(1.05);
 }
 
 .logo-icon {

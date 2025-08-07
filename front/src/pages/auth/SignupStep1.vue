@@ -208,12 +208,13 @@ const goNext = () => {
 
 <template>
   <div class="container">
-    <router-link to="/" class="logo-section text-decoration-none">
-      <div class="logo d-flex align-items-center">
-        <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
-      </div>
-    </router-link>
-
+    <div class="no-nav-header">
+      <router-link to="/" class="logo-section text-decoration-none">
+        <div class="logo d-flex align-items-center">
+          <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
+        </div>
+      </router-link>
+    </div>
     <div class="signup-box">
       <div class="sign-top">
         <div class="title">
@@ -398,10 +399,14 @@ const goNext = () => {
       </div>
 
       <div class="button-group">
-        <button class="cancel-button" @click="router.push('/')">
+        <button class="btn cancel-button" @click="router.push('/')">
           취소하기
         </button>
-        <button :disabled="!isFormValid" class="next-button" @click="goNext">
+        <button
+          :disabled="!isFormValid"
+          class="btn next-button"
+          @click="goNext"
+        >
           다음 단계
         </button>
       </div>
@@ -519,6 +524,7 @@ const goNext = () => {
   border-radius: 30px;
   white-space: nowrap;
   cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .email-group button:hover,
@@ -646,17 +652,21 @@ const goNext = () => {
   justify-content: space-between;
   margin-top: 20px;
 }
-
+.btn {
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
 .cancel-button {
-  background: #f2f2f2;
+  background: #fafbfc;
   color: #222;
   border: none;
   border-radius: 30px;
   padding: 14px 24px;
-  font-size: 16px;
-  font-weight: 500;
   min-width: 200px;
-  cursor: pointer;
 }
 
 .next-button {
@@ -665,10 +675,7 @@ const goNext = () => {
   border: none;
   border-radius: 30px;
   padding: 14px 24px;
-  font-size: 16px;
-  font-weight: 500;
   min-width: 200px;
-  cursor: pointer;
 }
 
 .next-button:disabled {

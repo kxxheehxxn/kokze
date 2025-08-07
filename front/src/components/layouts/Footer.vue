@@ -3,14 +3,16 @@
     <div class="footer-container container-xxl">
       <div class="d-flex align-items-center">
         <!-- 로고 영역 -->
-        <div class="logo-section me-4">
+        <div class="footer-logo-section me-4">
           <img src="@/assets/logo_black.svg" alt="로고" class="footer-logo" />
         </div>
 
         <!-- 회사 정보 영역 -->
         <div class="company-info">
           <div class="company-name mb-1">(주)꽁재</div>
-          <div class="company-address mb-1">주소 : 서울 강진구 능동로 195-16 6층(군자동) 605호</div>
+          <div class="company-address mb-1">
+            주소 : 서울 강진구 능동로 195-16 6층(군자동) 605호
+          </div>
           <div class="copyright">Copyright 2025. 꽁재 All rights reserved.</div>
         </div>
       </div>
@@ -108,7 +110,7 @@
     padding: 0 10px;
   }
 
-  .logo-section {
+  .footer-logo-section {
     margin-right: 12px !important;
   }
 }

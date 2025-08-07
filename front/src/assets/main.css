@@ -83,28 +83,38 @@ html {
   --bs-gutter-x: 0 !important;
   --bs-gutter-y: 0 !important;
 }
+.no-nav-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 80px;
+  background-color: transparent;
+}
+
+/* 로고 왼쪽 정렬을 위한 여백 */
+.no-nav-header .logo-section {
+  margin-left: 20px;
+}
 .logo-section {
   cursor: pointer;
   transition: transform 0.2s ease;
+  background-color: transparent;
+  flex-shrink: 0;
+  margin-left: 20px; /* 로고에만 왼쪽 여백 */
 }
-
 .logo-section:hover {
   transform: scale(1.05);
 }
 .logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 54px;
-  height: 54px;
+  background: transparent;
 }
 .logo-icon {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  width: 54px;
+  height: 54px;
+  background: transparent !important;
   border-radius: 50%;
   padding: 2px;
-  background: transparent;
+  object-fit: contain;
 }
 .signup-box {
   background-color: #fff;

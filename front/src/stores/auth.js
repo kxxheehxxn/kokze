@@ -30,21 +30,6 @@ export const userAuthStore = defineStore('auth', () => {
 
   const isLogin = computed(() => !!state.value.user.email);
   const userId = computed(() => state.value.user.userId);
-  const userName = computed(() => {
-    try {
-      const authData = localStorage.getItem('auth');
-      if (authData) {
-        const parsed = JSON.parse(authData);
-        const name = parsed.user?.userName;
-        return name || '';
-      }
-    } catch (error) {
-      console.error('localStorage 파싱 오류:', error);
-    }
-
-    const name = state.value.user.userName;
-    return name || '';
-  });
   const email = computed(() => state.value.user.email);
   const role = computed(() => state.value.user.role);
   const userInfo = reactive({ ...initialUserInfo });
@@ -59,9 +44,13 @@ export const userAuthStore = defineStore('auth', () => {
           userName: member.userName,
           email: member.email,
           role: 'USER',
+          kakao: true,
         };
       } else {
-        const response = await axios.post('http://localhost:8080/api/auth/login', member);
+        const response = await axios.post(
+          'http://localhost:8080/api/auth/login',
+          member
+        );
 
         if (response.data && response.data.success) {
           state.value.token = response.data.token;
@@ -130,6 +119,7 @@ export const userAuthStore = defineStore('auth', () => {
     state,
     email,
     userId,
+    role,
     isLogin,
     login,
     logout,

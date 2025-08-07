@@ -5,13 +5,14 @@ import { ref, computed } from 'vue';
 import moment from 'moment';
 import { userAuthStore } from '@/stores/auth';
 const isLoading = ref(false);
+const MAX_CONTENT_LENGTH = 1000;
 const auth = userAuthStore();
 const route = useRoute();
 const router = useRouter();
 const infoId = route.params.no;
 const article = ref({});
 const isEditingAnswer = ref(false);
-const isAdmin = computed(() => auth.role.toLowerCase() === 'admin');
+const isAdmin = computed(() => (auth.role ?? '').toLowerCase() === 'admin');
 const back = () => {
   router.push({ name: 'inquiryList', query: route.query });
 };
@@ -37,8 +38,7 @@ const updateAnswer = async () => {
   try {
     await api.updateAnswer(updatedFields);
     isEditingAnswer.value = false;
-    alert('답변이 성공적으로 수정되었습니다.');
-    await load(); // Reload data after successful update
+    await load();
   } catch (error) {
     console.error('답변 수정 중 오류 발생:', error);
     alert('답변 수정 중 오류가 발생했습니다.');
@@ -78,7 +78,6 @@ const submit = async () => {
       params: { no: article.value.infoId },
       query: route.query,
     });
-    // Note: window.location.reload() can be heavy. Consider re-fetching data with `load()`
     await load();
   } catch (error) {
     console.error('답변 등록 중 오류 발생:', error);
@@ -120,7 +119,7 @@ load();
           </div>
           <!-- 답변 페이지 -->
           <!-- 1. 관리자 화면 -->
-          <div v-if="isAdmin">
+          <div class="mt-5" v-if="isAdmin">
             <div v-if="!article.isAnswered">
               <form @submit.prevent="submit">
                 <div class="d-flex mb-3 mt-3 align-items-start">
@@ -142,9 +141,7 @@ load();
               </form>
             </div>
             <div v-else>
-              <div
-                class="d-flex footer w-100 justify-content-between align-items-center"
-              >
+              <div class="d-flex footer w-100 justify-content-between">
                 <div class="w-100">
                   <div v-if="!isEditingAnswer">
                     {{ article.answeredContent }}
@@ -154,6 +151,7 @@ load();
                       class="form-control textarea-input"
                       v-model="article.answeredContent"
                       rows="10"
+                      :maxlength="MAX_CONTENT_LENGTH"
                     ></textarea>
                   </div>
                 </div>
@@ -223,7 +221,7 @@ load();
   flex: 1;
   display: flex;
   flex-direction: column;
-} /* 버튼 그룹을 하단으로 밀고, 아래에서 20px 띄우기 */
+}
 .footer {
   margin-top: auto; /* 아래로 밀기 */
   padding-bottom: 20px; /* 박스 하단으로부터 20px 띄우기 효과 */
@@ -279,22 +277,19 @@ hr {
   margin-top: 20px;
   margin-bottom: 30px;
 }
-.answer-content {
-  font-size: 14px;
-}
 .callback-container {
-  position: fixed; /* Covers the entire viewport */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
-  flex-direction: column; /* Stack spinner and text vertically */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Ensures it's on top of everything */
-  color: white; /* Text color for the message */
+  z-index: 9999;
+  color: white;
 }
 
 .loading-spinner {

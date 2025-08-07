@@ -28,13 +28,8 @@
 </template>
 
 <script>
-import BankListComponent from './BankListComponent.vue'
-
 export default {
   name: 'ProductModal',
-  components: {
-    BankListComponent,
-  },
   props: {
     accounts: Array,
   },
@@ -42,21 +37,21 @@ export default {
     return {
       selectedAccountId: null,
       selectedBank: null,
-    }
+    };
   },
   methods: {
     onBankSelected(bank) {
-      this.selectedBank = bank
+      this.selectedBank = bank;
     },
     onConnect() {
       if (!this.selectedAccountId) {
-        alert('계좌를 선택하세요!')
-        return
+        alert('계좌를 선택하세요!');
+        return;
       }
-      this.$emit('connect', this.selectedAccountId)
+      this.$emit('connect', this.selectedAccountId);
     },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -80,11 +75,11 @@ export default {
   width: 600px;
   max-height: 80vh;
   overflow-y: auto;
+  color: #333;
 }
 
 .modal-content h3 {
   margin: 0 0 1.5rem 0;
-  color: #333;
   font-size: 1.5rem;
 }
 

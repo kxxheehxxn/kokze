@@ -36,11 +36,12 @@ export default {
       });
     },
     formatDate(dateStr) {
-      if (!dateStr) return '';
-      const date = new Date(dateStr);
-      return `${date.getFullYear()}년 ${
-        date.getMonth() + 1
-      }월 ${date.getDate()}일`;
+      if (!dateStr || dateStr.length !== 3) return '';
+      const [y, m, d] = dateStr;
+      return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
+        2,
+        '0'
+      )}일`;
     },
     getPeriodDiff(start, end) {
       if (!start || !end) return '';

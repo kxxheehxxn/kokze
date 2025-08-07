@@ -6,7 +6,6 @@
     </div>
   </div>
 </template>
-
 <script setup>
 const scrollToTop = () => {
   window.scrollTo({
@@ -15,7 +14,6 @@ const scrollToTop = () => {
   });
 };
 </script>
-
 <style scoped>
 /* ===== ScrollToTop 버튼 ===== */
 .scroll-top-btn {
@@ -37,21 +35,17 @@ const scrollToTop = () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
 }
-
 .scroll-top-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
-
 .scroll-top-icon {
   font-size: 20px;
   transition: transform 0.3s ease;
 }
-
 .scroll-top-btn:hover .scroll-top-icon {
   transform: translateY(-2px);
 }
-
 @media (max-width: 1024px) {
   .scroll-top-btn {
     width: 52px;
@@ -60,7 +54,6 @@ const scrollToTop = () => {
     right: 25px;
   }
 }
-
 @media (max-width: 768px) {
   /* 스크롤 버튼 */
   .scroll-top-btn {
@@ -69,7 +62,6 @@ const scrollToTop = () => {
     bottom: 20px;
     right: 20px;
   }
-
   .scroll-top-icon {
     font-size: 18px;
   }

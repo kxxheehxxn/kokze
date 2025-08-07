@@ -14,7 +14,6 @@
           />
         </div>
       </div>
-
       <!-- 상세 항목 표시 영역 -->
       <div class="col-md-8">
         <TaxDetail :type="activeItem" />
@@ -22,14 +21,11 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue'
 import TaxItemBox from './TaxItemBox.vue'
 import TaxDetail from './TaxDetail.vue'
-
 const activeItem = ref('의료비')
-
 const items = [
   { label: '소득기준 초과 부양가족', amount: '0원' },
   { label: '건강/고용보험', amount: '300,110원' },
@@ -46,7 +42,6 @@ const items = [
   { label: '장기집합투자증권저축/벤처기업투자신탁', amount: '0원' },
   { label: '기부금', amount: '0원' },
 ]
-
 function selectItem(label) {
   activeItem.value = label
 }

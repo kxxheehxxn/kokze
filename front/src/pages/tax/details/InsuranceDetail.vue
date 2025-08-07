@@ -4,12 +4,10 @@
     <p class="section-desc">
       근로자가 민간 보험사에 자발적으로 납입한 <strong>보장성 보험료</strong>에 대해 연말정산 시 세액공제를 받을 수 있습니다.
     </p>
-
     <h3 class="sub-title">공제 대상</h3>
     <p class="section-desc">
       보험계약자와 피보험자가 본인이거나, 피보험자가 기본공제 대상자일 경우 공제 가능합니다.
     </p>
-
     <h3 class="sub-title">공제 항목 및 한도</h3>
     <table class="info-table">
       <thead>
@@ -38,7 +36,6 @@
         </tr>
       </tbody>
     </table>
-
     <h3 class="sub-title">기본공제 대상자 기준</h3>
     <table class="info-table">
       <thead>
@@ -76,7 +73,6 @@
         </tr>
       </tbody>
     </table>
-
     <h3 class="sub-title">주의사항</h3>
     <ul class="info-list">
       <li>납입일이 과세기간 내라면 선납금도 공제 대상입니다.</li>
@@ -85,13 +81,11 @@
     </ul>
   </div>
 </template>
-
 <script>
 export default {
   name: 'InsuranceDetail'
 }
 </script>
-
 <style scoped>
 .insurance-detail {
   font-family: 'Noto Sans KR', sans-serif;
@@ -99,46 +93,39 @@ export default {
   background-color: #ffffff;
   color: #1f2937;
 }
-
 .section-title {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 12px;
 }
-
 .sub-title {
   font-size: 16px;
   font-weight: 700;
   margin: 20px 0 8px;
 }
-
 .section-desc {
   font-size: 14px;
   margin-bottom: 12px;
   color: #4b5563;
 }
-
 .info-list {
   list-style-type: disc;
   padding-left: 20px;
   font-size: 14px;
   color: #374151;
 }
-
 .info-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
   margin-bottom: 16px;
 }
-
 .info-table th,
 .info-table td {
   border: 1px solid #d1d5db;
   padding: 8px;
   text-align: left;
 }
-
 .info-table th {
   background-color: #f3f4f6;
   font-weight: 600;

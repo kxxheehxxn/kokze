@@ -17,7 +17,6 @@ const pageRequest = reactive({
   amount: parseInt(route.query.amount ?? 10),
 });
 const searchKeyword = ref('');
-
 const search = async () => {
   try {
     const params = {
@@ -45,7 +44,6 @@ const handlePageChange = async (pageNum) => {
 watch(route, async () => {
   pageRequest.page = parseInt(route.query.page);
   pageRequest.amount = parseInt(route.query.amount);
-
   if (searchKeyword.value) {
     await search();
   } else {
@@ -75,7 +73,6 @@ const load = async (query) => {
 };
 load(pageRequest);
 </script>
-
 <template>
   <div class="custom-box-wrapper">
     <div class="custom-box p-5">
@@ -99,7 +96,6 @@ load(pageRequest);
       >
         공지사항이 없습니다.
       </div>
-
       <!-- 공지사항 리스트 -->
       <div v-else v-for="notice in notices" :key="notice.noticeId">
         <div class="my-3 ms-2">

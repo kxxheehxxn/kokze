@@ -4,32 +4,25 @@ import { ref, reactive, computed, watch } from 'vue';
 import moment from 'moment';
 import { useRoute, useRouter } from 'vue-router';
 import { onMounted } from 'vue';
-
 const route = useRoute();
 const router = useRouter();
-
 const page = ref({}); // 일반 문의사항 페이지네이션 데이터
 const faqInquiries = ref([]); // FAQ 게시글 목록
-
 // 모든 문의사항 (FAQ + 일반)을 합쳐서 계산된 속성으로 만듭니다.
 const combinedInquiries = computed(() => {
   const currentPagedInquiries = page.value.list || [];
   const faqInfoIds = new Set(faqInquiries.value.map((faq) => faq.infoId));
-
   const filteredInquiries = currentPagedInquiries.filter(
     (inquiry) => !faqInfoIds.has(inquiry.infoId)
   );
-
   const combined = [...faqInquiries.value, ...filteredInquiries];
   return combined;
 });
-
 const pageRequest = reactive({
   page: parseInt(route.query.page ?? 1),
   amount: parseInt(route.query.amount ?? 10),
 });
 const searchKeyword = ref('');
-
 // getOriginalIndex 함수 정의
 const getOriginalIndex = (inquiry) => {
   if (!faqInquiries.value.some((faq) => faq.infoId === inquiry.infoId)) {
@@ -39,7 +32,6 @@ const getOriginalIndex = (inquiry) => {
   }
   return -1;
 };
-
 // 조회수 증가 및 상세 페이지 이동 처리 함수 추가
 const goToInquiryDetail = async (infoId) => {
   try {
@@ -53,7 +45,6 @@ const goToInquiryDetail = async (infoId) => {
     router.push({ name: 'inquiryDetail', params: { no: infoId } });
   }
 };
-
 const search = async () => {
   try {
     const params = {
@@ -66,13 +57,11 @@ const search = async () => {
     console.error('검색 실패:', e);
   }
 };
-
 const handlePageChange = async (pageNum) => {
   router.push({
     query: { page: pageNum, amount: pageRequest.amount },
   });
 };
-
 const loadInquiries = async (query) => {
   try {
     page.value = await api.getList(query);
@@ -80,7 +69,6 @@ const loadInquiries = async (query) => {
     console.error('일반 문의 목록 로드 실패:', e);
   }
 };
-
 const loadFaq = async () => {
   try {
     faqInquiries.value = await api.getFaqList();
@@ -88,18 +76,15 @@ const loadFaq = async () => {
     console.error('FAQ 목록 로드 실패:', e);
   }
 };
-
 watch(route, async () => {
   pageRequest.page = parseInt(route.query.page);
   pageRequest.amount = parseInt(route.query.amount);
-
   if (searchKeyword.value) {
     await search();
   } else {
     await loadInquiries(pageRequest);
   }
 });
-
 onMounted(async () => {
   await loadFaq();
   if (searchKeyword.value) {
@@ -126,7 +111,6 @@ onMounted(async () => {
           <i class="search-icon fa-solid fa-magnifying-glass" @click="search" />
         </div>
       </div>
-
       <!-- 데스크탑: 테이블 / 모바일: 카드 -->
       <div class="inquiries-wrapper">
         <table class="table inquiry-table">
@@ -190,7 +174,6 @@ onMounted(async () => {
             </tr>
           </tbody>
         </table>
-
         <!-- 모바일/좁은 화면용 카드 레이아웃 -->
         <div
           class="card-list"
@@ -242,7 +225,6 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-
         <div
           v-if="combinedInquiries.length === 0"
           class="mobile-empty text-center"
@@ -250,7 +232,6 @@ onMounted(async () => {
           <div class="text-muted py-4">게시글이 없습니다.</div>
         </div>
       </div>
-
       <div>
         <div
           class="flex-grow-1 text-center mt-2"
@@ -385,12 +366,10 @@ i {
 .inquiries-wrapper {
   position: relative;
 }
-
 /* 모바일 카드 리스트 숨김: 기본은 데스크탑 테이블 보여주기 */
 .card-list {
   display: none;
 }
-
 /* 모바일/태블릿 대응 */
 @media (max-width: 1024wpx) {
   .custom-box {
@@ -408,20 +387,17 @@ i {
     max-width: 80px;
   }
 }
-
 /* 태블릿 이하, 좁은 화면일 때: 테이블 숨기고 카드로 전환 */
 @media (max-width: 900px) {
   .inquiry-table {
     display: none;
   }
-
   .card-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
     margin-top: 20px;
   }
-
   .inquiry-card {
     background: #fff;
     border-radius: 16px;
@@ -477,7 +453,6 @@ i {
     margin-right: 4px;
   }
 }
-
 /* 아주 작은 스마트폰 */
 @media (max-width: 480px) {
   .search-container {

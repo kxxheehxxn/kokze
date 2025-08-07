@@ -2,7 +2,6 @@
   <div class="goal-add-card" @click="loadRecommendedGoal">
     <div class="plus-icon">+</div>
     <p>목표 추가하기</p>
-
     <GoalRecommendModal
       v-if="showModal"
       :recommendData="recommendData"
@@ -12,12 +11,10 @@
     />
   </div>
 </template>
-
 <script>
 import GoalRecommendModal from '@/components/GoalRecommendModal.vue';
 import { fetchRecommendedGoal } from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth';
-
 export default {
   components: { GoalRecommendModal },
   data() {
@@ -55,9 +52,6 @@ export default {
   },
 };
 </script>
-
-
-
 <style scoped>
 .goal-add-card {
   background: #fff;
@@ -76,7 +70,6 @@ export default {
   min-height: 150px;
   box-sizing: border-box;
 }
-
 .goal-add-card:hover {
   background: #f0f8ff;
 }

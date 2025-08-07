@@ -7,7 +7,6 @@
           지난 목표 리스트
         </button>
       </div>
-
       <div class="average-progress">
         <span>목표 평균 달성률</span>
         <div class="progress-bar">
@@ -20,27 +19,23 @@
           <GoalCard :goal="goal" />
           <div class="product-box">{{ goal.product || '-' }}</div>
         </div>
-
         <div v-for="n in emptySlots" :key="'add-' + n" class="goal-wrapper">
           <GoalAddCard />
           <div class="product-box">-</div>
         </div>
       </div>
     </section>
-
     <transition name="sidebar-fade">
       <PastGoalSidebar v-if="showSidebar" @close="showSidebar = false" />
     </transition>
   </div>
 </template>
-
 <script>
 import { fetchGoals } from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth';
 import GoalCard from '@/components/goal/GoalCard.vue';
 import GoalAddCard from '@/components/goal/GoalAddCard.vue';
 import PastGoalSidebar from '@/components/PastGoalSidebar.vue';
-
 export default {
   name: 'GoalPage',
   components: {
@@ -73,15 +68,12 @@ export default {
       const auth = userAuthStore();
       const userId = auth.state.user.userId;
       const token = auth.getToken();
-
       try {
         const response = await fetchGoals(userId, token);
-
         if (!Array.isArray(response.data)) {
-          console.error('🚨 응답이 배열이 아닙니다:', response.data);
+                      console.error('Response is not an array:', response.data);
           return;
         }
-
         this.goals = response.data.map((goal) => ({
           id: goal.goal_id,
           title: goal.goal_name,
@@ -95,7 +87,7 @@ export default {
           period2: goal.end_date ?? '',
         }));
       } catch (error) {
-        console.error('❌ 목표 불러오기 실패:', error);
+        console.error('Failed to load goals:', error);
       }
     },
     calculateProgress(saved, target) {
@@ -105,7 +97,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 /* 동일한 스타일 유지 */
 .goal-page {
@@ -118,7 +109,6 @@ export default {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-top: 1rem;
 }
-
 /* 타이틀 */
 .header-row {
   display: flex;
@@ -135,7 +125,6 @@ export default {
   font-size: 0.85rem;
   cursor: pointer;
 }
-
 /* 목표 평균 달성률 */
 .average-progress {
   display: flex;
@@ -143,7 +132,6 @@ export default {
   gap: 1rem;
   margin: 0 auto 2rem;
   font-size: 1.2rem;
-
   max-width: 1300px;
   padding: 0.5rem 0;
 }
@@ -161,21 +149,18 @@ export default {
 .percent {
   font-weight: bold;
 }
-
 /* 5가지 목표 리스트 */
 .goal-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
 }
-
 .goal-wrapper {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 0;
 }
-
 .product-box {
   border: 1px solid #a2c3ff;
   border-radius: 12px;
@@ -189,7 +174,6 @@ export default {
   height: 50px;
   box-sizing: border-box;
 }
-
 /* 지난 목표 리스트 이동 */
 .sidebar-fade-enter-active,
 .sidebar-fade-leave-active {
@@ -205,7 +189,6 @@ export default {
   transform: translateX(0);
   opacity: 1;
 }
-
 @media (max-width: 1024px) {
   .goal-summary {
     margin-top: 0rem;
@@ -216,7 +199,6 @@ export default {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.8rem;
   }
-
   /* 카드 내부 여백 및 글씨 크기 조정 */
   .goal-card,
   .goal-add-card,

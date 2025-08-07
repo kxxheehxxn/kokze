@@ -1,12 +1,10 @@
 <template>
   <div class="sidebar-wrapper">
     <div class="overlay" @click="$emit('close')"></div>
-
     <div class="sidebar">
       <div class="sidebar-header">
         <h3>🌟 김콕재님의 지난 목표 리스트 🌟</h3>
       </div>
-
       <div class="past-goals">
         <div
           v-for="(goal, index) in pastGoals"
@@ -25,18 +23,15 @@
           </div>
         </div>
       </div>
-
       <div class="close-bottom-wrapper">
         <button class="close-btn" @click="$emit('close')">[ 닫기 ✕ ]</button>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import { fetchPastGoals } from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth'; // Pinia 사용자 스토어 (또는 다른 경로)
-
 export default {
   name: 'PastGoalSidebar',
   data() {
@@ -71,7 +66,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .sidebar-wrapper {
   position: fixed;
@@ -84,7 +78,6 @@ export default {
   justify-content: flex-end;
   pointer-events: none; /* 클릭 막음 */
 }
-
 .overlay {
   position: fixed;
   top: 0;
@@ -97,7 +90,6 @@ export default {
   pointer-events: auto;
   transition: none; /* 💡 즉시 흐려지게 */
 }
-
 .sidebar {
   width: 500px;
   height: 100%;
@@ -111,21 +103,18 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
 .sidebar-header {
   margin-bottom: 1rem;
   text-align: center;
   font-size: 1.3rem;
   font-weight: bold;
 }
-
 .past-goals {
   margin-top: 1rem;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
 }
-
 .past-goal-card {
   background: #fff;
   border: 1px solid #a2c3ff;
@@ -135,17 +124,14 @@ export default {
   font-size: 1rem;
   box-shadow: 0 0 6px rgba(0, 120, 255, 0.15);
 }
-
 .title {
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
-
 .period,
 .amount {
   text-align: left;
 }
-
 .period {
   margin: 0.5rem 0;
   line-height: 1.4;

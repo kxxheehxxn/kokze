@@ -1,11 +1,9 @@
 <script setup>
 import { ref, watch } from 'vue';
-
 const props = defineProps({
   modelValue: Array,
 });
 const emit = defineEmits(['update:modelValue']);
-
 const types = [
   '예금',
   '적금',
@@ -17,9 +15,7 @@ const types = [
   '정기적금',
   '청년도약계좌',
 ];
-
 const selectedTypes = ref([...props.modelValue]);
-
 // 외부 변경 감지
 watch(
   () => props.modelValue,
@@ -27,7 +23,6 @@ watch(
     selectedTypes.value = [...val];
   }
 );
-
 // 클릭 시 토글
 function toggleType(type) {
   if (selectedTypes.value.includes(type)) {
@@ -39,7 +34,6 @@ function toggleType(type) {
   emit('change');
 }
 </script>
-
 <template>
   <div class="type-grid">
     <div
@@ -52,7 +46,6 @@ function toggleType(type) {
     </div>
   </div>
 </template>
-
 <style scoped>
 .type-grid {
   display: grid;

@@ -4,19 +4,15 @@ import { useRouter } from 'vue-router';
 import { bankNameMap } from '@/utils/bankMap';
 import ProductPagination from './ProductPagination.vue';
 import { fetchProductList, filterProducts } from '@/api/productApi';
-
 const router = useRouter();
 const sortKey = ref('max');
 const currentPage = ref(1);
 const itemsPerPage = 8;
-
 const props = defineProps({
   filters: Object,
 });
-
 const products = ref([]);
 const totalPages = ref(0);
-
 // ✅ 필터 적용 여부 판단
 const isFiltering = computed(() => {
   const f = props.filters || {};
@@ -31,7 +27,6 @@ const isFiltering = computed(() => {
     f.hasSpclCnd === true
   );
 });
-
 // 🔽 상품 리스트 가져오기
 const loadProducts = async () => {
   try {
@@ -50,7 +45,6 @@ const loadProducts = async () => {
     totalPages.value = 0;
   }
 };
-
 watch(currentPage, () => {
   if (!isFiltering.value) loadProducts();
 });
@@ -62,7 +56,6 @@ watch(
   }
 );
 onMounted(loadProducts);
-
 // 🔽 아이콘 처리
 const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
   eager: true,
@@ -75,14 +68,12 @@ const getBankIcon = (bankName) => {
   const match = Object.entries(iconModules).find(([path]) => path.includes(`/${english}.png`));
   return match ? match[1] : defaultIcon;
 };
-
 // 🔽 정렬
 const sortedProducts = computed(() => {
   return [...products.value].sort((a, b) =>
     sortKey.value === 'max' ? b.intrRate2 - a.intrRate2 : b.intrRate - a.intrRate
   );
 });
-
 // 🔽 상세 이동
 function goToDetail(product) {
   router
@@ -92,13 +83,11 @@ function goToDetail(product) {
     })
     .then(() => window.scrollTo(0, 0));
 }
-
 // 🔽 페이지 변경
 function handlePageChange(page) {
   currentPage.value = page;
 }
 </script>
-
 <template>
   <div class="product-list-wrapper">
     <div class="header-row">
@@ -110,9 +99,7 @@ function handlePageChange(page) {
         </select>
       </div>
     </div>
-
     <hr />
-
     <div v-for="product in sortedProducts" :key="product.finPrdtCd" class="product" @click="goToDetail(product)">
       <div class="left">
         <img :src="getBankIcon(product.bankName)" class="bank-icon" />
@@ -130,7 +117,6 @@ function handlePageChange(page) {
         </div>
       </div>
     </div>
-
     <!-- ✅ 필터 적용 중일 때는 페이지네이션 숨김 -->
     <ProductPagination
       v-if="!isFiltering"
@@ -140,7 +126,6 @@ function handlePageChange(page) {
     />
   </div>
 </template>
-
 <style scoped>
 .product-list-wrapper {
   background: #ffffff;
@@ -148,27 +133,23 @@ function handlePageChange(page) {
   border-radius: 20px;
   box-shadow: inset 0 0 12px #3573ee;
 }
-
 .header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
 }
-
 .count {
   font-weight: bold;
   font-size: 1rem;
   color: #1d4ed8;
 }
-
 .sort select {
   padding: 0.3rem 0.6rem;
   border: 1px solid #ccc;
   border-radius: 0.3rem;
   font-size: 0.9rem;
 }
-
 .product {
   display: flex;
   justify-content: space-between;
@@ -176,41 +157,34 @@ function handlePageChange(page) {
   border-bottom: 1px solid #eee;
   padding: 1rem 0;
 }
-
 .product:hover {
   cursor: pointer;
 }
-
 .left {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
-
 .bank-icon {
   width: 40px;
   height: 40px;
   object-fit: contain;
 }
-
 .info .name {
   font-weight: bold;
   font-size: 1.1rem;
 }
-
 .info .bank {
   font-size: 0.9rem;
   color: #666;
   margin-top: 0.2rem;
 }
-
 .tags {
   margin-top: 0.3rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
 }
-
 .tags span {
   background: #eee;
   padding: 0.2rem 0.5rem;
@@ -218,17 +192,14 @@ function handlePageChange(page) {
   border-radius: 0.5rem;
   color: #333;
 }
-
 .right {
   text-align: right;
   font-size: 0.9rem;
 }
-
 .right .max {
   color: #22c55e;
   font-weight: bold;
 }
-
 .right .basic {
   color: #666;
   margin-top: 0.2rem;

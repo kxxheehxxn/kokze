@@ -5,32 +5,26 @@ import { fetchRecommendedProducts } from '@/api/productApi';
 import { userAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 const router = useRouter();
-
 function goToDetail(finPrdtCd) {
   router.push(`/product/${finPrdtCd}`);
 }
-
 const currentPage = ref(0);
 const itemsPerPage = 2;
 const products = ref([]);
-
 const auth = userAuthStore();
 const userId = auth.state.user.userId;
 const userName = auth.state.user.userName || '김콕재';
-
 const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
   eager: true,
   import: 'default',
 });
 const defaultIcon = new URL('@/assets/images/bankIcon/default.png', import.meta.url).href;
-
 const getBankIcon = (bankName) => {
   const english = bankNameMap[bankName];
   if (!english) return defaultIcon;
   const match = Object.entries(iconModules).find(([path]) => path.includes(`/${english}.png`));
   return match ? match[1] : defaultIcon;
 };
-
 onMounted(async () => {
   try {
     const result = await fetchRecommendedProducts(userId);
@@ -39,17 +33,14 @@ onMounted(async () => {
     console.error('추천 상품 불러오기 실패:', error);
   }
 });
-
 const visibleProducts = computed(() => {
   const start = currentPage.value * itemsPerPage;
   const end = start + itemsPerPage;
   return products.value.slice(start, end);
 });
-
 const endOfSlide = computed(() => {
   return (currentPage.value + 1) * itemsPerPage >= products.value.length;
 });
-
 function prevSlide() {
   if (currentPage.value > 0) currentPage.value--;
 }
@@ -57,16 +48,13 @@ function nextSlide() {
   if (!endOfSlide.value) currentPage.value++;
 }
 </script>
-
 <template>
   <div class="carousel-wrapper">
     <div class="title">✨ {{ userName }}님의 맞춤 추천 상품 ✨</div>
-
     <div class="carousel-container">
       <button class="nav-button" @click="prevSlide" :disabled="currentPage === 0">
         <i class="fa-solid fa-angle-left"></i>
       </button>
-
       <div class="carousel-cards">
         <div
           class="card"
@@ -87,14 +75,12 @@ function nextSlide() {
           <div class="highlight">✨ {{ product.reason }} ✨</div>
         </div>
       </div>
-
       <button class="nav-button" @click="nextSlide" :disabled="endOfSlide">
         <i class="fa-solid fa-angle-right"></i>
       </button>
     </div>
   </div>
 </template>
-
 <style scoped>
 .carousel-wrapper {
   height: 360px;
@@ -105,20 +91,17 @@ function nextSlide() {
   text-align: center;
   margin: 0 0 36px;
 }
-
 .title {
   font-weight: bold;
   font-size: 1.2rem;
   margin-bottom: 50px;
 }
-
 .carousel-container {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
 }
-
 /* 좌우버튼 */
 .nav-button {
   background: white;
@@ -143,13 +126,11 @@ function nextSlide() {
   transform: translateY(-2px);
   transition: all 0.2s ease;
 }
-
 /* 금융 상품 */
 .carousel-cards {
   display: flex;
   gap: 1.5rem;
 }
-
 .card {
   width: 320px;
   background: white;
@@ -159,13 +140,11 @@ function nextSlide() {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
   text-align: left;
 }
-
 .card:hover {
   cursor: pointer;
   transform: translateY(-2px);
   transition: all 0.2s ease;
 }
-
 .card-header {
   display: flex;
   align-items: center;
@@ -175,24 +154,20 @@ function nextSlide() {
   padding: 0;
   border: none;
 }
-
 .bank-icon {
   width: 45px;
   height: 45px;
   object-fit: contain;
 }
-
 .product-name {
   font-weight: bold;
   font-size: 18px;
 }
-
 .bank-name {
   font-size: 13px;
   color: #666;
   margin-top: 0.2rem;
 }
-
 .rate {
   margin: 0.5rem 0 1rem;
   font-weight: normal;
@@ -200,7 +175,6 @@ function nextSlide() {
   font-size: 15px;
   text-align: center;
 }
-
 .highlight {
   list-style: none;
   margin: 0;
@@ -208,37 +182,30 @@ function nextSlide() {
   font-size: 15px;
   text-align: center;
 }
-
 @media (max-width: 1024px) {
   .carousel-wrapper {
     padding: 36px 36px 36px;
     margin-bottom: 24px;
     height: auto;
   }
-
   .title {
     margin-bottom: 36px;
   }
-
   .card {
     width: 230px;
   }
-
   .product-name {
     font-size: 12px;
   }
-
   .bank-name {
     font-size: 10px;
   }
-
   .rate {
     font-size: 10px;
   }
   .highlight {
     font-size: 10px;
   }
-
   .nav-button {
     width: 30px;
     height: 30px;

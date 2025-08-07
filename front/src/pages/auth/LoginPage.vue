@@ -3,20 +3,16 @@ import { reactive, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
 import kakaoLogin from '@/assets/images/kakao_logo.PNG';
-
 const router = useRouter();
 const auth = userAuthStore();
-
 const user = reactive({
   email: '',
   password: '',
 });
-
 const error = ref('');
 const disableSubmit = computed(
   () => !(user.email.trim() && user.password.trim())
 );
-
 const handleLogin = async () => {
   if (!user.email.trim()) {
     alert('이메일을 입력해주세요.');
@@ -30,23 +26,20 @@ const handleLogin = async () => {
     await auth.login(user);
     router.push('/');
   } catch (e) {
-    console.error('에러=======', e);
+            console.error('Login error:', e);
     alert(e.response?.data || '로그인에 실패했습니다. 다시 시도해주세요.');
   }
 };
-
 const handleKakaoLogin = () => {
   const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID;
   const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
   const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
   window.location.href = kakaoAuthUrl;
 };
-
 const handleSignup = () => {
   router.push('/signup/step1');
 };
 </script>
-
 <template>
   <div class="container">
     <router-link to="/" class="logo-section" aria-label="홈으로 이동">
@@ -54,10 +47,8 @@ const handleSignup = () => {
         <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
       </div>
     </router-link>
-
     <div class="login-box" role="form" aria-label="로그인 폼">
       <div class="title">로그인</div>
-
       <div class="form-group">
         <label for="email">이메일</label>
         <input
@@ -69,7 +60,6 @@ const handleSignup = () => {
           aria-required="true"
         />
       </div>
-
       <div class="form-group">
         <label for="password">비밀번호</label>
         <input
@@ -81,11 +71,9 @@ const handleSignup = () => {
           aria-required="true"
         />
       </div>
-
       <div class="forgot-password">
         <router-link to="/find-password">비밀번호를 잊으셨나요?</router-link>
       </div>
-
       <button
         class="login-button button-like"
         :disabled="disableSubmit"
@@ -94,7 +82,6 @@ const handleSignup = () => {
       >
         로그인
       </button>
-
       <div
         class="kakao-login button-like"
         role="button"
@@ -108,7 +95,6 @@ const handleSignup = () => {
         </div>
         <span class="kakao-login-text">카카오 로그인</span>
       </div>
-
       <p class="sign-up-prompt">
         <span>아직 콕재 회원이 아닌가요?&nbsp;</span>
         <span class="sign-up" @click="handleSignup">가입하기</span>
@@ -116,7 +102,6 @@ const handleSignup = () => {
     </div>
   </div>
 </template>
-
 <style>
 :root {
   --radius: 12px;
@@ -126,18 +111,15 @@ const handleSignup = () => {
   --muted: #686868;
   --bg: #fafafa;
 }
-
 * {
   box-sizing: border-box;
 }
-
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
   color: var(--text-default);
 }
-
 .container {
   background-color: var(--bg);
   min-height: 100vh;
@@ -159,13 +141,11 @@ body {
   gap: 18px;
   margin-top: 10px;
 }
-
 .title {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 4px;
 }
-
 .form-group {
   display: flex;
   flex-direction: column;
@@ -189,7 +169,6 @@ body {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(53, 115, 238, 0.2);
 }
-
 .forgot-password {
   text-align: right;
   font-size: 14px;
@@ -202,7 +181,6 @@ body {
 .forgot-password a:hover {
   text-decoration: underline;
 }
-
 .button-like {
   width: 100%;
   border: none;
@@ -214,7 +192,6 @@ body {
   font-weight: 600;
   transition: opacity 0.2s ease;
 }
-
 .login-button {
   background-color: var(--primary);
   color: #fff;
@@ -225,7 +202,6 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 .kakao-login {
   position: relative;
   display: flex;
@@ -255,7 +231,6 @@ body {
   font-weight: 600;
   white-space: nowrap;
 }
-
 .sign-up-prompt {
   text-align: center;
   font-size: 15px;

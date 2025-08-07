@@ -5,7 +5,6 @@
     <div class="modal-content" @click.stop>
       <h3>🎯 추천 목표가 있어요!</h3>
       <p class="reason">{{ recommendData.reason }}</p>
-
       <div class="summary">
         <p><strong>💰 금액:</strong> {{ formattedAmount }} 원</p>
         <p>
@@ -14,7 +13,6 @@
           {{ recommendData.recommendedEndDate }}
         </p>
       </div>
-
       <div class="btn-group">
         <button class="accept" @click="$emit('accept')">추천 목표로 할래요</button>
         <button class="reject" @click="$emit('reject')">직접 설정할게요</button>
@@ -23,8 +21,6 @@
     </div>
   </div>
 </template>
-
-
 <script>
 export default {
   props: {
@@ -37,7 +33,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .modal-overlay {
   position: fixed;

@@ -1,11 +1,9 @@
 <script setup>
 import { ref, watch } from 'vue';
-
 const props = defineProps({
   modelValue: Array,
 });
 const emit = defineEmits(['update:modelValue']);
-
 const conditions = [
   '비대면가입',
   '은행앱사용',
@@ -17,9 +15,7 @@ const conditions = [
   '입출금통장',
   '재예치',
 ];
-
 const selectedConditions = ref([...props.modelValue]);
-
 // 외부 변경 감지
 watch(
   () => props.modelValue,
@@ -27,7 +23,6 @@ watch(
     selectedConditions.value = [...val];
   }
 );
-
 // 클릭 시 토글
 function toggleCondition(condition) {
   if (selectedConditions.value.includes(condition)) {
@@ -41,7 +36,6 @@ function toggleCondition(condition) {
   emit('change');
 }
 </script>
-
 <template>
   <div class="condition-filter">
     <div class="condition-grid">
@@ -60,14 +54,12 @@ function toggleCondition(condition) {
     <p class="footnote">*신협 상품에는 적용되지 않습니다</p>
   </div>
 </template>
-
 <style scoped>
 .condition-filter {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-
 .condition-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -75,7 +67,6 @@ function toggleCondition(condition) {
   border-radius: 0.75rem;
   overflow: hidden;
 }
-
 .condition-cell {
   display: flex;
   justify-content: center;
@@ -86,20 +77,17 @@ function toggleCondition(condition) {
   border-bottom: 1px solid #eee;
   cursor: pointer;
 }
-
 .condition-cell:nth-child(3n) {
   border-right: none;
 }
 .condition-cell:nth-last-child(-n + 3) {
   border-bottom: none;
 }
-
 .selected {
   font-weight: bold;
   background-color: #e0f0ff;
   color: #1d4ed8;
 }
-
 .footnote {
   font-size: 0.75rem;
   color: #888;

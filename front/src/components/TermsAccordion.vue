@@ -15,7 +15,6 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue'
 const props = defineProps({
@@ -26,7 +25,6 @@ function toggle(id) {
   openedId.value = openedId.value === id ? null : id
 }
 </script>
-
 <style scoped>
 .terms-accordion {
   flex: 1;

@@ -39,7 +39,6 @@
     </template>
   </UserCardLayout>
 </template>
-
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -96,7 +95,6 @@ const step = ref(0);
 const selected = ref(null);
 const scores = ref({ fast: 0, slow: 0, high: 0, low: 0 });
 const router = useRouter();
-
 function onNext() {
   const choice = questions[step.value].choices[selected.value];
   if (choice.type === 'fast' || choice.type === 'slow') {
@@ -107,17 +105,14 @@ function onNext() {
   step.value++;
   selected.value = null;
 }
-
 function onCancel() {
   router.back();
 }
-
 function onRetry() {
   step.value = 0;
   selected.value = null;
   scores.value = { fast: 0, slow: 0, high: 0, low: 0 };
 }
-
 const mbtiResult = computed(() => {
   if (step.value < questions.length) return '';
   const isFast = scores.value.fast >= scores.value.slow;
@@ -127,7 +122,6 @@ const mbtiResult = computed(() => {
   if (isFast && !isHigh) return '신속한 분석가';
   return '신중한 분석가';
 });
-
 const mbtiDesc = computed(() => {
   switch (mbtiResult.value) {
     case '신속한 승부사':
@@ -142,7 +136,6 @@ const mbtiDesc = computed(() => {
       return '';
   }
 });
-
 async function saveMbtiResult() {
   try {
     const result = await updateMbti(mbtiResult.value);
@@ -169,7 +162,6 @@ onMounted(async () => {
   }
 });
 </script>
-
 <style scoped>
 .title {
   background-color: #fff;

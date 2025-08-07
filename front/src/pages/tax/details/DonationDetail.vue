@@ -4,7 +4,6 @@
     <p class="section-desc">
       <strong>국가가 인정한 단체에 기부</strong>하면 <strong>소득공제 또는 세액공제</strong> 혜택을 받을 수 있습니다.
     </p>
-
     <h3 class="sub-title">공제 대상 단체</h3>
     <ul class="info-list">
       <li>사회복지단체 (아동·장애인·노인 등)</li>
@@ -13,7 +12,6 @@
       <li>공익재단 및 긴급재난 기부</li>
       <li>유니세프, 세이브더칠드런 등 공인 단체</li>
     </ul>
-
     <h3 class="sub-title">공제 방식 비교</h3>
     <table class="donation-table">
       <thead>
@@ -36,7 +34,6 @@
         </tr>
       </tbody>
     </table>
-
     <h3 class="sub-title">공제 금액</h3>
     <table class="donation-table">
       <thead>
@@ -64,7 +61,6 @@
         </tr>
       </tbody>
     </table>
-
     <h3 class="sub-title">공제 조건</h3>
     <ul class="info-list">
       <li>기부금 영수증 제출 필수</li>
@@ -73,13 +69,11 @@
     </ul>
   </div>
 </template>
-
 <script>
 export default {
   name: 'DonationDetail'
 }
 </script>
-
 <style scoped>
 .donation-detail {
   font-family: 'Noto Sans KR', sans-serif;
@@ -87,25 +81,21 @@ export default {
   background-color: #ffffff;
   color: #1f2937;
 }
-
 .section-title {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 12px;
 }
-
 .sub-title {
   font-size: 16px;
   font-weight: 700;
   margin: 16px 0 8px;
 }
-
 .section-desc {
   font-size: 14px;
   margin-bottom: 12px;
   color: #4b5563;
 }
-
 .info-list {
   list-style-type: disc;
   padding-left: 20px;
@@ -113,14 +103,12 @@ export default {
   color: #374151;
   font-size: 14px;
 }
-
 .donation-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 16px;
   background-color: #f9fafb;
 }
-
 .donation-table th,
 .donation-table td {
   border: 1px solid #d1d5db;
@@ -129,7 +117,6 @@ export default {
   vertical-align: top;
   font-size: 14px;
 }
-
 .donation-table thead {
   background-color: #f3f4f6;
   font-weight: bold;

@@ -3,14 +3,10 @@ import api from '@/api/inquiryApi';
 import { reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
-
 const auth = userAuthStore();
-
 const router = useRouter();
-
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
-
 const getUserInfo = () => {
   const authData = JSON.parse(localStorage.getItem('auth') || '{}');
   return {
@@ -19,7 +15,6 @@ const getUserInfo = () => {
     isLogin: !!authData.user?.email,
   };
 };
-
 const userInfo = getUserInfo();
 const article = reactive({
   userId: userInfo.userId,
@@ -27,28 +22,23 @@ const article = reactive({
   content: '',
   isAnswered: false,
 });
-
 const disableSubmit = computed(() => {
   return !article.title || !article.content;
 });
-
 const submit = async () => {
   if (!confirm('문의사항을 등록하시겠습니까?')) {
     return;
   }
-
   if (!auth.isLogin || !auth.userId) {
     alert('로그인이 필요합니다.');
     router.push('/login');
     return;
   }
-
   try {
     await api.create(article);
     router.push('/inquiry/list');
   } catch (e) {
     console.error('문의사항 등록 실패:', e);
-
     if (e.response && e.response.data && e.response.data.message) {
       alert(`문의사항 등록 실패: ${e.response.data.message}`);
     } else {
@@ -56,12 +46,10 @@ const submit = async () => {
     }
   }
 };
-
 const back = () => {
   router.back();
 };
 </script>
-
 <template>
   <div class="custom-box-wrapper">
     <div class="custom-box p-5">
@@ -116,7 +104,6 @@ const back = () => {
     </div>
   </div>
 </template>
-
 <style scoped>
 .custom-box-wrapper {
   display: flex;
@@ -198,7 +185,6 @@ const back = () => {
   background: transparent;
   padding-bottom: 20px;
 }
-
 .char-count {
   position: absolute;
   right: 15px;
@@ -217,7 +203,6 @@ const back = () => {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
 /* 또는 뷰포트 기반으로 유연하게 */
 @media (max-width: 1024px) and (orientation: portrait) {
   .custom-box {

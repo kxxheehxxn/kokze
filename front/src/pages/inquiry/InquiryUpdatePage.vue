@@ -3,19 +3,13 @@ import api from '@/api/inquiryApi';
 import { reactive, computed, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
-
 const auth = userAuthStore();
-
 const router = useRouter();
 const route = useRoute();
-
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
-
 const infoId = route.params.no;
-
 const orgArticle = ref({});
-
 const article = reactive({
   infoId: infoId,
   userId: '',
@@ -24,26 +18,21 @@ const article = reactive({
   content: '',
   isAnswered: false,
 });
-
 const disableSubmit = computed(() => {
   return !article.title || !article.content;
 });
-
 const submit = async () => {
   if (!confirm('문의사항을 수정하시겠습니까?')) {
     return;
   }
-
   const updatedFields = {
     infoId: article.infoId,
     userId: article.userId,
     title: article.title,
     content: article.content,
   };
-
   try {
     await api.update(updatedFields);
-
     router.replace({
       name: 'inquiryDetail',
       params: { no: article.infoId },
@@ -54,7 +43,6 @@ const submit = async () => {
     alert('문의사항 수정에 실패했습니다. 다시 시도해주세요.');
   }
 };
-
 const load = async () => {
   if (!infoId) {
     console.error('유효하지 않은 infoId:', infoId);
@@ -62,16 +50,13 @@ const load = async () => {
     router.replace('/inquiry/list');
     return;
   }
-
   try {
     const data = await api.get(infoId);
-
     if (!data || !data.infoId) {
       throw new Error(
         'API 응답 데이터가 유효하지 않거나 게시글을 찾을 수 없습니다.'
       );
     }
-
     orgArticle.value = { ...data };
     article.infoId = orgArticle.value.infoId;
     article.userId = orgArticle.value.userId;
@@ -84,7 +69,6 @@ const load = async () => {
     router.replace('/inquiry/list');
   }
 };
-
 const back = () => {
   router.replace({
     name: 'inquiryDetail',
@@ -92,12 +76,10 @@ const back = () => {
     query: route.query,
   });
 };
-
 onMounted(() => {
   load();
 });
 </script>
-
 <template>
   <div class="custom-box-wrapper">
     <div class="custom-box p-5">
@@ -152,7 +134,6 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
 <style scoped>
 .custom-box-wrapper {
   display: flex;

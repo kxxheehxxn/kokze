@@ -68,20 +68,17 @@
     </form>
   </UserCardLayout>
 </template>
-
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import UserCardLayout from '@/components/UserCardLayout.vue';
 import { updatePassword } from '@/api/userApi';
-
 const currentPassword = ref('');
 const password = ref('');
 const passwordCheck = ref('');
 const loading = ref(false);
 const error = ref('');
 const router = useRouter();
-
 const passwordStrength = computed(() => {
   const pwd = password.value;
   if (!pwd) return { valid: false };
@@ -96,7 +93,6 @@ const passwordStrength = computed(() => {
     valid,
   };
 });
-
 const canSubmit = computed(
   () =>
     currentPassword.value &&
@@ -104,16 +100,13 @@ const canSubmit = computed(
     passwordStrength.value.valid &&
     password.value === passwordCheck.value
 );
-
 function onCancel() {
   router.back();
 }
 async function onSubmit() {
   if (!canSubmit.value) return;
-
   loading.value = true;
   error.value = '';
-
   try {
     const result = await updatePassword(currentPassword.value, password.value);
     if (result.success) {
@@ -132,7 +125,6 @@ async function onSubmit() {
   }
 }
 </script>
-
 <style scoped>
 .title {
   background-color: #fff;

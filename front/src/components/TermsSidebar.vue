@@ -12,7 +12,6 @@
     </ul>
   </div>
 </template>
-
 <script setup>
 const props = defineProps({
   categories: Array,
@@ -20,7 +19,6 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:modelValue']);
 </script>
-
 <style scoped>
 .terms-sidebar {
   min-width: 200px;

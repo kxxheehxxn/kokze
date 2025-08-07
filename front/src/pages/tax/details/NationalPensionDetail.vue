@@ -4,7 +4,6 @@
     <p class="section-desc">
       직장인이 의무적으로 가입하는 <strong>국민연금</strong>은 본인 명의로 납부한 경우, <strong>전액 소득공제</strong>가 가능합니다.
     </p>
-
     <h3 class="sub-title">공제 대상 및 방식</h3>
     <table class="info-table">
       <thead>
@@ -30,7 +29,6 @@
         </tr>
       </tbody>
     </table>
-
     <h3 class="sub-title">연금 수령 시 과세 기준</h3>
     <table class="info-table">
       <thead>
@@ -58,7 +56,6 @@
         </tr>
       </tbody>
     </table>
-
     <h3 class="sub-title">노령연금 과세대상 비율 (나이에 따른 차등 적용)</h3>
     <table class="info-table">
       <thead>
@@ -84,13 +81,11 @@
     </table>
   </div>
 </template>
-
 <script>
 export default {
   name: 'NationalPensionDetail'
 }
 </script>
-
 <style scoped>
 .pension-detail {
   font-family: 'Noto Sans KR', sans-serif;
@@ -98,39 +93,33 @@ export default {
   background-color: #ffffff;
   color: #1f2937;
 }
-
 .section-title {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 12px;
 }
-
 .sub-title {
   font-size: 16px;
   font-weight: 700;
   margin: 20px 0 8px;
 }
-
 .section-desc {
   font-size: 14px;
   margin-bottom: 12px;
   color: #4b5563;
 }
-
 .info-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
   margin-bottom: 16px;
 }
-
 .info-table th,
 .info-table td {
   border: 1px solid #d1d5db;
   padding: 8px;
   text-align: left;
 }
-
 .info-table th {
   background-color: #f3f4f6;
   font-weight: 600;

@@ -43,20 +43,17 @@
     </form>
   </UserCardLayout>
 </template>
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { getUserInfo, updateUserProfile, createTestUser } from '@/api/userApi';
 import UserCardLayout from '@/components/UserCardLayout.vue';
-
 const salary = ref(0);
 const payAmount = ref(0);
 const loading = ref(false);
 const error = ref(null);
 const success = ref(false);
 const router = useRouter();
-
 async function loadUserAsset() {
   error.value = null;
   try {
@@ -65,10 +62,8 @@ async function loadUserAsset() {
     payAmount.value = user.payAmount || 0;
   } catch (e) {
     error.value = '사용자 정보를 불러올 수 없습니다.';
-
     try {
       await createTestUser();
-
       const user = await getUserInfo();
       salary.value = user.salary || 0;
       payAmount.value = user.payAmount || 0;
@@ -82,7 +77,6 @@ function formatNumber(value) {
   if (value === null || value === undefined) return '';
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
-
 function parseNumber(value) {
   const cleaned = value.replace(/[^0-9]/g, '');
   return cleaned ? parseInt(cleaned, 10) : 0;
@@ -90,7 +84,6 @@ function parseNumber(value) {
 onMounted(() => {
   loadUserAsset();
 });
-
 async function onSubmit() {
   if (
     salary.value === null ||
@@ -101,7 +94,6 @@ async function onSubmit() {
     error.value = '모든 필드를 숫자로 정확히 입력해주세요.';
     return;
   }
-
   loading.value = true;
   error.value = null;
   success.value = false;
@@ -126,12 +118,10 @@ async function onSubmit() {
     loading.value = false;
   }
 }
-
 function onCancel() {
   router.back();
 }
 </script>
-
 <style scoped>
 .title {
   background-color: #fff;
@@ -159,7 +149,6 @@ function onCancel() {
   width: 100%;
   text-align: left;
 }
-
 .input {
   width: 95%;
   max-width: 100%;
@@ -179,7 +168,6 @@ function onCancel() {
   color: #666;
   align-self: flex-end;
 }
-
 /* 버튼 영역 */
 .btn {
   width: 180px;
@@ -196,7 +184,6 @@ function onCancel() {
   color: #222;
   border: 1.5px solid #e5e7eb;
 }
-
 .submit-btn {
   background: #2573ee;
   color: #fff;
@@ -205,24 +192,20 @@ function onCancel() {
   background: #b3d0fa;
   cursor: not-allowed;
 }
-
 .error-msg,
 .success-msg {
   font-size: 14px;
   margin-top: 8px;
   color: #e74c3c;
 }
-
 .success-msg {
   color: #2573ee;
 }
-
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
 input[type='number'] {
   -moz-appearance: textfield;
 }

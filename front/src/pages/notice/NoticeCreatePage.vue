@@ -21,7 +21,6 @@ const submit = async () => {
   await api.create(article);
   router.push('/notice/list');
 };
-
 onMounted(() => {
   if (auth.role.toLowerCase() !== 'admin') {
     alert('권한이 없습니다.');
@@ -165,7 +164,6 @@ onMounted(() => {
   background: transparent;
   padding-bottom: 20px; /* 글자 수 표시 공간 확보 */
 }
-
 /* ⭐ 새로 추가된 글자 수 표시 스타일 ⭐ */
 .char-count {
   position: absolute;

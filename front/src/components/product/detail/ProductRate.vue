@@ -1,17 +1,14 @@
 <script setup>
 import { ref, computed } from 'vue';
-
 const props = defineProps({
   product: {
     type: Object,
     required: true,
   },
 });
-
 const depositAmount = ref('10000000');
 const selectedTab = ref('max'); // 'max' or 'basic'
 const taxRate = 0.154;
-
 // 💰 금리 목록에서 최대/기본 금리 계산
 const rates = computed(() => {
   const options = props.product.options || [];
@@ -19,93 +16,73 @@ const rates = computed(() => {
   const max = Math.max(...options.map((opt) => opt.intrRate2 ?? 0));
   return { basic, max };
 });
-
 // 👉 options 리스트
 const productOptions = computed(() => props.product.options || []);
-
 // 💬 우대조건 및 유형 정리
 const extraInfo = computed(() => {
   const result = [];
-
   if (props.product.spclCnd) {
     result.push({ label: '조건', value: props.product.spclCnd });
   }
-
   const types = [...new Set((props.product.options || []).map((o) => o.rsrvTypeNm))].join(', ');
   if (types) {
     result.push({ label: '유형', value: types });
   }
-
   return result;
 });
-
 // 🔢 입력 금액 처리
 const parsedAmount = computed(() => {
   return Number(depositAmount.value.replace(/\D/g, '')) || 0;
 });
-
 const formattedAmount = computed(() => {
   const raw = depositAmount.value.replace(/\D/g, '');
   if (!raw) return '';
   return Number(raw).toLocaleString();
 });
-
 // 💸 계산 로직
 const interest = computed(() => {
   const rate = selectedTab.value === 'max' ? rates.value.max / 100 : rates.value.basic / 100;
   return Math.floor(parsedAmount.value * rate);
 });
-
 const tax = computed(() => Math.floor(interest.value * taxRate));
 const afterTax = computed(() => parsedAmount.value + interest.value - tax.value);
-
 function onInputChange(e) {
   const onlyNumbers = e.target.value.replace(/\D/g, '');
   depositAmount.value = onlyNumbers;
 }
-
 function formatCurrency(val) {
   return val.toLocaleString('ko-KR') + '원';
 }
-
 function formatKoreanCurrency(num) {
   if (isNaN(num) || num <= 0) return '';
-
   const jo = Math.floor(num / 1_0000_0000_0000);
   const uk = Math.floor((num % 1_0000_0000_0000) / 1_0000_0000);
   const man = Math.floor((num % 1_0000_0000) / 10000);
   const rest = num % 10000;
-
   let result = '';
   if (jo > 0) result += `${jo}조`;
   if (uk > 0) result += `${uk}억`;
   if (man > 0) result += `${man}만`;
   if (rest > 0) result += rest.toLocaleString();
   result += '원';
-
   return result;
 }
-
 function clearInput() {
   depositAmount.value = '';
 }
 </script>
-
 <template>
   <div class="rate-box">
     <h2 class="title">금리 안내</h2>
     <hr />
     <p class="subtitle">12개월 만기 시 세후수령액 (단리)</p>
-
     <!-- 예치금액 입력 -->
     <div class="amount-input">
       <input type="text" :value="formattedAmount" @input="onInputChange" placeholder="예치금액을 입력해주세요" />
       <span>원</span>
       <button class="clear-btn" @click="clearInput">×</button>
     </div>
-
     <p class="korean-text">{{ formatKoreanCurrency(parsedAmount) }}</p>
-
     <!-- 탭 버튼 -->
     <div class="tab-buttons">
       <button :class="{ active: selectedTab === 'max' }" @click="selectedTab = 'max'">
@@ -115,7 +92,6 @@ function clearInput() {
         기본금리 <span>{{ rates.basic.toFixed(2) }}%</span>
       </button>
     </div>
-
     <!-- 세후 계산 요약 -->
     <div class="summary-box">
       <div>
@@ -132,7 +108,6 @@ function clearInput() {
         세후수령액 <span>{{ formatCurrency(afterTax) }}</span>
       </div>
     </div>
-
     <!-- 금리 테이블 -->
     <table class="rate-table">
       <thead>
@@ -152,9 +127,7 @@ function clearInput() {
         </tr>
       </tbody>
     </table>
-
     <hr />
-
     <!-- 조건/유형 안내 -->
     <div class="extra">
       <div v-for="(item, idx) in extraInfo" :key="idx" class="info-row">
@@ -164,7 +137,6 @@ function clearInput() {
     </div>
   </div>
 </template>
-
 <style scoped>
 .rate-box {
   background: white;

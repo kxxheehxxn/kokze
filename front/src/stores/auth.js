@@ -53,12 +53,12 @@ export const userAuthStore = defineStore('auth', () => {
         );
 
         if (response.data && response.data.success) {
-          state.value.token = response.data.token;
+          state.value.token = response.data.data.token;
           state.value.user = {
-            userId: response.data.user.userId || '',
-            userName: response.data.user.name,
-            email: response.data.user.email,
-            role: response.data.user.role,
+            userId: response.data.data.user.userId || '',
+            userName: response.data.data.user.name,
+            email: response.data.data.user.email,
+            role: response.data.data.user.role,
           };
         } else {
           throw new Error(response.data.message || '로그인에 실패했습니다.');

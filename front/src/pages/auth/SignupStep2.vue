@@ -2,39 +2,30 @@
 import { reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
-
 const router = useRouter();
 const authStore = userAuthStore();
-
 const assetInfo = reactive({
   monthlyIncomeRaw: '',
   monthlyExpenseRaw: '',
 });
-
 const unformat = (value) => value.replace(/,/g, '').replace(/\D/g, '');
-
 const format = (value) => {
   const num = unformat(value);
   if (!num) return '';
   return Number(num).toLocaleString();
 };
-
 const getRawNumber = (value) => {
   const raw = unformat(value);
   return raw === '' ? 0 : parseInt(raw);
 };
-
 function numberToKorean(num) {
   const units = ['', '만', '억', '조'];
   const result = [];
-
   let strNum = String(num);
   let i = 0;
-
   while (strNum.length > 0) {
     const chunk = strNum.length >= 4 ? strNum.slice(-4) : strNum;
     strNum = strNum.slice(0, -4);
-
     if (Number(chunk) !== 0) {
       result.unshift(`${Number(chunk)}${units[i]}`);
     }
@@ -42,47 +33,36 @@ function numberToKorean(num) {
   }
   return result.length > 0 ? result.join(' ') + ' 원' : ' 원';
 }
-
 const monthlyIncome = computed({
   get: () => format(assetInfo.monthlyIncomeRaw),
   set: (val) => (assetInfo.monthlyIncomeRaw = unformat(val)),
 });
-
 const monthlyExpense = computed({
   get: () => format(assetInfo.monthlyExpenseRaw),
   set: (val) => (assetInfo.monthlyExpenseRaw = unformat(val)),
 });
-
 const koreanIncome = computed(() =>
   numberToKorean(getRawNumber(monthlyIncome.value))
 );
-
 const koreanExpense = computed(() =>
   numberToKorean(getRawNumber(monthlyExpense.value))
 );
-
 const resetField = (type) => {
   if (type === 'income') assetInfo.monthlyIncomeRaw = '';
   if (type === 'expense') assetInfo.monthlyExpenseRaw = '';
 };
-
 const isFormValid = computed(
   () => assetInfo.monthlyIncomeRaw !== '' && assetInfo.monthlyExpenseRaw !== ''
 );
-
 const goNext = () => {
   if (!isFormValid.value) return;
-
   const income = Number(assetInfo.monthlyIncomeRaw);
   const expense = Number(assetInfo.monthlyExpenseRaw);
-
   authStore.setUserInfo('salary', income);
   authStore.setUserInfo('payAmount', expense);
-
   router.push('/signup/step3');
 };
 </script>
-
 <template>
   <div class="container">
     <div class="no-nav-header">
@@ -99,11 +79,8 @@ const goNext = () => {
         </div>
         <div class="page-num">2/3</div>
       </div>
-
       <hr />
-
       <div class="title">자산정보 입력</div>
-
       <div class="form-group with-unit">
         <label>월 소득 (원)</label>
         <div class="input-with-unit">
@@ -123,7 +100,6 @@ const goNext = () => {
         </div>
         <div class="visual-display">{{ koreanIncome }}</div>
       </div>
-
       <div class="form-group with-unit">
         <label>월 지출 (원)</label>
         <div class="input-with-unit">
@@ -143,7 +119,6 @@ const goNext = () => {
         </div>
         <div class="visual-display">{{ koreanExpense }}</div>
       </div>
-
       <div class="button-group">
         <button class="cancel-button" @click="router.push('/signup/step1')">
           뒤로가기
@@ -155,7 +130,6 @@ const goNext = () => {
     </div>
   </div>
 </template>
-
 <style scoped>
 .container {
   display: flex;
@@ -171,7 +145,6 @@ const goNext = () => {
   text-align: left;
   flex-shrink: 0;
 }
-
 .page-num {
   display: flex;
   align-items: center;
@@ -181,33 +154,28 @@ const goNext = () => {
   white-space: nowrap;
   flex-shrink: 0;
 }
-
 .page-num::after {
   content: '';
   flex-grow: 1;
   height: 1px;
   display: inline-block;
 }
-
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-
 .form-group label {
   font-size: 15px;
   font-weight: 600;
   color: #222;
 }
-
 .input-with-unit {
   display: flex;
   align-items: center;
   gap: 8px;
   position: relative;
 }
-
 .input-with-unit input {
   flex: 1;
   font-size: 16px;
@@ -215,18 +183,15 @@ const goNext = () => {
   border: 1px solid #ccc;
   border-radius: 30px;
 }
-
 .input-with-unit input::-webkit-outer-spin-button,
 .input-with-unit input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
 .unit {
   font-size: 16px;
   color: #222;
 }
-
 .reset-btn {
   position: absolute;
   right: 40px;
@@ -236,20 +201,17 @@ const goNext = () => {
   color: #888;
   cursor: pointer;
 }
-
 .visual-display {
   margin-top: 4px;
   color: #777;
   font-size: 14px;
 }
-
 .button-group {
   display: flex;
   gap: 10px;
   justify-content: space-between;
   margin-top: 20px;
 }
-
 .cancel-button {
   background: #f2f2f2;
   color: #222;
@@ -261,7 +223,6 @@ const goNext = () => {
   min-width: 200px;
   cursor: pointer;
 }
-
 .next-button {
   background: #3573ee;
   color: white;
@@ -273,12 +234,10 @@ const goNext = () => {
   min-width: 200px;
   cursor: pointer;
 }
-
 .next-button:disabled {
   background: #a5c2ff;
   cursor: not-allowed;
 }
-
 .next-button:hover:enabled {
   background-color: #255edb;
 }

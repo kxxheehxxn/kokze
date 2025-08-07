@@ -21,12 +21,10 @@ const updateAnswer = async () => {
     isEditingAnswer.value = true;
     return;
   }
-
   if (!article.value.answeredContent || !article.value.answeredContent.trim()) {
     alert('답변 내용을 입력해주세요.');
     return;
   }
-
   if (!confirm('답변을 수정할까요?')) return;
   const updatedFields = {
     title: article.value.title,
@@ -34,7 +32,6 @@ const updateAnswer = async () => {
     userId: article.value.userId,
     answeredContent: article.value.answeredContent,
   };
-
   try {
     await api.updateAnswer(updatedFields);
     isEditingAnswer.value = false;
@@ -53,13 +50,11 @@ const update = () => {
 };
 const submit = async () => {
   if (!confirm('답변을 등록할까요?')) return;
-
   if (!article.value.answeredContent || !article.value.answeredContent.trim()) {
     alert('답변 내용을 입력해주세요.');
     return;
   }
   isLoading.value = true;
-
   const updatedFields = {
     title: article.value.title,
     infoId: article.value.infoId,
@@ -67,11 +62,9 @@ const submit = async () => {
     isAnswered: article.value.isAnswered,
     answeredContent: article.value.answeredContent,
   };
-
   try {
     await api.updateAnswer(updatedFields);
     alert('답변이 성공적으로 등록되었습니다.'); // Success feedback
-
     // 페이지 이동 후 새로고침 대신, 직접 데이터 로드 또는 필요한 상태 업데이트
     router.push({
       name: 'inquiryDetail',
@@ -96,7 +89,6 @@ const load = async () => {
 };
 load();
 </script>
-
 <template>
   <div class="custom-box-wrapper">
     <div class="custom-box p-5">
@@ -213,7 +205,6 @@ load();
   border-radius: 28px;
   padding: 2rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-
   display: flex;
   flex-direction: column; /* 세로 방향으로 배치 */
 }
@@ -291,11 +282,9 @@ hr {
   z-index: 9999;
   color: white;
 }
-
 .loading-spinner {
   text-align: center;
 }
-
 .spinner {
   width: 50px;
   height: 50px;
@@ -305,13 +294,11 @@ hr {
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
 }
-
 .loading-spinner p {
   font-size: 1.2em;
   font-weight: bold;
   margin: 0;
 }
-
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -320,7 +307,6 @@ hr {
     transform: rotate(360deg);
   }
 }
-
 /* 또는 뷰포트 기반으로 유연하게 */
 @media (max-width: 1024px) and (orientation: portrait) {
   .custom-box {

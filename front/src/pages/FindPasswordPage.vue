@@ -98,7 +98,6 @@
     </form>
   </UserCardLayout>
 </template>
-
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -108,46 +107,38 @@ import {
   sendVerificationCode,
   verifyCode,
   changePassword,
-} from '@/api/passwordApi.js';
-
-const step = ref(1);
-const phoneNum = ref('');
-const email = ref('');
-const code = ref('');
-const password = ref('');
-const passwordCheck = ref('');
-const userVerified = ref(null);
-const codeChecked = ref(null);
-const router = useRouter();
-
+} from '@/api/passwordApi.js'
+const step = ref(1)
+const phoneNum = ref('')
+const email = ref('')
+const code = ref('')
+const password = ref('')
+const passwordCheck = ref('')
+const userVerified = ref(null)
+const codeChecked = ref(null)
+const router = useRouter()
 async function onVerifyUser() {
   if (!phoneNum.value || !email.value) {
     alert('전화번호와 이메일을 모두 입력해주세요.');
     return;
   }
-
-  userVerified.value = await verifyUserInfo(phoneNum.value, email.value);
+  userVerified.value = await verifyUserInfo(phoneNum.value, email.value)
   if (userVerified.value) {
     await sendVerificationCode(email.value);
   }
 }
-
 async function onCodeCheck() {
   codeChecked.value = await verifyCode(code.value, email.value);
 }
-
 const canNext = computed(
-  () => phoneNum.value && email.value && userVerified.value && codeChecked.value
-);
-
+  () => phoneNum.value && email.value && userVerified.value && codeChecked.value,
+)
 function onNext() {
   if (canNext.value) step.value = 2;
 }
-
 const canChange = computed(
-  () => password.value && password.value === passwordCheck.value
-);
-
+  () => password.value && password.value === passwordCheck.value,
+)
 async function onChangePassword() {
   if (!canChange.value) return;
   await changePassword(email.value, password.value);
@@ -182,7 +173,6 @@ function onCancel() {
   router.back();
 }
 </script>
-
 <style scoped>
 .title {
   background-color: #fff;

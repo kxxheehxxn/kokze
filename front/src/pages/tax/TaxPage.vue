@@ -14,17 +14,14 @@
             <p class="tax-amount">{{ taxAmounts[label] || '0원' }}</p>
           </div>
         </div>
-
         <div class="tax-info">
           <DefaultInfo v-if="!selected" />
-
           <component v-else :is="detailComponentName" :label="selected" />
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import DefaultInfo from './details/DefaultInfo.vue';
 import MedicalDetail from './details/MEdicalDetail.vue';
@@ -41,7 +38,6 @@ import HousingSavingDetail from './details/HousingSavingDetail.vue';
 import EducationDetail from './details/EducationDetail.vue';
 import CreditCardDetail from './details/CreditCardDetail.vue';
 import HousingDetail from './details/HousingDetail.vue';
-
 export default {
   name: 'TaxPage',
   components: {
@@ -127,7 +123,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 /* 기존 스타일 유지 */
 .tax-page {
@@ -235,17 +230,14 @@ export default {
   cursor: pointer;
   transform: translateY(-2px);
 }
-
 .tax-card.active {
   border: 2px solid #1d4ed8;
   background-color: #1d4ed8;
 }
-
 .tax-card.active .tax-label,
 .tax-card.active .tax-amount {
   color: #ffffff;
 }
-
 @media (max-width: 1024px) {
   .tax-wrapper {
     padding: 24px; /* 패딩 약간 줄임 */
@@ -268,45 +260,36 @@ export default {
     padding: 12px; /* 카드 패딩 줄임 */
   }
 }
-
 @media (max-width: 768px) {
   .tax-wrapper {
     padding: 12px;
     overflow: hidden; /* 중요: wrapper에서 overflow 숨김 */
   }
-
   .tax-content {
     flex-direction: column; /* 세로 방향으로 정렬 */
     gap: 16px; /* 간격 줄임 */
   }
-
   /* tax-grid 스타일 완전히 재설정 */
   .tax-grid {
     /* 기존 grid 속성들을 모두 초기화 */
     display: flex !important;
     grid-template-columns: unset !important;
     flex: none !important;
-
     /* 스크롤 관련 속성 */
     overflow-x: auto;
     overflow-y: hidden;
-
     /* 레이아웃 속성 */
     gap: 16px;
     padding: 16px 16px; /* 위아래 16px, 좌우 16px */
     border-radius: 12px;
     /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
-
     /* 스크롤 안쪽에서 양옆 여백 */
     scroll-padding: 0 16px; /* 스크롤 시 양쪽에 16px 여백 */
-
     /* 너비 설정 */
     width: 100%; /* 부모 너비에 맞춤 */
-
     /* 스크롤 동작 강제 */
     scroll-behavior: smooth;
   }
-
   /* 카드 크기 고정 및 축소 방지 */
   .tax-card {
     width: 150px; /* 고정 너비 */
@@ -316,35 +299,29 @@ export default {
     padding: 10px;
     font-size: 12px;
   }
-
   .tax-label,
   .tax-amount {
     font-size: 12px; /* 폰트 크기 줄임 */
     margin: 0;
     line-height: 1.3;
   }
-
   .tax-label {
     margin-bottom: 4px;
   }
-
   /* tax-info 스타일 조정 */
   .tax-info {
     flex: none;
     width: 100%; /* 전체 너비 사용 */
     padding: 16px;
   }
-
   /* 스크롤바 스타일링 (웹킷 브라우저) */
   .tax-grid::-webkit-scrollbar {
     height: 8px;
   }
-
   .tax-grid::-webkit-scrollbar-track {
     background: #f0f0f0;
     border-radius: 3px;
   }
-
   .tax-grid::-webkit-scrollbar-thumb {
     background: #3573ee;
     border-radius: 3px;

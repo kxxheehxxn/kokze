@@ -21,7 +21,6 @@
     </div>
   </div>
 </template>
-
 <script>
 export default {
   name: 'GoalCard',
@@ -36,26 +35,24 @@ export default {
       });
     },
     formatDate(dateStr) {
-      if (!dateStr) return '';
-      const date = new Date(dateStr);
-      return `${date.getFullYear()}년 ${
-        date.getMonth() + 1
-      }월 ${date.getDate()}일`;
+      if (!dateStr || dateStr.length !== 3) return '';
+      const [y, m, d] = dateStr;
+      return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
+        2,
+        '0'
+      )}일`;
     },
     getPeriodDiff(start, end) {
       if (!start || !end) return '';
       const startDate = new Date(start);
       const endDate = new Date(end);
-
       let diffMonths =
         (endDate.getFullYear() - startDate.getFullYear()) * 12 +
         (endDate.getMonth() - startDate.getMonth());
-
       // 일(day) 차이가 양수면 한 달 추가
       if (endDate.getDate() > startDate.getDate()) {
         diffMonths += 1;
       }
-
       if (diffMonths < 24) {
         return `${diffMonths}개월`;
       } else {
@@ -66,7 +63,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .goal-card {
   background: #fff;
@@ -82,7 +78,6 @@ export default {
 .goal-card:hover {
   box-shadow: inset 0 0 20px #3573ee;
 }
-
 .goal-title {
   font-weight: bold;
   font-size: 1.5rem;
@@ -94,29 +89,24 @@ export default {
   display: block;
   max-width: 100%;
 }
-
 .goal-info {
   font-size: 1rem;
   color: #333;
   line-height: 1.4;
   margin-bottom: 1.5rem;
 }
-
 .goal-box {
   display: flex;
   align-items: flex-start;
 }
-
 .goal-box .label {
   width: 2.8rem;
   font-weight: 600;
   color: #555;
 }
-
 .goal-box .value {
   display: inline-block;
 }
-
 .goal-progress {
   text-align: right;
 }

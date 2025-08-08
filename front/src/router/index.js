@@ -32,37 +32,37 @@ const router = createRouter({
     {
       path: '/user',
       name: 'UserPage',
-      component: () => import('@/pages/UserPage.vue'),
+      component: () => import('@/pages/mypage/UserPage.vue'),
       beforeEnter: isAuthenticated,
     },
     {
       path: '/user/point',
       name: 'PointPage',
-      component: () => import('@/pages/PointPage.vue'),
+      component: () => import('@/pages/mypage/PointPage.vue'),
       beforeEnter: isAuthenticated,
     },
     {
       path: '/user/asset',
       name: 'UserAssetEditPage',
-      component: () => import('@/pages/UserAssetEditPage.vue'),
+      component: () => import('@/pages/mypage/UserAssetEditPage.vue'),
       beforeEnter: isAuthenticated,
     },
     {
       path: '/user/mbti',
       name: 'UserMbtiEditPage',
-      component: () => import('@/pages/UserMbtiEditPage.vue'),
+      component: () => import('@/pages/mypage/UserMbtiEditPage.vue'),
       beforeEnter: isAuthenticated,
     },
     {
       path: '/user/password',
       name: 'UserPasswordEditPage',
-      component: () => import('@/pages/UserPasswordEditPage.vue'),
+      component: () => import('@/pages/mypage/UserPasswordEditPage.vue'),
       beforeEnter: isAuthenticated,
     },
     {
       path: '/user/withdraw',
       name: 'UserWithdrawPage',
-      component: () => import('@/pages/UserWithdrawPage.vue'),
+      component: () => import('@/pages/mypage/UserWithdrawPage.vue'),
       beforeEnter: isAuthenticated,
     },
     {

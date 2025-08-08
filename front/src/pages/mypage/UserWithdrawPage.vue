@@ -199,6 +199,7 @@ th {
   background: #e74c3c;
   color: #fff;
   cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   transition: background 0.2s;
 }
 .submit-btn:disabled {

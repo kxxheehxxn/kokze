@@ -90,107 +90,114 @@ const load = async () => {
 load();
 </script>
 <template>
-  <div class="custom-box-wrapper">
-    <div class="custom-box p-5">
-      <div class="m-2 content-wrapper">
-        <h4 class="fw-bold">문의사항</h4>
-        <div class="ms-1">
-          <h5 class="fw-bold my-4">
-            <span v-if="article.isAnswered">[답변완료] </span
-            >{{ article.title }}
-          </h5>
-          <div class="inquiry-info">
-            <span>{{ article.userName }}</span>
-            <span v-if="article.createdAt" class="ms-5">
-              {{ moment(article.createdAt).format('YYYY-MM-DD HH:mm') }}
-            </span>
-          </div>
-          <div class="mt-3">
-            <hr />
-            <div class="content">{{ article.content }}</div>
-          </div>
-          <!-- 답변 페이지 -->
-          <!-- 1. 관리자 화면 -->
-          <div class="mt-5" v-if="isAdmin">
-            <div v-if="!article.isAnswered">
-              <form @submit.prevent="submit">
-                <div class="d-flex mb-3 mt-3 align-items-start">
-                  <div class="textarea-container w-100">
-                    <textarea
-                      class="form-control textarea-input"
-                      v-model="article.answeredContent"
-                      rows="10"
-                    ></textarea>
+  <div class="container">
+    <div class="custom-box-wrapper">
+      <div class="custom-box p-5">
+        <div class="m-2 content-wrapper">
+          <h4 class="fw-bold">문의사항</h4>
+          <div class="ms-1">
+            <h5 class="fw-bold my-4">
+              <span v-if="article.isAnswered">[답변완료] </span
+              >{{ article.title }}
+            </h5>
+            <div class="inquiry-info">
+              <span>{{ article.userName }}</span>
+              <span v-if="article.createdAt" class="ms-5">
+                {{ moment(article.createdAt).format('YYYY-MM-DD HH:mm') }}
+              </span>
+            </div>
+            <div class="mt-3">
+              <hr />
+              <div class="content">{{ article.content }}</div>
+            </div>
+            <!-- 답변 페이지 -->
+            <!-- 1. 관리자 화면 -->
+            <div class="mt-5" v-if="isAdmin">
+              <div v-if="!article.isAnswered">
+                <form @submit.prevent="submit">
+                  <div class="d-flex mb-3 mt-3 align-items-start">
+                    <div class="textarea-container w-100">
+                      <textarea
+                        class="form-control textarea-input"
+                        v-model="article.answeredContent"
+                        rows="10"
+                      ></textarea>
+                    </div>
+                    <button
+                      class="btn ms-3 answer"
+                      type="submit"
+                      :disabled="!article.answeredContent || isLoading"
+                    >
+                      입력
+                    </button>
                   </div>
-                  <button
-                    class="btn ms-3 answer"
-                    type="submit"
-                    :disabled="!article.answeredContent || isLoading"
-                  >
-                    입력
+                </form>
+              </div>
+              <div v-else>
+                <div class="d-flex footer w-100 justify-content-between">
+                  <div class="w-100">
+                    <div v-if="!isEditingAnswer">
+                      {{ article.answeredContent }}
+                    </div>
+                    <div v-else class="textarea-container">
+                      <textarea
+                        class="form-control textarea-input"
+                        v-model="article.answeredContent"
+                        rows="10"
+                        :maxlength="MAX_CONTENT_LENGTH"
+                      ></textarea>
+                    </div>
+                  </div>
+                  <button class="btn ms-3 answer" @click="updateAnswer">
+                    {{ isEditingAnswer ? '입력' : '수정' }}
                   </button>
                 </div>
-              </form>
-            </div>
-            <div v-else>
-              <div class="d-flex footer w-100 justify-content-between">
-                <div class="w-100">
-                  <div v-if="!isEditingAnswer">
-                    {{ article.answeredContent }}
-                  </div>
-                  <div v-else class="textarea-container">
-                    <textarea
-                      class="form-control textarea-input"
-                      v-model="article.answeredContent"
-                      rows="10"
-                      :maxlength="MAX_CONTENT_LENGTH"
-                    ></textarea>
-                  </div>
-                </div>
-                <button class="btn ms-3 answer" @click="updateAnswer">
-                  {{ isEditingAnswer ? '입력' : '수정' }}
-                </button>
               </div>
             </div>
-          </div>
-          <!-- 2. 유저 화면  -->
-          <div v-else>
-            <div class="d-flex mb-3 mt-3 align-items-start">
-              <div class="w-100" v-if="article.isAnswered">
-                <div class="fw-bold mb-3">답변</div>
-                {{ article.answeredContent }}
+            <!-- 2. 유저 화면  -->
+            <div v-else>
+              <div class="d-flex mb-3 mt-3 align-items-start">
+                <div class="w-100" v-if="article.isAnswered">
+                  <div class="fw-bold mb-3">답변</div>
+                  {{ article.answeredContent }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="d-flex mt-4 w-100 justify-content-between align-items-center">
-        <button class="btn back" @click="back">목록</button>
-        <button class="btn delete" @click="remove" v-if="isAdmin">
-          문의 삭제
-        </button>
-        <template
-          v-if="
-            !article.isAnswered && !isAdmin && auth.userId == article.userId
-          "
-          class="w-100 text-end"
+        <div
+          class="d-flex mt-4 w-100 justify-content-between align-items-center"
         >
-          <div class="ms-auto">
-            <button class="btn edit" @click="update">수정</button>
-            <button class="btn delete" @click="remove">삭제</button>
-          </div>
-        </template>
+          <button class="btn back" @click="back">목록</button>
+          <button class="btn delete" @click="remove" v-if="isAdmin">
+            문의 삭제
+          </button>
+          <template
+            v-if="
+              !article.isAnswered && !isAdmin && auth.userId == article.userId
+            "
+            class="w-100 text-end"
+          >
+            <div class="ms-auto">
+              <button class="btn edit" @click="update">수정</button>
+              <button class="btn delete" @click="remove">삭제</button>
+            </div>
+          </template>
+        </div>
       </div>
     </div>
-  </div>
-  <div v-if="isLoading" class="callback-container">
-    <div class="loading-spinner">
-      <div class="spinner"></div>
-      <p>이메일 전송 중...</p>
+    <div v-if="isLoading" class="callback-container">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>이메일 전송 중...</p>
+      </div>
     </div>
   </div>
 </template>
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .custom-box-wrapper {
   display: flex;
   justify-content: center;

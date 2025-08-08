@@ -1,70 +1,74 @@
 <template>
-  <div class="goal-edit-page">
-    <div class="goal-edit-card">
-      <h2 class="title">목표 수정하기</h2>
-      <hr />
-      <div class="input-form">
-        <!-- 목표 이름 -->
-        <div class="form-group">
-          <label>목표 이름</label>
-          <input type="text" v-model="goal.title" />
-        </div>
-        <!-- 목표 기간 -->
-        <div class="form-group">
-          <label>목표 기간</label>
-          <div class="date-range">
-            <input type="date" v-model="goal.startDate" />
-            <span>~</span>
-            <input type="date" v-model="goal.endDate" :min="endDateMin" />
+  <div class="container">
+    <div class="goal-edit-page">
+      <div class="goal-edit-card">
+        <h2 class="title">목표 수정하기</h2>
+        <hr />
+        <div class="input-form">
+          <!-- 목표 이름 -->
+          <div class="form-group">
+            <label>목표 이름</label>
+            <input type="text" v-model="goal.title" />
           </div>
-          <p class="helper-text">입력하지 않을 시 기존 날짜로 설정됩니다.</p>
-        </div>
-        <!-- 목표 금액 -->
-        <div class="form-group">
-          <label>목표 금액</label>
-          <div class="amount-input">
-            <input type="text" v-model="goal.amount" @input="onInputChange" />
-            <span>원</span>
-            <button class="clear-btn" @click="clearInput">×</button>
-          </div>
-          <p class="helper-text">{{ formatKoreanCurrency(parsedAmount) }}</p>
-        </div>
-        <!-- 입금 날짜 -->
-        <div class="form-group">
-          <label>입금 날짜 (매월 며칠)</label>
-          <input type="number" v-model="goal.depositDate" min="1" max="28" />
-          <p class="helper-text">1~28 사이의 숫자 입력</p>
-        </div>
-        <!-- 금융 상품 연결 -->
-        <div class="form-group">
-          <label>금융 상품 연결하기</label>
-          <p class="subtext">최소 1개 이상의 상품을 연결해야 합니다.</p>
-          <div class="product-card" v-if="selectedAccount">
-            <span class="product-icon">💳</span>
-            <div class="product-text">
-              {{ selectedAccount.bank_name }} -
-              {{ selectedAccount.account_num }}
+          <!-- 목표 기간 -->
+          <div class="form-group">
+            <label>목표 기간</label>
+            <div class="date-range">
+              <input type="date" v-model="goal.startDate" />
+              <span>~</span>
+              <input type="date" v-model="goal.endDate" :min="endDateMin" />
             </div>
-            <button class="remove-btn" @click="selectedAccount = null">
-              －
+            <p class="helper-text">입력하지 않을 시 기존 날짜로 설정됩니다.</p>
+          </div>
+          <!-- 목표 금액 -->
+          <div class="form-group">
+            <label>목표 금액</label>
+            <div class="amount-input">
+              <input type="text" v-model="goal.amount" @input="onInputChange" />
+              <span>원</span>
+              <button class="clear-btn" @click="clearInput">×</button>
+            </div>
+            <p class="helper-text">{{ formatKoreanCurrency(parsedAmount) }}</p>
+          </div>
+          <!-- 입금 날짜 -->
+          <div class="form-group">
+            <label>입금 날짜 (매월 며칠)</label>
+            <input type="number" v-model="goal.depositDate" min="1" max="28" />
+            <p class="helper-text">1~28 사이의 숫자 입력</p>
+          </div>
+          <!-- 금융 상품 연결 -->
+          <div class="form-group">
+            <label>금융 상품 연결하기</label>
+            <p class="subtext">최소 1개 이상의 상품을 연결해야 합니다.</p>
+            <div class="product-card" v-if="selectedAccount">
+              <span class="product-icon">💳</span>
+              <div class="product-text">
+                {{ selectedAccount.bank_name }} -
+                {{ selectedAccount.account_num }}
+              </div>
+              <button class="remove-btn" @click="selectedAccount = null">
+                －
+              </button>
+            </div>
+            <div class="product-placeholder" v-else @click="fetchAccounts">
+              ＋
+            </div>
+          </div>
+          <!-- 버튼 -->
+          <div class="text-center">
+            <button class="btn cancel-btn" @click="goBack">취소하기</button>
+            <button class="btn submit-btn ms-4" @click="submitEdit">
+              목표 수정
             </button>
           </div>
-          <div class="product-placeholder" v-else @click="fetchAccounts">
-            ＋
-          </div>
         </div>
-        <!-- 버튼 -->
-        <div class="btn-row">
-          <button class="btn cancel" @click="goBack">취소하기</button>
-          <button class="btn submit" @click="submitEdit">목표 수정하기</button>
-        </div>
+        <ProductModal
+          v-if="showProductModal"
+          :accounts="accounts"
+          @close="showProductModal = false"
+          @connect="handleProductConnect"
+        />
       </div>
-      <ProductModal
-        v-if="showProductModal"
-        :accounts="accounts"
-        @close="showProductModal = false"
-        @connect="handleProductConnect"
-      />
     </div>
   </div>
 </template>
@@ -223,6 +227,9 @@ export default {
 };
 </script>
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .goal-edit-page {
   padding: 2rem;
 }
@@ -322,28 +329,25 @@ input[type='date'] {
   color: #aaa;
   cursor: pointer;
 }
-.btn-row {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-top: 2rem;
-}
 .btn {
+  width: 180px;
+  height: 48px;
   border-radius: 20px;
-  padding: 0.5rem 3rem;
-  font-weight: bold;
-  font-size: 1rem;
-  border: none;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 16px;
+  font-weight: 500;
 }
-.cancel {
-  background: #eee;
-  color: #444;
+.cancel-btn {
+  background: #fafbfc;
+  color: #222;
+  border: 1.5px solid #e5e7eb;
 }
-.submit {
-  background: #296bff;
-  color: white;
+.submit-btn {
+  background: #2573ee;
+  color: #fff;
+  border: none;
 }
 @media (max-width: 1024px) {
   .input-form {

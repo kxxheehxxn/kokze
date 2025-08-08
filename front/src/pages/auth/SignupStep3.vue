@@ -276,8 +276,8 @@ const onSubmit = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px 0 #e5e7eb;
   border: 2px solid transparent;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   transition: 0.2s;
 }
 .choice.selected {

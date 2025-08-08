@@ -31,40 +31,45 @@ const load = async () => {
 load();
 </script>
 <template>
-  <div class="custom-box-wrapper">
-    <div class="custom-box p-5">
-      <div class="m-2 content-wrapper">
-        <h4 class="fw-bold">공지사항</h4>
-        <div class="ms-1 mt-5">
-          <h5 class="fw-bold my-4">
-            {{ article.title }}
-          </h5>
-          <div class="notice-date">
-            <span v-if="article.createdAt">
-              {{ moment(article.createdAt).format('YYYY-MM-DD HH:mm') }}
-            </span>
-          </div>
-          <div class="mt-3">
-            <hr />
-            <div class="content">{{ article.content }}</div>
+  <div class="container">
+    <div class="custom-box-wrapper">
+      <div class="custom-box p-5">
+        <div class="m-2 content-wrapper">
+          <h4 class="fw-bold">공지사항</h4>
+          <div class="ms-1 mt-5">
+            <h5 class="fw-bold my-4">
+              {{ article.title }}
+            </h5>
+            <div class="notice-date">
+              <span v-if="article.createdAt">
+                {{ moment(article.createdAt).format('YYYY-MM-DD HH:mm') }}
+              </span>
+            </div>
+            <div class="mt-3">
+              <hr />
+              <div class="content">{{ article.content }}</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div
-        class="d-flex footer w-100 justify-content-between align-items-center"
-      >
-        <button class="btn back" @click="back">목록</button>
-        <template v-if="!article.isAnswered && isAdmin" class="w-100 text-end"
-          ><div class="ms-auto">
-            <button class="btn edit" @click="update">수정</button>
-            <button class="btn delete" @click="remove">삭제</button>
-          </div>
-        </template>
+        <div
+          class="d-flex footer w-100 justify-content-between align-items-center"
+        >
+          <button class="btn back" @click="back">목록</button>
+          <template v-if="!article.isAnswered && isAdmin" class="w-100 text-end"
+            ><div class="ms-auto">
+              <button class="btn edit" @click="update">수정</button>
+              <button class="btn delete" @click="remove">삭제</button>
+            </div>
+          </template>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .custom-box-wrapper {
   display: flex;
   justify-content: center;

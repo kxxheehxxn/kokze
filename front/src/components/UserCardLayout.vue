@@ -20,7 +20,7 @@
   width: 100%;
   max-width: 920px;
   min-height: 80vh;
-  padding: 90px 140px;
+  padding: 80px 140px;
   border-radius: 28px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   display: flex;

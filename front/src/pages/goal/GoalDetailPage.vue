@@ -1,88 +1,95 @@
 <template>
-  <div class="goal-detail-page">
-    <router-link to="/goals" class="back-link">← 목표로 돌아가기</router-link>
-    <section class="summary-card">
-      <div class="header-row">
-        <h2 class="goal-title">
-          목표: {{ goal.title }} ({{ goal.progress }}%)
-        </h2>
-      </div>
-      <hr />
-      <div class="progress-area">
-        <div class="progress-bar">
-          <div class="progress" :style="{ width: goal.progress + '%' }"></div>
-          <div class="progress-markers">
-            <span
-              v-for="mark in [0, 25, 50, 75, 100]"
-              :key="mark"
-              class="marker"
-              :style="{ left: mark + '%' }"
-            >
-              <div v-if="mark !== 0 && mark !== 100" class="marker-line"></div>
-              <div class="marker-label">{{ mark }}%</div>
+  <div class="container">
+    <div class="goal-detail-page">
+      <router-link to="/goals" class="back-link">← 목표로 돌아가기</router-link>
+      <section class="summary-card">
+        <div class="header-row">
+          <h2 class="goal-title">
+            목표: {{ goal.title }} ({{ goal.progress }}%)
+          </h2>
+        </div>
+        <hr />
+        <div class="progress-area">
+          <div class="progress-bar">
+            <div class="progress" :style="{ width: goal.progress + '%' }"></div>
+            <div class="progress-markers">
+              <span
+                v-for="mark in [0, 25, 50, 75, 100]"
+                :key="mark"
+                class="marker"
+                :style="{ left: mark + '%' }"
+              >
+                <div
+                  v-if="mark !== 0 && mark !== 100"
+                  class="marker-line"
+                ></div>
+                <div class="marker-label">{{ mark }}%</div>
+              </span>
+            </div>
+          </div>
+          <img src="/src/assets/images/gift.png" alt="목표 달성 선물 이미지" />
+        </div>
+        <div class="details">
+          <div class="detail-row">
+            <span class="label">목표 기간</span>
+            <span class="value">
+              {{ formatDate(goal.period1) }} ~ {{ formatDate(goal.period2) }} (
+              약 {{ getPeriodDiff(goal.period1, goal.period2) }} )
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">목표 금액</span>
+            <span class="value">
+              {{ goal.savedAmount.toLocaleString() }} 원 /
+              {{ goal.totalAmount.toLocaleString() }} 원
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">연결된 금융 상품</span>
+            <span class="value">
+              <template v-if="goal.linked_accounts.length > 0">
+                {{ goal.linked_accounts[0].bank_name }} -
+                {{ goal.linked_accounts[0].account_num }}
+              </template>
+              <template v-else>-</template>
             </span>
           </div>
         </div>
-        <img src="/src/assets/images/gift.png" alt="목표 달성 선물 이미지" />
-      </div>
-      <div class="details">
-        <div class="detail-row">
-          <span class="label">목표 기간</span>
-          <span class="value">
-            {{ formatDate(goal.period1) }} ~ {{ formatDate(goal.period2) }} ( 약
-            {{ getPeriodDiff(goal.period1, goal.period2) }} )
-          </span>
+        <div class="button-row">
+          <button
+            class="btn btn-primary"
+            @click="
+              $router.push({
+                name: 'GoalEditPage',
+                params: { goalId: goal.id },
+              })
+            "
+          >
+            목표 수정하기
+          </button>
+          <button class="btn btn-danger" @click="handleDeleteGoal">
+            목표 삭제하기
+          </button>
         </div>
-        <div class="detail-row">
-          <span class="label">목표 금액</span>
-          <span class="value">
-            {{ goal.savedAmount.toLocaleString() }} 원 /
-            {{ goal.totalAmount.toLocaleString() }} 원
-          </span>
+      </section>
+      <section class="recommendation-section">
+        <h4>✨ {{ userName }}님에게 추천하는 맞춤 금융 상품 ✨</h4>
+
+        <!-- 추천 상품이 있는 경우 -->
+        <div v-if="recommended.length" class="product-grid">
+          <RecommendedProductCard
+            v-for="(product, idx) in recommended"
+            :key="idx"
+            :product="product"
+            @click="$router.push(`/product/${product.finPrdtCd}`)"
+          />
         </div>
-        <div class="detail-row">
-          <span class="label">연결된 금융 상품</span>
-          <span class="value">
-            <template v-if="goal.linked_accounts.length > 0">
-              {{ goal.linked_accounts[0].bank_name }} -
-              {{ goal.linked_accounts[0].account_num }}
-            </template>
-            <template v-else>-</template>
-          </span>
+
+        <div v-else class="no-recommendation-message">
+          😢 기간과 금액이 충분하지 않아서 추천드릴 수 있는 상품이 없습니다.
         </div>
-      </div>
-      <div class="button-row">
-        <button
-          class="btn btn-primary"
-          @click="
-            $router.push({ name: 'GoalEditPage', params: { goalId: goal.id } })
-          "
-        >
-          목표 수정하기
-        </button>
-        <button class="btn btn-danger" @click="handleDeleteGoal">
-          목표 삭제하기
-        </button>
-      </div>
-    </section>
-    <section class="recommendation-section">
-  <h4>✨ {{ userName }}님에게 추천하는 맞춤 금융 상품 ✨</h4>
-
-  <!-- 추천 상품이 있는 경우 -->
-  <div v-if="recommended.length" class="product-grid">
-    <RecommendedProductCard
-      v-for="(product, idx) in recommended"
-      :key="idx"
-      :product="product"
-      @click="$router.push(`/product/${product.finPrdtCd}`)"
-    />
-  </div>
-
-  <div v-else class="no-recommendation-message">
-    😢 기간과 금액이 충분하지 않아서 추천드릴 수 있는 상품이 없습니다.
-  </div>
-</section>
-
+      </section>
+    </div>
   </div>
 </template>
 <script>
@@ -120,33 +127,41 @@ export default {
     RecommendedProductCard,
   },
   async created() {
-    const goalId = this.$route.params.goalId;
-    const auth = userAuthStore();
-    const token = auth.getToken();
-    try {
-      const response = await getGoalById(goalId, token);
-      const data = response.data;
-      const progress = data.target_amount
-        ? Math.floor((data.current_amount / data.target_amount) * 100)
-        : 0;
-      this.goal = {
-        id: data.goal_id,
-        title: data.goal_name,
-        progress,
-        period1: data.start_date,
-        period2: data.end_date,
-        savedAmount: data.current_amount,
-        totalAmount: data.target_amount,
-        depositDate: data.deposit_date,
-        linked_accounts: data.linked_accounts || [],
-        product: data.linked_accounts?.[0]?.product_name || '-',
-      };
-      const recommendRes = await getRecommendedProducts(goalId, token);
-      this.recommended = recommendRes.data;
-    } catch (err) {
-      console.error('Failed to load details:', err);
-    }
-  },
+  const goalId = this.$route.params.goalId;
+  const auth = userAuthStore();
+  const token = auth.getToken();
+  try {
+    const response = await getGoalById(goalId, token);
+    const data = response.data;
+
+    // 계좌 잔액 (없으면 0)
+    const accountBalance = data.linked_accounts?.[0]?.balance || 0;
+
+    // 목표 퍼센트 (계좌 잔액 기준)
+    const progress = data.target_amount
+      ? Math.floor((accountBalance / data.target_amount) * 100)
+      : 0;
+
+    this.goal = {
+      id: data.goal_id,
+      title: data.goal_name,
+      progress,
+      period1: data.start_date,
+      period2: data.end_date,
+      savedAmount: accountBalance, // 🔹 현재 금액 = 계좌 잔액
+      totalAmount: data.target_amount,
+      depositDate: data.deposit_date,
+      linked_accounts: data.linked_accounts || [],
+      product: data.linked_accounts?.[0]?.product_name || '-',
+    };
+
+    const recommendRes = await getRecommendedProducts(goalId, token);
+    this.recommended = recommendRes.data;
+  } catch (err) {
+    console.error('Failed to load details:', err);
+  }
+},
+
   methods: {
     async handleDeleteGoal() {
       const confirmDelete = confirm('정말로 이 목표를 삭제하시겠습니까?');
@@ -191,6 +206,9 @@ export default {
 };
 </script>
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .goal-detail-page {
   padding: 2rem;
 }

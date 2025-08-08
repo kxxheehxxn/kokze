@@ -37,11 +37,7 @@
       </div>
       <TermsAccordion :terms="filteredTerms" />
     </div>
-    <div class="scroll-top-btn" @click="scrollToTop">
-      <div class="scroll-top-icon">
-        <i class="fa-solid fa-chevron-up" style="color: #3573ee"></i>
-      </div>
-    </div>
+    <ScrollTopButton />
   </div>
 </template>
 <script setup>
@@ -49,6 +45,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import TermsSidebar from '@/components/TermsSidebar.vue';
 import TermsAccordion from '@/components/TermsAccordion.vue';
 import api from '@/api/termsApi.js';
+import ScrollTopButton from '@/components/layouts/ScrollTopButton.vue';
 const categories = ref([]);
 const selectedCategory = ref('');
 const search = ref('');
@@ -97,13 +94,13 @@ const scrollToTop = () => {
 .terms-page {
   display: flex;
   gap: 0;
-  background: #f6f6f6;
+  background-color: #fbfbfb;
   min-height: 100vh;
 }
 .terms-content {
   flex: 1;
   padding: 40px 48px 0 20px;
-  background: #f6f6f6;
+  background-color: #fbfbfb;
 }
 .search-container {
   width: 320px;
@@ -175,7 +172,7 @@ const scrollToTop = () => {
 .terms-page {
   display: flex;
   gap: 0;
-  background: #f6f6f6;
+  background: #fbfbfb;
   min-height: 100vh;
 }
 /* 모바일용 카테고리 select (기본 숨김) */
@@ -204,7 +201,7 @@ const scrollToTop = () => {
 .terms-content {
   flex: 1;
   padding: 40px 48px 0 20px;
-  background: #f6f6f6;
+  background: #fbfbfb;
 }
 /* 검색 컨테이너 기존 그대로 유지 */
 .search-container {

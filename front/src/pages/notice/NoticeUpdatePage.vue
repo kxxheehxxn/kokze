@@ -80,7 +80,8 @@ load();
                   :maxlength="MAX_TITLE_LENGTH"
                 />
                 <span class="char-count"
-                  >{{ article.title.length }} / {{ MAX_TITLE_LENGTH }}</span
+                  >{{ article.title?.length ?? 0 }} /
+                  {{ MAX_TITLE_LENGTH }}</span
                 >
               </div>
             </div>
@@ -96,7 +97,8 @@ load();
                   :maxlength="MAX_CONTENT_LENGTH"
                 ></textarea>
                 <span class="char-count textarea-count"
-                  >{{ article.content.length }} / {{ MAX_CONTENT_LENGTH }}</span
+                  >{{ article.content?.length ?? 0 }} /
+                  {{ MAX_CONTENT_LENGTH }}</span
                 >
               </div>
             </div>

@@ -107,14 +107,14 @@ function nextSlide() {
 }
 .title {
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   margin-bottom: 50px;
 }
 .carousel-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 32px;
+  gap: 16px;
 }
 .nav-button {
   background: white;
@@ -141,14 +141,14 @@ function nextSlide() {
 }
 .carousel-cards {
   display: flex;
-  gap: 8px;
+  gap: 12px;
 }
 .card {
-  width: clamp(180px, calc(180px + (320 - 180) * ((100vw - 1024px) / (1920 - 1024))), 320px);
+  width: clamp(240px, calc(240px + (360 - 240) * ((100vw - 1024px) / (1920 - 1024))), 360px);
   background: white;
   border: 1px solid #ddd;
   border-radius: 12px;
-  padding: 1.5rem 1.5rem 1.8rem;
+  padding: 1.2rem 1.2rem 1.4rem;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
   text-align: left;
 }
@@ -173,10 +173,10 @@ function nextSlide() {
 }
 .product-name {
   font-weight: bold;
-  font-size: clamp(10px, calc(10px + (18 - 10) * ((100vw - 1024px) / (1920 - 1024))), 18px);
+  font-size: clamp(14px, calc(14px + (22 - 14) * ((100vw - 1024px) / (1920 - 1024))), 22px);
 }
 .bank-name {
-  font-size: clamp(7.3px, calc(7.3px + (13 - 7.3) * ((100vw - 1024px) / (1920 - 1024))), 13px);
+  font-size: clamp(10px, calc(10px + (15 - 10) * ((100vw - 1024px) / (1920 - 1024))), 15px);
   color: #666;
   margin-top: 0.2rem;
 }
@@ -184,14 +184,14 @@ function nextSlide() {
   margin: 0.5rem 0 1rem;
   font-weight: normal;
   color: #222;
-  font-size: clamp(8.4px, calc(8.4px + (15 - 8.4) * ((100vw - 1024px) / (1920 - 1024))), 15px);
+  font-size: clamp(13px, calc(13px + (18 - 13) * ((100vw - 1024px) / (1920 - 1024))), 18px);
   text-align: center;
 }
 .highlight {
   list-style: none;
   margin: 0;
   font-weight: bold;
-  font-size: clamp(8.4px, calc(8.4px + (15 - 8.4) * ((100vw - 1024px) / (1920 - 1024))), 15px);
+  font-size: clamp(13px, calc(13px + (18 - 13) * ((100vw - 1024px) / (1920 - 1024))), 18px);
   text-align: center;
 }
 @media (max-width: 1024px) {

@@ -75,18 +75,22 @@ export default {
           console.error('Response is not an array:', response.data)
           return
         }
-        this.goals = response.data.map(goal => ({
-          id: goal.goal_id,
-          title: goal.goal_name,
-          amount: `${goal.target_amount.toLocaleString()} 원`,
-          progress: this.calculateProgress(
-            goal.save_amount,
-            goal.target_amount,
-          ),
-          product: '-',
-          period1: goal.start_date ?? '',
-          period2: goal.end_date ?? '',
-        }))
+
+        this.goals = response.data.map(goal => {
+          const saved = goal.save_amount ?? 0
+          const target = goal.target_amount ?? 0
+          return {
+            id: goal.goal_id,
+            title: goal.goal_name,
+            savedAmount: saved, // 🔹 잔액
+            totalAmount: target, // 🔹 목표 금액
+            amount: `${saved.toLocaleString()} 원 / ${target.toLocaleString()} 원`,
+            progress: this.calculateProgress(saved, target),
+            product: '-',
+            period1: goal.start_date ?? '',
+            period2: goal.end_date ?? '',
+          }
+        })
       } catch (error) {
         console.error('Failed to load goals:', error)
       }
@@ -98,6 +102,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 /* 동일한 스타일 유지 */
 .goal-page {

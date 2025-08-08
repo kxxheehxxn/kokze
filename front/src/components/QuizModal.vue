@@ -14,7 +14,9 @@
         </div>
         <div v-else-if="alreadySolved && solvedQuizData" class="already-solved-section">
           <div class="solved-icon">{{ solvedQuizData.isCorrect ? '✅' : '❌' }}</div>
-          <div class="solved-title">{{ solvedQuizData.isCorrect ? '정답입니다!' : '아쉽게도 틀렸습니다' }}</div>
+          <div class="solved-title" :class="{ correct: solvedQuizData.isCorrect, incorrect: !solvedQuizData.isCorrect }">
+            {{ solvedQuizData.isCorrect ? '정답입니다!' : '아쉽게도 틀렸습니다' }}
+          </div>
 
           <!-- 문제 표시 -->
           <div class="solved-question">
@@ -513,6 +515,12 @@ onUnmounted(() => {
   font-weight: bold;
   color: #22c55e;
   margin-bottom: 16px;
+}
+.solved-title.correct {
+  color: #22c55e; 
+}
+.solved-title.incorrect {
+  color: #ef4444; 
 }
 .solved-message {
   font-size: 16px;

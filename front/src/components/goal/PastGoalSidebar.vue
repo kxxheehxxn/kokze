@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="close-bottom-wrapper">
-        <button class="close-btn" @click="$emit('close')">[ 닫기 ✕ ]</button>
+        <button class="close-btn" @click="$emit('close')"> 닫기 ✕ </button>
       </div>
     </div>
   </div>

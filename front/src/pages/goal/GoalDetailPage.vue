@@ -127,33 +127,41 @@ export default {
     RecommendedProductCard,
   },
   async created() {
-    const goalId = this.$route.params.goalId;
-    const auth = userAuthStore();
-    const token = auth.getToken();
-    try {
-      const response = await getGoalById(goalId, token);
-      const data = response.data;
-      const progress = data.target_amount
-        ? Math.floor((data.current_amount / data.target_amount) * 100)
-        : 0;
-      this.goal = {
-        id: data.goal_id,
-        title: data.goal_name,
-        progress,
-        period1: data.start_date,
-        period2: data.end_date,
-        savedAmount: data.current_amount,
-        totalAmount: data.target_amount,
-        depositDate: data.deposit_date,
-        linked_accounts: data.linked_accounts || [],
-        product: data.linked_accounts?.[0]?.product_name || '-',
-      };
-      const recommendRes = await getRecommendedProducts(goalId, token);
-      this.recommended = recommendRes.data;
-    } catch (err) {
-      console.error('Failed to load details:', err);
-    }
-  },
+  const goalId = this.$route.params.goalId;
+  const auth = userAuthStore();
+  const token = auth.getToken();
+  try {
+    const response = await getGoalById(goalId, token);
+    const data = response.data;
+
+    // 계좌 잔액 (없으면 0)
+    const accountBalance = data.linked_accounts?.[0]?.balance || 0;
+
+    // 목표 퍼센트 (계좌 잔액 기준)
+    const progress = data.target_amount
+      ? Math.floor((accountBalance / data.target_amount) * 100)
+      : 0;
+
+    this.goal = {
+      id: data.goal_id,
+      title: data.goal_name,
+      progress,
+      period1: data.start_date,
+      period2: data.end_date,
+      savedAmount: accountBalance, // 🔹 현재 금액 = 계좌 잔액
+      totalAmount: data.target_amount,
+      depositDate: data.deposit_date,
+      linked_accounts: data.linked_accounts || [],
+      product: data.linked_accounts?.[0]?.product_name || '-',
+    };
+
+    const recommendRes = await getRecommendedProducts(goalId, token);
+    this.recommended = recommendRes.data;
+  } catch (err) {
+    console.error('Failed to load details:', err);
+  }
+},
+
   methods: {
     async handleDeleteGoal() {
       const confirmDelete = confirm('정말로 이 목표를 삭제하시겠습니까?');

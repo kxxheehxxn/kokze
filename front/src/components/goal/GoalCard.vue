@@ -32,37 +32,34 @@ export default {
       this.$router.push({
         name: 'GoalDetailPage',
         params: { goalId: this.goal.id },
-      });
+      })
     },
     formatDate(dateStr) {
-      if (!dateStr || dateStr.length !== 3) return '';
-      const [y, m, d] = dateStr;
-      return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
-        2,
-        '0'
-      )}일`;
+      if (!dateStr || dateStr.length !== 3) return ''
+      const [y, m, d] = dateStr
+      return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(2, '0')}일`
     },
     getPeriodDiff(start, end) {
-      if (!start || !end) return '';
-      const startDate = new Date(start);
-      const endDate = new Date(end);
+      if (!start || !end) return ''
+      const startDate = new Date(start)
+      const endDate = new Date(end)
       let diffMonths =
         (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-        (endDate.getMonth() - startDate.getMonth());
-      // 일(day) 차이가 양수면 한 달 추가
+        (endDate.getMonth() - startDate.getMonth())
       if (endDate.getDate() > startDate.getDate()) {
-        diffMonths += 1;
+        diffMonths += 1
       }
       if (diffMonths < 24) {
-        return `${diffMonths}개월`;
+        return `${diffMonths}개월`
       } else {
-        const diffYears = diffMonths / 12;
-        return `${Math.round(diffYears)}년`;
+        const diffYears = diffMonths / 12
+        return `${Math.round(diffYears)}년`
       }
     },
   },
-};
+}
 </script>
+
 <style scoped>
 .goal-card {
   background: #fff;

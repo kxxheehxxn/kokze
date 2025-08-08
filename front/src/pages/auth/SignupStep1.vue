@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, computed, watch, onMounted } from 'vue';
+import { reactive, ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { userAuthStore } from '@/stores/auth';
@@ -30,13 +30,23 @@ const userInfo = reactive({
   agreeSub2: false,
 });
 onMounted(() => {
-  // 오늘 날짜 (YYYY-MM-DD)
   today.value = new Date().toISOString().split('T')[0];
-  if (isKakao.value) {
-    const emailParts = authStore.userInfo.email.split('@');
-    userInfo.emailId = emailParts[0];
-    userInfo.emailDomain = emailParts[1];
+  if (authStore.userInfo.name) {
+    const emailParts = authStore.userInfo.email?.split('@') || [];
     userInfo.name = authStore.userInfo.name;
+    userInfo.gender = authStore.userInfo.sex || 'male';
+    userInfo.birth = authStore.userInfo.birthDate;
+    [userInfo.phone1, userInfo.phone2, userInfo.phone3] = authStore.userInfo.phoneNum?.split('-') || [];
+    userInfo.emailId = emailParts[0] || '';
+    userInfo.emailDomain = emailParts[1] || '';
+    userInfo.password = '';
+    userInfo.passwordConfirm = '';
+  }
+});
+onBeforeUnmount(() => {
+  if (cooldownTimeout) {
+    clearInterval(cooldownTimeout);
+    cooldownTimeout = null;
   }
 });
 const emailSent = ref(false);
@@ -45,28 +55,53 @@ const emailVerified = ref(false);
 const emailVerifiedError = ref('');
 const passwordError = ref('');
 const isPolicyModalOpen = ref(false);
+const isCooldown = ref(false);
+const cooldownTimer = ref(0);
+let cooldownTimeout = null;
 const sendEmailVerification = async () => {
   const fullEmail = `${userInfo.emailId}@${userInfo.emailDomain}`;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (emailVerified.value) {
+    alert('이미 이메일 인증이 완료되었습니다.');
+    return;
+  }
   if (!emailRegex.test(fullEmail)) {
     emailSentError.value = '이메일을 정확히 입력해주세요.';
     emailSent.value = false;
     return;
   }
+  if (isCooldown.value) {
+    alert('인증 버튼은 1분 후 다시 누를 수 있습니다.');
+    return;
+  }
+  userInfo.emailCode = '';
+  emailVerified.value = false;
+  isCooldown.value = true;
+  cooldownTimer.value = 60;
   try {
     const res = await axios.get(`/api/auth/signup/check/${fullEmail}`);
     if (res.data === true) {
       emailSentError.value = '이미 존재하는 이메일입니다.';
       emailSent.value = false;
+      isCooldown.value = false;
     } else {
       try {
         const success = await sendSignupVerificationCode(fullEmail);
         if (success) {
           emailSentError.value = '';
           emailSent.value = true;
+          cooldownTimeout = setInterval(() => {
+            cooldownTimer.value--;
+            if (cooldownTimer.value <= 0) {
+              clearInterval(cooldownTimeout);
+              isCooldown.value = false;
+              cooldownTimeout = null;
+            }
+          }, 1000);
         } else {
           emailSentError.value = '인증번호 발송에 실패했습니다.';
           emailSent.value = false;
+          isCooldown.value = false;
         }
       } catch (error) {
         emailSentError.value = '인증번호 발송에 실패했습니다.';
@@ -77,6 +112,7 @@ const sendEmailVerification = async () => {
     console.error('이메일 중복 확인 실패', err);
     emailSentError.value = '서버 오류가 발생했습니다.';
     emailSent.value = false;
+    isCooldown.value = false;
   }
 };
 const confirmEmailCode = async () => {
@@ -85,6 +121,10 @@ const confirmEmailCode = async () => {
     const success = await verifySignupCode(userInfo.emailCode, fullEmail);
     emailVerified.value = success;
     emailVerifiedError.value = success ? '' : '인증번호가 올바르지 않습니다.';
+    if (success) {
+      clearInterval(cooldownTimeout);
+      isCooldown.value = false;
+    }
   } catch (error) {
     console.error('인증번호 확인 실패:', error);
     emailVerified.value = false;
@@ -134,6 +174,21 @@ watch(
     userInfo.agreeSub2 = val;
   }
 );
+watch(
+  () => [userInfo.emailId, userInfo.emailDomain],
+  () => {
+    emailSent.value = false;
+    emailSentError.value = '';
+    emailVerified.value = false;
+    emailVerifiedError.value = '';
+    cooldownTimer.value = 0;
+    isCooldown.value = false;
+    if (cooldownTimeout) {
+      clearInterval(cooldownTimeout);
+      cooldownTimeout = null;
+    }
+  }
+);
 const openModal = () => {
   isPolicyModalOpen.value = true;
 };
@@ -169,14 +224,22 @@ const isFormValid = computed(() => {
 });
 const goNext = () => {
   if (!isFormValid.value) return;
-  authStore.setUserInfo('name', userInfo.name);
-  authStore.setUserInfo('sex', userInfo.gender);
-  authStore.setUserInfo('birthDate', userInfo.birth);
-  authStore.setUserInfo(
-    'phoneNum',
-    `${userInfo.phone1}-${userInfo.phone2}-${userInfo.phone3}`
-  );
-  authStore.setUserInfo('email', `${userInfo.emailId}@${userInfo.emailDomain}`);
+  authStore.setAllUserInfo({
+    name: userInfo.name,
+    sex: userInfo.gender,
+    birthDate: userInfo.birth,
+    phoneNum: `${userInfo.phone1}-${userInfo.phone2}-${userInfo.phone3}`,
+    email: `${userInfo.emailId}@${userInfo.emailDomain}`,
+    // 나머지 필요한 값도 넣을 수 있음
+  });
+  // authStore.setUserInfo('name', userInfo.name);
+  // authStore.setUserInfo('sex', userInfo.gender);
+  // authStore.setUserInfo('birthDate', userInfo.birth);
+  // authStore.setUserInfo(
+  //   'phoneNum',
+  //   `${userInfo.phone1}-${userInfo.phone2}-${userInfo.phone3}`
+  // );
+  // authStore.setUserInfo('email', `${userInfo.emailId}@${userInfo.emailDomain}`);
   if (!isKakao.value) {
     authStore.setUserInfo('password', userInfo.password);
   }
@@ -215,12 +278,12 @@ const goNext = () => {
         <div class="gender-group">
           <label>
             <input type="radio" value="male" v-model="userInfo.gender" />
-            남성</label
-          >
+            남성
+          </label>
           <label>
             <input type="radio" value="female" v-model="userInfo.gender" />
-            여성</label
-          >
+            여성
+          </label>
         </div>
       </div>
       <div class="form-group">
@@ -254,15 +317,16 @@ const goNext = () => {
             :class="{ 'readonly-input': isKakao }"
           >
             <option value="">선택</option>
-            <option value="example.com">example.com</option>
-            <option value="gmail.com">gmail.com</option>
             <option value="naver.com">naver.com</option>
             <option value="daum.net">daum.net</option>
+            <option value="hanmail.net">hanmail.net</option>
+            <option value="gmail.com">gmail.com</option>
+            <option value="nate.com">nate.com</option>
           </select>
           <button
             @click="sendEmailVerification"
-            :disabled="isKakao"
-            :class="{ 'readonly-button': isKakao }"
+            :disabled="isKakao || isCooldown"
+            :class="[{ 'cooldown': isCooldown, 'readonly-button': isKakao }]"
           >
             인증
           </button>
@@ -485,6 +549,11 @@ const goNext = () => {
   font-size: 13px;
   padding-left: 16px;
   list-style: disc;
+}
+.cooldown {
+  background-color: #d3d3d3 !important;
+  cursor: not-allowed !important;
+  color: #999 !important;
 }
 .agreement {
   display: flex;

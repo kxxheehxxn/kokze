@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
 import axios from 'axios';
@@ -68,6 +68,14 @@ const questions = [
     ],
   },
 ];
+onMounted(() => {
+  resetMbtiState();
+});
+function resetMbtiState() {
+  step.value = 0;
+  selectedList.value = [];
+  scores.value = { fast: 0, slow: 0, high: 0, low: 0 };
+}
 const mbtiResult = computed(() => {
   if (step.value < questions.length) return '';
   const isFast = scores.value.fast >= scores.value.slow;
@@ -102,9 +110,11 @@ function onPrev() {
     router.push('/signup/step2');
   } else {
     step.value--;
-    const selected = selectedList.value[step.value - 1];
-    const choice = questions[step.value - 1].choices[selected];
-    scores.value[choice.type] -= choice.score;
+    const selected = selectedList.value[step.value];
+    if (selected !== undefined) {
+      const choice = questions[step.value].choices[selected];
+      scores.value[choice.type] -= choice.score;
+    }
   }
 }
 const onSubmit = async () => {

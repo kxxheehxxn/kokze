@@ -12,13 +12,27 @@
         <div v-if="isLoading" class="loading-section">
           <p>퀴즈를 불러오는 중...</p>
         </div>
-        <div v-else-if="alreadySolved" class="already-solved-section">
-          <div class="solved-icon">✅</div>
-          <div class="solved-title">오늘의 퀴즈 완료!</div>
-          <div class="solved-message">
-            오늘은 이미 퀴즈를 풀었습니다.<br />
-            내일 다시 도전해보세요!
+        <div v-else-if="alreadySolved && solvedQuizData" class="already-solved-section">
+          <div class="solved-icon">{{ solvedQuizData.isCorrect ? '✅' : '❌' }}</div>
+          <div class="solved-title">{{ solvedQuizData.isCorrect ? '정답입니다!' : '아쉽게도 틀렸습니다' }}</div>
+
+          <!-- 문제 표시 -->
+          <div class="solved-question">
+            <h3>문제</h3>
+            <p>{{ solvedQuizData.question }}</p>
           </div>
+          <!-- 해설 표시 -->
+          <div class="solved-explanation">
+            <h4>💡 해설</h4>
+            <p>{{ solvedQuizData.explanation }}</p>
+          </div>
+
+          <div class="solved-message" v-if="solvedQuizData.isCorrect">
+            🎉 내일도 도전해보세요! 🎉
+          </div>   
+          <div class="solved-message" v-else="solvedQuizData.isCorrect">
+            😅 내일 다시 도전해보세요!
+          </div>   
         </div>
         <div v-else-if="errorMessage" class="error-section">
           <p>{{ errorMessage }}</p>
@@ -123,6 +137,7 @@ const currentQuiz = ref(null);
 const isLoading = ref(false);
 const errorMessage = ref('');
 const alreadySolved = ref(false); // 추가
+const solvedQuizData = ref(null) // 추가
 // 답 선택 함수
 const selectAnswer = (answer) => {
   selectedAnswer.value = answer;
@@ -134,6 +149,7 @@ const fetchQuiz = async () => {
   currentQuiz.value = null;
   selectedAnswer.value = null;
   alreadySolved.value = false; // 초기화
+  solvedQuizData.value = null; // 추가  
   if (!auth.userId) {
     errorMessage.value = '로그인이 필요합니다. (사용자 ID 없음)';
     isLoading.value = false;
@@ -142,12 +158,25 @@ const fetchQuiz = async () => {
   try {
     const quizData = await quizApi.getTodayQuiz(auth.userId);
     currentQuiz.value = quizData;
+    alreadySolved.value = false;
   } catch (error) {
-    // 이미 풀었다면 alreadySolved 상태로 표시
-    if (error.message.includes('오늘은 이미 퀴즈를 풀었습니다')) {
+    if (error.response && error.response.status === 409) {
       alreadySolved.value = true;
+      const responseData = error.response.data;
+      solvedQuizData.value = {
+        question: responseData.question,
+        explanation: responseData.explanation,
+        isCorrect: responseData.correct  // correct → isCorrect
+      };
+      
+      console.log('solvedQuizData 설정됨:', solvedQuizData.value);
     } else {
-      errorMessage.value = error.message;
+      // 다른 에러들
+      if (error.message && error.message.includes('오늘은 이미 퀴즈를 풀었습니다')) {
+        alreadySolved.value = true;
+      } else {
+        errorMessage.value = error.message || '퀴즈를 불러오는데 실패했습니다.';
+      }
     }
   } finally {
     isLoading.value = false;
@@ -165,7 +194,8 @@ watch(
       selectedAnswer.value = null;
       currentQuiz.value = null;
       errorMessage.value = '';
-      alreadySolved.value = false; // 추가
+      alreadySolved.value = false;
+      solvedQuizData.value = null;
       isLoading.value = false;
     }
   },
@@ -177,7 +207,8 @@ const closeModal = () => {
   selectedAnswer.value = null;
   currentQuiz.value = null;
   errorMessage.value = '';
-  alreadySolved.value = false; // 추가
+  alreadySolved.value = false;
+  solvedQuizData.value = null
   isLoading.value = false;
   emit('close');
 };
@@ -471,12 +502,11 @@ onUnmounted(() => {
 }
 /* 이미 풀었을 때 섹션 스타일 추가 */
 .already-solved-section {
-  padding: 48px 24px;
+  padding: 0 24px;
   text-align: center;
 }
 .solved-icon {
-  font-size: 64px;
-  margin-bottom: 30px;
+  font-size: 48px;
 }
 .solved-title {
   font-size: 24px;
@@ -488,9 +518,46 @@ onUnmounted(() => {
   font-size: 16px;
   line-height: 1.6;
   opacity: 0.8;
+  padding: 0 0 20px 0;
+}
+.solved-question {
+  margin: 24px 0;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  text-align: left;
+}
+.solved-question h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #666;
+}
+.solved-question p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+}
+.solved-explanation {
+  margin: 24px 0;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  text-align: left;
+}
+.solved-explanation h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #666;
+}
+.solved-explanation p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
 }
 /* 반응형 디자인 */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .modal-container {
     width: 95%;
     margin: 10px;

@@ -8,11 +8,8 @@ export const quizApi = {
       const response = await axios.get(`${API_BASE_URL}/today`, {
         params: { userId },
       });
-
-  
       return response.data;
     } catch (error) {
-      console.error('오늘의 퀴즈 조회 실패:', error);
 
       if (error.response) {
         const status = error.response.status;
@@ -21,7 +18,8 @@ export const quizApi = {
           case 400:
             throw new Error('잘못된 요청입니다. 사용자 정보를 확인해주세요.');
           case 409:
-            throw new Error('오늘은 이미 퀴즈를 풀었습니다. 내일 다시 도전해보세요!');
+            // 409 응답: 이미 푼 퀴즈 데이터 반환
+            throw error;
           case 500:
             throw new Error('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
           default:

@@ -74,79 +74,87 @@ const load = async (query) => {
 load(pageRequest);
 </script>
 <template>
-  <div class="custom-box-wrapper">
-    <div class="custom-box p-5">
-      <h4 class="fw-bold m-2">공지사항</h4>
-      <div class="d-flex justify-content-end mb-3">
-        <div class="search-container mt-3 text-end">
-          <input
-            type="text"
-            class="search-input"
-            v-model="searchKeyword"
-            placeholder="검색어를 입력하세요"
-            @keyup.enter="search"
-          />
-          <i class="search-icon fa-solid fa-magnifying-glass" @click="search" />
-        </div>
-      </div>
-      <!-- 공지사항 없을 때 메시지 -->
-      <div
-        v-if="!notices || notices.length === 0"
-        class="text-center text-muted py-5"
-      >
-        공지사항이 없습니다.
-      </div>
-      <!-- 공지사항 리스트 -->
-      <div v-else v-for="notice in notices" :key="notice.noticeId">
-        <div class="my-3 ms-2">
-          <router-link
-            class="ellipsis-title link-reset mt-4"
-            :to="{ name: 'noticeDetail', params: { no: notice.noticeId } }"
-          >
-            {{ notice.title }}
-          </router-link>
-          <div class="mt-3 date">
-            {{ moment(notice.createdAt).format('YYYY-MM-DD HH:mm') }}
+  <div class="container">
+    <div class="custom-box-wrapper">
+      <div class="custom-box p-5">
+        <h4 class="fw-bold m-2">공지사항</h4>
+        <div class="d-flex justify-content-end mb-3">
+          <div class="search-container mt-3 text-end">
+            <input
+              type="text"
+              class="search-input"
+              v-model="searchKeyword"
+              placeholder="검색어를 입력하세요"
+              @keyup.enter="search"
+            />
+            <i
+              class="search-icon fa-solid fa-magnifying-glass"
+              @click="search"
+            />
           </div>
         </div>
-        <hr />
-      </div>
-      <div>
-        <div class="flex-grow-1 text-center" v-if="totalCount > 0">
-          <vue-awesome-paginate
-            :total-items="totalCount"
-            :items-per-page="pageRequest.amount"
-            :max-pages-shown="5"
-            :show-ending-buttons="true"
-            v-model="pageRequest.page"
-            @click="handlePageChange"
-          >
-            <template #first-page-button>
-              <i class="fa-solid fa-angles-left" />
-            </template>
-            <template #prev-button>
-              <i class="fa-solid fa-angle-left" />
-            </template>
-            <template #next-button>
-              <i class="fa-solid fa-angle-right" />
-            </template>
-            <template #last-page-button>
-              <i class="fa-solid fa-angles-right" />
-            </template>
-          </vue-awesome-paginate>
+        <!-- 공지사항 없을 때 메시지 -->
+        <div
+          v-if="!notices || notices.length === 0"
+          class="text-center text-muted py-5"
+        >
+          공지사항이 없습니다.
         </div>
-        <div class="d-flex justify-content-end" v-if="isAdmin">
-          <router-link
-            :to="{ name: 'noticeCreate', query: route.query }"
-            class="btn d-flex align-items-center justify-content-center"
-            >공지 작성
-          </router-link>
+        <!-- 공지사항 리스트 -->
+        <div v-else v-for="notice in notices" :key="notice.noticeId">
+          <div class="my-3 ms-2">
+            <router-link
+              class="ellipsis-title link-reset mt-4"
+              :to="{ name: 'noticeDetail', params: { no: notice.noticeId } }"
+            >
+              {{ notice.title }}
+            </router-link>
+            <div class="mt-3 date">
+              {{ moment(notice.createdAt).format('YYYY-MM-DD HH:mm') }}
+            </div>
+          </div>
+          <hr />
+        </div>
+        <div>
+          <div class="flex-grow-1 text-center" v-if="totalCount > 0">
+            <vue-awesome-paginate
+              :total-items="totalCount"
+              :items-per-page="pageRequest.amount"
+              :max-pages-shown="5"
+              :show-ending-buttons="true"
+              v-model="pageRequest.page"
+              @click="handlePageChange"
+            >
+              <template #first-page-button>
+                <i class="fa-solid fa-angles-left" />
+              </template>
+              <template #prev-button>
+                <i class="fa-solid fa-angle-left" />
+              </template>
+              <template #next-button>
+                <i class="fa-solid fa-angle-right" />
+              </template>
+              <template #last-page-button>
+                <i class="fa-solid fa-angles-right" />
+              </template>
+            </vue-awesome-paginate>
+          </div>
+          <div class="d-flex justify-content-end" v-if="isAdmin">
+            <router-link
+              :to="{ name: 'noticeCreate', query: route.query }"
+              class="btn d-flex align-items-center justify-content-center"
+              >공지 작성
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 th {
   text-align: center;
 }

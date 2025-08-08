@@ -127,7 +127,7 @@ function onCancel() {
   background-color: #fff;
   font-size: 28px;
   font-weight: bold;
-  margin: 0 auto 32px auto;
+  margin: 0 auto 2px auto;
   text-align: center;
   width: 100%;
 }

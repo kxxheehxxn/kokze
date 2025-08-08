@@ -30,13 +30,13 @@ const router = createRouter({
       component: () => import('@/pages/term/TermsPage.vue'),
     },
     {
-      path: '/userpage',
+      path: '/user',
       name: 'UserPage',
       component: () => import('@/pages/UserPage.vue'),
       beforeEnter: isAuthenticated,
     },
     {
-      path: '/points',
+      path: '/user/point',
       name: 'PointPage',
       component: () => import('@/pages/PointPage.vue'),
       beforeEnter: isAuthenticated,

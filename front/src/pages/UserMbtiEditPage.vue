@@ -192,22 +192,20 @@ onMounted(async () => {
 .choice {
   background: #fff;
   border-radius: 20px;
-  box-shadow: 0 2px 8px 0 #e5e7eb;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   padding: 32px 36px;
   font-size: 18px;
   font-weight: 500;
   text-align: center;
   cursor: pointer;
-  transition:
-    box-shadow 0.2s,
-    border 0.2s;
   border: 2px solid transparent;
-  min-width: 260px;
+  min-width: 270px;
   max-width: 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  transition: 0.2s;
 }
 .choice.selected {
   border: 2px solid #2573ee;

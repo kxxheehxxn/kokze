@@ -26,8 +26,8 @@ const handleLogin = async () => {
     await auth.login(user);
     router.push('/');
   } catch (e) {
-            console.error('Login error:', e);
-    alert(e.response?.data || '로그인에 실패했습니다. 다시 시도해주세요.');
+    console.error('Login error:', e);
+    alert('아이디 또는 비밀번호가 일치하지 않습니다.');
   }
 };
 const handleKakaoLogin = () => {
@@ -72,6 +72,7 @@ const handleSignup = () => {
           placeholder="비밀번호를 입력하세요"
           autocomplete="current-password"
           aria-required="true"
+          @keyup.enter="handleLogin"
         />
       </div>
       <div class="forgot-password">

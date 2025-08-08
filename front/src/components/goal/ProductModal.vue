@@ -4,6 +4,7 @@
       <h3>📂 금융상품 연동</h3>
       <label>연동할 계좌 선택</label>
       <select v-model="selectedAccountId">
+        <option disabled value="">계좌를 선택해주세요</option>
         <option
           v-for="account in accounts"
           :key="account.account_id"
@@ -33,7 +34,7 @@ export default {
   },
   data() {
     return {
-      selectedAccountId: null,
+      selectedAccountId: '',
       selectedBank: null,
     }
   },

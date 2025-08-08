@@ -247,7 +247,7 @@ export default {
   height: 20px;
   background: #eee;
   border-radius: 10px;
-  overflow: visible;
+  overflow: hidden;
 }
 .progress {
   height: 100%;

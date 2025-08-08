@@ -95,37 +95,98 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <div class="custom-box-wrapper">
-    <div class="custom-box p-5">
-      <h4 class="fw-bold m-2">문의사항</h4>
-      <div class="d-flex justify-content-end mb-3">
-        <div class="search-container mt-3 text-end">
-          <input
-            type="text"
-            class="search-input"
-            v-model="searchKeyword"
-            @keyup.enter="search"
-            placeholder="검색어를 입력하세요"
-            aria-label="문의사항 검색"
-          />
-          <i class="search-icon fa-solid fa-magnifying-glass" @click="search" />
+  <div class="container">
+    <div class="custom-box-wrapper">
+      <div class="custom-box p-5">
+        <h4 class="fw-bold m-2">문의사항</h4>
+        <div class="d-flex justify-content-end mb-3">
+          <div class="search-container mt-3 text-end">
+            <input
+              type="text"
+              class="search-input"
+              v-model="searchKeyword"
+              @keyup.enter="search"
+              placeholder="검색어를 입력하세요"
+              aria-label="문의사항 검색"
+            />
+            <i
+              class="search-icon fa-solid fa-magnifying-glass"
+              @click="search"
+            />
+          </div>
         </div>
-      </div>
-      <!-- 데스크탑: 테이블 / 모바일: 카드 -->
-      <div class="inquiries-wrapper">
-        <table class="table inquiry-table">
-          <thead>
-            <tr>
-              <th style="width: 70px">No</th>
-              <th>제목</th>
-              <th style="width: 100px">작성자</th>
-              <th style="width: 120px">작성일</th>
-              <th style="width: 100px">조회수</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(inquiry, index) in combinedInquiries"
+        <!-- 데스크탑: 테이블 / 모바일: 카드 -->
+        <div class="inquiries-wrapper">
+          <table class="table inquiry-table">
+            <thead>
+              <tr>
+                <th style="width: 70px">No</th>
+                <th>제목</th>
+                <th style="width: 100px">작성자</th>
+                <th style="width: 120px">작성일</th>
+                <th style="width: 100px">조회수</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(inquiry, index) in combinedInquiries"
+                :key="inquiry.infoId"
+                :class="{
+                  'faq-row': faqInquiries.some(
+                    (faq) => faq.infoId === inquiry.infoId
+                  ),
+                }"
+              >
+                <td class="text-center">
+                  <template
+                    v-if="
+                      faqInquiries.some((faq) => faq.infoId === inquiry.infoId)
+                    "
+                  >
+                    HOT
+                  </template>
+                  <template v-else>
+                    {{
+                      (page.totalCount || 0) -
+                      ((pageRequest.page - 1) * pageRequest.amount +
+                        getOriginalIndex(inquiry))
+                    }}
+                  </template>
+                </td>
+                <td>
+                  <router-link
+                    class="ellipsis-title link-reset ms-5"
+                    :to="{
+                      name: 'inquiryDetail',
+                      params: { no: inquiry.infoId },
+                    }"
+                    @click.prevent="goToInquiryDetail(inquiry.infoId)"
+                  >
+                    <span v-if="inquiry.isAnswered">[답변완료] </span
+                    >{{ inquiry.title }}
+                  </router-link>
+                </td>
+                <td class="grayfont ellipsis-writer">
+                  {{ inquiry.userName }}
+                </td>
+                <td class="grayfont">
+                  {{ moment(inquiry.createdAt).format('YYYY-MM-DD') }}
+                </td>
+                <td class="grayfont text-center">
+                  {{ inquiry.viewCount }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- 모바일/좁은 화면용 카드 레이아웃 -->
+          <div
+            class="card-list"
+            v-if="combinedInquiries.length > 0"
+            aria-label="모바일용 문의사항 카드 리스트"
+          >
+            <div
+              class="inquiry-card"
+              v-for="inquiry in combinedInquiries"
               :key="inquiry.infoId"
               :class="{
                 'faq-row': faqInquiries.some(
@@ -133,144 +194,94 @@ onMounted(async () => {
                 ),
               }"
             >
-              <td class="text-center">
-                <template
+              <div class="card-header">
+                <div
                   v-if="
                     faqInquiries.some((faq) => faq.infoId === inquiry.infoId)
                   "
+                  class="badge-no"
                 >
                   HOT
-                </template>
-                <template v-else>
-                  {{
-                    (page.totalCount || 0) -
-                    ((pageRequest.page - 1) * pageRequest.amount +
-                      getOriginalIndex(inquiry))
-                  }}
-                </template>
-              </td>
-              <td>
-                <router-link
-                  class="ellipsis-title link-reset ms-5"
-                  :to="{
-                    name: 'inquiryDetail',
-                    params: { no: inquiry.infoId },
-                  }"
-                  @click.prevent="goToInquiryDetail(inquiry.infoId)"
-                >
-                  <span v-if="inquiry.isAnswered">[답변완료] </span
-                  >{{ inquiry.title }}
-                </router-link>
-              </td>
-              <td class="grayfont ellipsis-writer">
-                {{ inquiry.userName }}
-              </td>
-              <td class="grayfont">
-                {{ moment(inquiry.createdAt).format('YYYY-MM-DD') }}
-              </td>
-              <td class="grayfont text-center">
-                {{ inquiry.viewCount }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <!-- 모바일/좁은 화면용 카드 레이아웃 -->
-        <div
-          class="card-list"
-          v-if="combinedInquiries.length > 0"
-          aria-label="모바일용 문의사항 카드 리스트"
-        >
-          <div
-            class="inquiry-card"
-            v-for="inquiry in combinedInquiries"
-            :key="inquiry.infoId"
-            :class="{
-              'faq-row': faqInquiries.some(
-                (faq) => faq.infoId === inquiry.infoId
-              ),
-            }"
-          >
-            <div class="card-header">
-              <div
-                v-if="faqInquiries.some((faq) => faq.infoId === inquiry.infoId)"
-                class="badge-no"
-              >
-                HOT
+                </div>
+                <div class="title-wrapper">
+                  <router-link
+                    class="ellipsis-title link-reset"
+                    :to="{
+                      name: 'inquiryDetail',
+                      params: { no: inquiry.infoId },
+                    }"
+                    @click.prevent="goToInquiryDetail(inquiry.infoId)"
+                  >
+                    <span v-if="inquiry.isAnswered">[답변완료] </span
+                    >{{ inquiry.title }}
+                  </router-link>
+                </div>
               </div>
-              <div class="title-wrapper">
-                <router-link
-                  class="ellipsis-title link-reset"
-                  :to="{
-                    name: 'inquiryDetail',
-                    params: { no: inquiry.infoId },
-                  }"
-                  @click.prevent="goToInquiryDetail(inquiry.infoId)"
-                >
-                  <span v-if="inquiry.isAnswered">[답변완료] </span
-                  >{{ inquiry.title }}
-                </router-link>
-              </div>
-            </div>
-            <div class="card-meta">
-              <div class="meta-item">
-                <span class="meta-label">작성자:</span> {{ inquiry.userName }}
-              </div>
-              <div class="meta-item">
-                <span class="meta-label">작성일:</span>
-                {{ moment(inquiry.createdAt).format('YYYY-MM-DD') }}
-              </div>
-              <div class="meta-item">
-                <span class="meta-label">조회수:</span> {{ inquiry.viewCount }}
+              <div class="card-meta">
+                <div class="meta-item">
+                  <span class="meta-label">작성자:</span> {{ inquiry.userName }}
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">작성일:</span>
+                  {{ moment(inquiry.createdAt).format('YYYY-MM-DD') }}
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">조회수:</span>
+                  {{ inquiry.viewCount }}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div
-          v-if="combinedInquiries.length === 0"
-          class="mobile-empty text-center"
-        >
-          <div class="text-muted py-4">게시글이 없습니다.</div>
-        </div>
-      </div>
-      <div>
-        <div
-          class="flex-grow-1 text-center mt-2"
-          v-if="combinedInquiries.length > 0"
-        >
-          <vue-awesome-paginate
-            :total-items="page.totalCount || 0"
-            :items-per-page="pageRequest.amount"
-            :max-pages-shown="5"
-            :show-ending-buttons="true"
-            v-model="pageRequest.page"
-            @click="handlePageChange"
+          <div
+            v-if="combinedInquiries.length === 0"
+            class="mobile-empty text-center"
           >
-            <template #first-page-button>
-              <i class="fa-solid fa-angles-left" />
-            </template>
-            <template #prev-button>
-              <i class="fa-solid fa-angle-left" />
-            </template>
-            <template #next-button>
-              <i class="fa-solid fa-angle-right" />
-            </template>
-            <template #last-page-button>
-              <i class="fa-solid fa-angles-right" />
-            </template>
-          </vue-awesome-paginate>
+            <div class="text-muted py-4">게시글이 없습니다.</div>
+          </div>
         </div>
-        <div class="text-end">
-          <router-link
-            :to="{ name: 'inquiryCreate', query: route.query }"
-            class="btn fw-bold"
-            >문의 작성
-          </router-link>
+        <div>
+          <div
+            class="flex-grow-1 text-center mt-2"
+            v-if="combinedInquiries.length > 0"
+          >
+            <vue-awesome-paginate
+              :total-items="page.totalCount || 0"
+              :items-per-page="pageRequest.amount"
+              :max-pages-shown="5"
+              :show-ending-buttons="true"
+              v-model="pageRequest.page"
+              @click="handlePageChange"
+            >
+              <template #first-page-button>
+                <i class="fa-solid fa-angles-left" />
+              </template>
+              <template #prev-button>
+                <i class="fa-solid fa-angle-left" />
+              </template>
+              <template #next-button>
+                <i class="fa-solid fa-angle-right" />
+              </template>
+              <template #last-page-button>
+                <i class="fa-solid fa-angles-right" />
+              </template>
+            </vue-awesome-paginate>
+          </div>
+          <div class="d-flex justify-content-end">
+            <router-link
+              :to="{ name: 'inquiryCreate', query: route.query }"
+              class="btn d-flex align-items-center justify-content-center"
+              >문의 작성
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 /* 기존 스타일 유지 */
 th {
   text-align: center;
@@ -291,7 +302,7 @@ td {
 }
 .custom-box {
   width: 920px;
-  min-height: 530px;
+  min-height: 540px;
   background-color: #fff;
   border-radius: 28px;
   padding: 2rem;
@@ -308,6 +319,7 @@ td {
   color: white;
   border-radius: 20px;
   text-align: center;
+  font-weight: bold;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 .ellipsis-title {

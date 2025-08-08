@@ -120,13 +120,14 @@ onMounted(() => {
 <style scoped>
 .point-page {
   min-height: 100vh;
-  background: #f6f6f6;
+  background: #fbfbfb;
   padding: 20px;
 }
 .point-header {
   background: #ffffff;
   border-radius: 12px;
   padding: 24px;
+  padding-left: 38px;
   margin-bottom: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

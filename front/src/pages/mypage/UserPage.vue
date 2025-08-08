@@ -1,27 +1,29 @@
 <template>
-  <div class="user-page">
-    <div v-if="loading" class="loading">
-      <div class="loading-spinner"></div>
-      <p>사용자 정보를 불러오는 중...</p>
-    </div>
-    <div v-else-if="error" class="error">
-      <p>{{ error }}</p>
-      <button @click="loadUserData" class="retry-btn">다시 시도</button>
-    </div>
-    <div v-else class="user-card">
-      <div class="user-mbti">{{ user.mbti || '미입력' }}</div>
-      <div class="user-name">
-        {{ user.name || '사용자' }} 님
-        <span class="user-point" @click="goTo('/points')"
-          >{{ point.toLocaleString() }} P</span
-        >
+  <div class="container">
+    <div class="user-page">
+      <div v-if="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <p>사용자 정보를 불러오는 중...</p>
       </div>
-      <ul class="user-menu">
-        <li @click="goTo('/user/asset')">자산 정보 수정</li>
-        <li @click="goTo('/user/mbti')">나의 금융 MBTI 수정</li>
-        <li @click="goTo('/user/password')">비밀번호 수정</li>
-        <li @click="goTo('/user/withdraw')">회원 탈퇴</li>
-      </ul>
+      <div v-else-if="error" class="error">
+        <p>{{ error }}</p>
+        <button @click="loadUserData" class="retry-btn">다시 시도</button>
+      </div>
+      <div v-else class="user-card">
+        <div class="user-mbti">{{ user.mbti || '미입력' }}</div>
+        <div class="user-name">
+          {{ user.name || '사용자' }} 님
+          <span class="user-point" @click="goTo('/user/point')"
+            >{{ point.toLocaleString() }} P</span
+          >
+        </div>
+        <ul class="user-menu">
+          <li @click="goTo('/user/asset')">자산 정보 수정</li>
+          <li @click="goTo('/user/mbti')">나의 금융 MBTI 수정</li>
+          <li @click="goTo('/user/password')">비밀번호 수정</li>
+          <li @click="goTo('/user/withdraw')">회원 탈퇴</li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -63,6 +65,9 @@ onMounted(() => {
 });
 </script>
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .user-page {
   display: flex;
   justify-content: center;

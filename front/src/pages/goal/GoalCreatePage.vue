@@ -1,20 +1,15 @@
 <template>
   <div class="container">
-    <div class="goal-create-page">
-      <div class="goal-create-card">
-        <h2 class="title">목표 추가하기</h2>
-        <hr />
-        <div class="input-form">
-          <!-- 목표 이름 -->
-          <div class="form-group">
-            <label>목표 이름</label>
-            <input
-              type="text"
-              v-model="goalName"
-              placeholder="예: 내 집 마련"
-              :maxlength="MAX_NAME_LENGTH"
-            />
-          </div>
+  <div class="goal-create-page">
+    <div class="goal-create-card">
+      <h2 class="title">목표 추가하기</h2>
+      <hr />
+      <div class="input-form">
+        <!-- 목표 이름 -->
+        <div class="form-group">
+          <label>목표 이름</label>
+          <input type="text" v-model="goalName" placeholder="예: 내 집 마련" />
+        </div>
           <!-- 목표 기간 -->
           <div class="form-group">
             <label>목표 기간</label>
@@ -54,7 +49,7 @@
             <div class="product-card" v-if="selectedAccount">
               <span class="product-icon">💳</span>
               <div class="product-text">
-                {{ selectedAccount.bank_name }} -
+                {{ selectedAccount.bank_name }} :
                 {{ selectedAccount.account_num }}
               </div>
               <button class="remove-btn" @click="selectedAccount = null">
@@ -68,8 +63,8 @@
           <!-- 버튼 -->
           <div class="text-center">
             <button class="btn cancel-btn" @click="onCancel">취소하기</button>
-            <button class="btn submit-btn ms-4" @click="onSubmit">
-              목표 추가
+            <button class="btn submit-btn ms-4" :disabled="loading" @click="onSubmit">
+              {{ loading ? '처리 중...' : '목표 추가' }}
             </button>
           </div>
         </div>
@@ -82,20 +77,21 @@
       </div>
     </div>
   </div>
+
 </template>
 <script>
 import {
   getAccountsByUserId,
   createGoal,
   linkAccountToGoal,
-} from '@/api/goalApi';
-import ProductModal from '@/components/goal/ProductModal.vue';
-import { userAuthStore } from '@/stores/auth';
+  deleteGoalById, // 🔁 롤백용
+} from '@/api/goalApi'
+import ProductModal from '@/components/goal/ProductModal.vue'
+import { userAuthStore } from '@/stores/auth'
+
 export default {
   name: 'GoalCreatePage',
-  components: {
-    ProductModal,
-  },
+  components: { ProductModal },
   data() {
     return {
       goalName: '',
@@ -105,8 +101,9 @@ export default {
       depositDate: 1,
       showProductModal: false,
       selectedAccount: null,
-      accounts: [], // ✅ 서버에서 불러올 수도 있음
+      accounts: [],
       MAX_NAME_LENGTH: 255,
+      loading: false,
     };
   },
   computed: {
@@ -139,11 +136,9 @@ export default {
       this.$router.back();
     },
     toDateInputFormat(dateStr) {
-      if (typeof dateStr === 'string' && dateStr.includes('-')) {
-        return dateStr;
-      }
-      const date = new Date(dateStr);
-      return date.toISOString().split('T')[0]; // yyyy-MM-dd
+      if (typeof dateStr === 'string' && dateStr.includes('-')) return dateStr
+      const date = new Date(dateStr)
+      return date.toISOString().split('T')[0] // yyyy-MM-dd
     },
     onInputChange(e) {
       this.targetAmount = e.target.value.replace(/\D/g, '');
@@ -164,46 +159,83 @@ export default {
       if (rest > 0) result += rest.toLocaleString();
       return result + '원';
     },
+
+    // 생성 실패 -> "기간에 비해 금액이 많습니다."
+    // 연동 실패 -> 롤백 + "이미 연동되어있는 계좌입니다."
     async onSubmit() {
-      const auth = userAuthStore();
-      const userId = auth.state.user.userId;
-      const token = auth.getToken();
-      if (
-        !this.goalName ||
-        !this.startDate ||
-        !this.endDate ||
-        !this.targetAmount
-      ) {
-        alert('모든 필드를 입력해주세요.');
-        return;
+      if (this.loading) return
+      this.loading = true
+
+      const auth = userAuthStore()
+      const userId = auth.state.user.userId
+      const token = auth.getToken()
+
+      // 필수값 검증
+      if (!this.goalName || !this.startDate || !this.endDate || !this.targetAmount) {
+        alert('모든 필드를 입력해주세요.')
+        this.loading = false
+        return
       }
-      const requestBody = {
+
+      // (가능하면) 선제 차단: 응답에 is_linked/goal_id가 있으면 즉시 막기
+      if (this.selectedAccount && (this.selectedAccount.is_linked || this.selectedAccount.goal_id)) {
+        alert('이미 연동되어있는 계좌입니다.')
+        this.loading = false
+        return
+      }
+
+      const body = {
         goal_name: this.goalName,
-        target_amount: this.targetAmount,
+        target_amount: this.parsedAmount, // 숫자 보장
         save_amount: 0,
         start_date: this.startDate,
         end_date: this.endDate,
         deposit_date: this.depositDate,
-      };
-      try {
-        const res = await createGoal(userId, requestBody, token);
-        const goalId = res.data.goal_id;
-        if (this.selectedAccount) {
-          await linkAccountToGoal(
-            goalId,
-            this.selectedAccount.account_id,
-            token
-          );
-          alert('목표와 계좌가 성공적으로 연동되었습니다!');
-        } else {
-          alert('목표가 성공적으로 등록되었습니다!');
-        }
-        this.$router.push('/goals');
-      } catch (error) {
-        console.error('❌ 등록 실패:', error);
-        alert('기간에 비해 금액이 너무 많습니다.');
       }
+
+      let goalId = null
+
+      // 1) 목표 생성
+      try {
+        const res = await createGoal(userId, body, token)
+        goalId = res.data.goal_id
+      } catch (err) {
+        console.error('[createGoal:error]', err?.response?.status, err?.response?.data)
+        // 백이 구분 못 줘도: 생성 실패는 고정 문구
+        alert('기간에 비해 금액이 너무 많습니다.')
+        this.loading = false
+        return
+      }
+
+      // 2) 계좌 연동(선택)
+      if (this.selectedAccount) {
+        try {
+          await linkAccountToGoal(goalId, this.selectedAccount.account_id, token)
+          alert('목표와 계좌가 성공적으로 연동되었습니다!')
+          this.$router.push('/goals')
+          this.loading = false
+          return
+        } catch (err) {
+          console.error('[linkAccountToGoal:error]', err?.response?.status, err?.response?.data)
+          // 연동 실패 → 생성 롤백
+          try {
+            await deleteGoalById(goalId, token)
+          } catch (rbErr) {
+            console.error('[deleteGoalById:rollback-fail]', rbErr?.response?.status, rbErr?.response?.data)
+          }
+          // 백이 코드 못 줘도: 연동 단계 실패는 고정 문구
+          alert('이미 연동되어있는 계좌입니다.')
+          this.loading = false
+          return
+        }
+      }
+
+      // 3) 연동 없이 성공
+      alert('목표가 성공적으로 등록되었습니다!')
+      this.$router.push('/goals')
+      this.loading = false
     },
+
     async fetchAccounts() {
       const auth = userAuthStore();
       const userId = auth.state.user.userId;
@@ -213,18 +245,25 @@ export default {
         this.accounts = res.data;
         this.showProductModal = true;
       } catch (err) {
-        alert('계좌를 불러오지 못했습니다.');
+        console.error('[getAccountsByUserId:error]', err)
+        alert('계좌를 불러오지 못했습니다.')
       }
     },
+
     handleProductConnect(accountId) {
-      this.selectedAccount = this.accounts.find(
-        (a) => a.account_id === accountId
-      );
-      this.showProductModal = false;
+      const acc = this.accounts.find(a => a.account_id === accountId)
+      // 응답에 is_linked/goal_id 있으면 선택 단계에서도 차단
+      if (acc?.is_linked || acc?.goal_id) {
+        alert('이미 연동되어있는 계좌입니다.')
+        return
+      }
+      this.selectedAccount = acc
+      this.showProductModal = false
     },
   },
 };
 </script>
+
 <style scoped>
 .container {
   background-color: #fbfbfb;

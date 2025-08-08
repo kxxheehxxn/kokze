@@ -62,7 +62,6 @@ export default {
   padding: 2rem 1rem;
   text-align: center;
   color: #007bff;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;

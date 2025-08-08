@@ -1,9 +1,16 @@
 <script setup>
-import { reactive, computed } from 'vue';
+import { reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
 const router = useRouter();
 const authStore = userAuthStore();
+onMounted(() => {
+  const income = authStore.userInfo.salary;
+  const expense = authStore.userInfo.payAmount;
+
+  if (income) assetInfo.monthlyIncomeRaw = String(income);
+  if (expense) assetInfo.monthlyExpenseRaw = String(expense);
+});
 const assetInfo = reactive({
   monthlyIncomeRaw: '',
   monthlyExpenseRaw: '',
@@ -54,6 +61,13 @@ const resetField = (type) => {
 const isFormValid = computed(
   () => assetInfo.monthlyIncomeRaw !== '' && assetInfo.monthlyExpenseRaw !== ''
 );
+const goBack = () => {
+  const income = Number(assetInfo.monthlyIncomeRaw);
+  const expense = Number(assetInfo.monthlyExpenseRaw);
+  authStore.setUserInfo('salary', income);
+  authStore.setUserInfo('payAmount', expense);
+  router.push('/signup/step1');
+};
 const goNext = () => {
   if (!isFormValid.value) return;
   const income = Number(assetInfo.monthlyIncomeRaw);
@@ -120,7 +134,7 @@ const goNext = () => {
         <div class="visual-display">{{ koreanExpense }}</div>
       </div>
       <div class="button-group">
-        <button class="cancel-button" @click="router.push('/signup/step1')">
+        <button class="cancel-button" @click="goBack">
           뒤로가기
         </button>
         <button :disabled="!isFormValid" class="next-button" @click="goNext">

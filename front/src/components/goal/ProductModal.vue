@@ -36,21 +36,21 @@ export default {
     return {
       selectedAccountId: '',
       selectedBank: null,
-    }
+    };
   },
   methods: {
     onBankSelected(bank) {
-      this.selectedBank = bank
+      this.selectedBank = bank;
     },
     onConnect() {
       if (!this.selectedAccountId) {
-        alert('계좌를 선택하세요!')
-        return
+        alert('계좌를 선택하세요!');
+        return;
       }
-      this.$emit('connect', this.selectedAccountId)
+      this.$emit('connect', this.selectedAccountId);
     },
   },
-}
+};
 </script>
 <style scoped>
 .modal-overlay {

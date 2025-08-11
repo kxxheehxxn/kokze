@@ -4,6 +4,7 @@ import api from '@/api/inquiryApi';
 import { ref, computed } from 'vue';
 import moment from 'moment';
 import { userAuthStore } from '@/stores/auth';
+import BaseModal from '@/components/BaseModal.vue';
 const isLoading = ref(false);
 const MAX_CONTENT_LENGTH = 1000;
 const auth = userAuthStore();
@@ -193,6 +194,11 @@ load();
       </div>
     </div>
   </div>
+  <BaseModal
+    :visible="modalVisible"
+    :message="modalMessage"
+    :buttons="modalButtons"
+  />
 </template>
 <style scoped>
 .container {

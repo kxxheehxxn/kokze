@@ -3,11 +3,26 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
 import axios from 'axios';
+import BaseModal from '@/components/BaseModal.vue';
+
 const router = useRouter();
 const step = ref(0);
 const selectedList = ref([]);
 const scores = ref({ fast: 0, slow: 0, high: 0, low: 0 });
 const authStore = userAuthStore();
+// 모달 상태
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
+
+function showModal(message, buttons) {
+  modalMessage.value = message;
+  modalButtons.value = buttons;
+  modalVisible.value = true;
+}
+function hideModal() {
+  modalVisible.value = false;
+}
 const questions = [
   {
     question: '월급을 받았을 때 나는?',
@@ -144,9 +159,16 @@ const onSubmit = async () => {
       : 'http://localhost:8080/api/auth/signup';
     const response = await axios.post(apiUrl, authStore.userInfo);
     if (response.status === 200) {
-      alert('회원가입이 완료되었습니다!');
       authStore.resetUserInfo();
-      router.push('/auth/login');
+      showModal('회원가입이 완료되었습니다!', [
+        {
+          text: '확인',
+          onClick: () => {
+            hideModal();
+            router.push('/auth/login');
+          },
+        },
+      ]);
     } else {
       alert('회원가입 실패: 서버 응답 코드 ' + response.status);
     }
@@ -210,6 +232,11 @@ const onSubmit = async () => {
       </template>
     </div>
   </div>
+  <BaseModal
+    :visible="modalVisible"
+    :message="modalMessage"
+    :buttons="modalButtons"
+  />
 </template>
 <style scoped>
 .container {

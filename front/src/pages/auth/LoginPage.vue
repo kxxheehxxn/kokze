@@ -3,6 +3,17 @@ import { reactive, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
 import kakaoLogin from '@/assets/images/kakao_logo.PNG';
+import BaseModal from '@/components/BaseModal.vue';
+// 모달 상태
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
+
+function showModal(message, buttons) {
+  modalMessage.value = message;
+  modalButtons.value = buttons;
+  modalVisible.value = true;
+}
 const router = useRouter();
 const auth = userAuthStore();
 const user = reactive({
@@ -15,11 +26,25 @@ const disableSubmit = computed(
 );
 const handleLogin = async () => {
   if (!user.email.trim()) {
-    alert('이메일을 입력해주세요.');
+    showModal('이메일을 입력해주세요.', [
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+        },
+      },
+    ]);
     return;
   }
   if (!user.password.trim()) {
-    alert('비밀번호를 입력해주세요.');
+    showModal('비밀번호를 입력해주세요.', [
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+        },
+      },
+    ]);
     return;
   }
   try {
@@ -27,7 +52,14 @@ const handleLogin = async () => {
     router.push('/');
   } catch (e) {
     console.error('Login error:', e);
-    alert('아이디 또는 비밀번호가 일치하지 않습니다.');
+    showModal('아이디 또는 비밀번호가 일치하지 않습니다.', [
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+        },
+      },
+    ]);
   }
 };
 const handleKakaoLogin = () => {
@@ -105,6 +137,11 @@ const handleSignup = () => {
       </p>
     </div>
   </div>
+  <BaseModal
+    :visible="modalVisible"
+    :message="modalMessage"
+    :buttons="modalButtons"
+  />
 </template>
 <style>
 :root {

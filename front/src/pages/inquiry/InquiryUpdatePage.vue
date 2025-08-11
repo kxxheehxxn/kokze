@@ -129,7 +129,7 @@ onMounted(() => {
                 class="btn fw-bold create ms-3"
                 :disabled="disableSubmit"
               >
-                확인
+                수정
               </button>
             </div>
           </form>

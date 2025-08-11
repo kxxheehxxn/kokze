@@ -43,13 +43,19 @@
       </div>
     </div>
   </div>
+  <BaseModal
+    :visible="modalVisible"
+    :message="modalMessage"
+    :buttons="modalButtons"
+  />
 </template>
 <script>
 import { fetchPastGoals, deleteGoalById } from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth';
-
+import BaseModal from '@/components/BaseModal.vue';
 export default {
   name: 'PastGoalSidebar',
+  components: { BaseModal },
   data() {
     const auth = userAuthStore();
 
@@ -57,6 +63,10 @@ export default {
       pastGoals: [],
       userName: auth.state.user.userName || '김콕재',
       userId: auth.state.user.userId,
+      // 모달 상태
+      modalVisible: false,
+      modalMessage: '',
+      modalButtons: [],
     };
   },
   methods: {
@@ -68,19 +78,36 @@ export default {
         console.error('지난 목표 조회 실패:', e);
       }
     },
+    // 모달 보여주는 헬퍼
+    showModal(message, buttons) {
+      this.modalMessage = message;
+      this.modalButtons = buttons;
+      this.modalVisible = true;
+    },
     async handleDeleteGoal(goalId) {
-      const confirmDelete = confirm('정말로 이 목표를 삭제하시겠습니까?');
-      if (!confirmDelete) return;
-      const auth = userAuthStore();
-      const token = auth.getToken();
-      try {
-        await deleteGoalById(goalId, token); // ✅ 넘겨받은 goalId 사용
-        alert('목표가 삭제되었습니다.');
-        this.loadPastGoals(); // 삭제 후 새로고침
-      } catch (error) {
-        console.error('Failed to delete goal:', error);
-        alert('삭제 중 오류가 발생했습니다.');
-      }
+      this.showModal('정말로 이 목표를 삭제하시겠습니까?', [
+        { text: '취소', onClick: () => (this.modalVisible = false) },
+        {
+          text: '삭제',
+          onClick: async () => {
+            this.modalVisible = false;
+            const auth = userAuthStore();
+            const token = auth.getToken();
+            try {
+              await deleteGoalById(goalId, token);
+              this.showModal('목표가 삭제되었습니다.', [
+                { text: '확인', onClick: () => (this.modalVisible = false) },
+              ]);
+              this.loadPastGoals();
+            } catch (error) {
+              console.error('Failed to delete goal:', error);
+              this.showModal('삭제 중 오류가 발생했습니다.', [
+                { text: '확인', onClick: () => (this.modalVisible = false) },
+              ]);
+            }
+          },
+        },
+      ]);
     },
 
     formatDate(arr) {

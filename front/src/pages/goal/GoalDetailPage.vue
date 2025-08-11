@@ -127,40 +127,40 @@ export default {
     RecommendedProductCard,
   },
   async created() {
-  const goalId = this.$route.params.goalId;
-  const auth = userAuthStore();
-  const token = auth.getToken();
-  try {
-    const response = await getGoalById(goalId, token);
-    const data = response.data;
+    const goalId = this.$route.params.goalId;
+    const auth = userAuthStore();
+    const token = auth.getToken();
+    try {
+      const response = await getGoalById(goalId, token);
+      const data = response.data;
 
-    // 계좌 잔액 (없으면 0)
-    const accountBalance = data.linked_accounts?.[0]?.balance || 0;
+      // 계좌 잔액 (없으면 0)
+      const accountBalance = data.linked_accounts?.[0]?.balance || 0;
 
-    // 목표 퍼센트 (계좌 잔액 기준)
-    const progress = data.target_amount
-      ? Math.floor((accountBalance / data.target_amount) * 100)
-      : 0;
+      // 목표 퍼센트 (계좌 잔액 기준)
+      const progress = data.target_amount
+        ? Math.floor((accountBalance / data.target_amount) * 100)
+        : 0;
 
-    this.goal = {
-      id: data.goal_id,
-      title: data.goal_name,
-      progress,
-      period1: data.start_date,
-      period2: data.end_date,
-      savedAmount: accountBalance, // 🔹 현재 금액 = 계좌 잔액
-      totalAmount: data.target_amount,
-      depositDate: data.deposit_date,
-      linked_accounts: data.linked_accounts || [],
-      product: data.linked_accounts?.[0]?.product_name || '-',
-    };
+      this.goal = {
+        id: data.goal_id,
+        title: data.goal_name,
+        progress,
+        period1: data.start_date,
+        period2: data.end_date,
+        savedAmount: accountBalance, // 🔹 현재 금액 = 계좌 잔액
+        totalAmount: data.target_amount,
+        depositDate: data.deposit_date,
+        linked_accounts: data.linked_accounts || [],
+        product: data.linked_accounts?.[0]?.product_name || '-',
+      };
 
-    const recommendRes = await getRecommendedProducts(goalId, token);
-    this.recommended = recommendRes.data;
-  } catch (err) {
-    console.error('Failed to load details:', err);
-  }
-},
+      const recommendRes = await getRecommendedProducts(goalId, token);
+      this.recommended = recommendRes.data;
+    } catch (err) {
+      console.error('Failed to load details:', err);
+    }
+  },
 
   methods: {
     async handleDeleteGoal() {
@@ -305,12 +305,14 @@ export default {
 }
 /* 버튼 */
 .button-row {
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   display: flex;
   gap: 1rem;
 }
 .btn {
-  border-radius: 16px;
+  height: 35px;
+  border-radius: 18px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   padding: 0.2rem 2rem;
 }
 /* 추천 상품 */

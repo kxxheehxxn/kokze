@@ -39,87 +39,87 @@
         </div>
       </div>
       <div class="close-bottom-wrapper">
-        <button class="close-btn" @click="$emit('close')"> 닫기 ✕ </button>
+        <button class="close-btn" @click="$emit('close')">닫기 ✕</button>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { fetchPastGoals, deleteGoalById } from '@/api/goalApi'
-import { userAuthStore } from '@/stores/auth'
+import { fetchPastGoals, deleteGoalById } from '@/api/goalApi';
+import { userAuthStore } from '@/stores/auth';
 
 export default {
   name: 'PastGoalSidebar',
   data() {
-    const auth = userAuthStore()
+    const auth = userAuthStore();
 
     return {
       pastGoals: [],
       userName: auth.state.user.userName || '김콕재',
       userId: auth.state.user.userId,
-    }
+    };
   },
   methods: {
     async loadPastGoals() {
       try {
-        const goals = await fetchPastGoals(this.userId)
-        this.pastGoals = goals
+        const goals = await fetchPastGoals(this.userId);
+        this.pastGoals = goals;
       } catch (e) {
-        console.error('지난 목표 조회 실패:', e)
+        console.error('지난 목표 조회 실패:', e);
       }
     },
     async handleDeleteGoal(goalId) {
-  const confirmDelete = confirm('정말로 이 목표를 삭제하시겠습니까?');
-  if (!confirmDelete) return;
-  const auth = userAuthStore();
-  const token = auth.getToken();
-  try {
-    await deleteGoalById(goalId, token); // ✅ 넘겨받은 goalId 사용
-    alert('목표가 삭제되었습니다.');
-    this.loadPastGoals(); // 삭제 후 새로고침
-  } catch (error) {
-    console.error('Failed to delete goal:', error);
-    alert('삭제 중 오류가 발생했습니다.');
-  }
-},
+      const confirmDelete = confirm('정말로 이 목표를 삭제하시겠습니까?');
+      if (!confirmDelete) return;
+      const auth = userAuthStore();
+      const token = auth.getToken();
+      try {
+        await deleteGoalById(goalId, token); // ✅ 넘겨받은 goalId 사용
+        alert('목표가 삭제되었습니다.');
+        this.loadPastGoals(); // 삭제 후 새로고침
+      } catch (error) {
+        console.error('Failed to delete goal:', error);
+        alert('삭제 중 오류가 발생했습니다.');
+      }
+    },
 
     formatDate(arr) {
-      if (!arr || arr.length !== 3) return ''
-      const [y, m, d] = arr
+      if (!arr || arr.length !== 3) return '';
+      const [y, m, d] = arr;
       return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
         2,
-        '0',
-      )}일`
+        '0'
+      )}일`;
     },
     formatAmount(amount) {
-      return `${amount.toLocaleString()}원`
+      return `${amount.toLocaleString()}원`;
     },
     getPeriodDiff(start, end) {
-      if (!start || !end) return ''
-      const startDate = new Date(start)
-      const endDate = new Date(end)
+      if (!start || !end) return '';
+      const startDate = new Date(start);
+      const endDate = new Date(end);
 
       let diffMonths =
         (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-        (endDate.getMonth() - startDate.getMonth())
+        (endDate.getMonth() - startDate.getMonth());
 
       // 일(day) 차이가 양수면 한 달 추가
       if (endDate.getDate() > startDate.getDate()) {
-        diffMonths += 1
+        diffMonths += 1;
       }
 
       if (diffMonths < 24) {
-        return `${diffMonths}개월`
+        return `${diffMonths}개월`;
       } else {
-        const diffYears = diffMonths / 12
-        return `${Math.round(diffYears)}년`
+        const diffYears = diffMonths / 12;
+        return `${Math.round(diffYears)}년`;
       }
     },
   },
   mounted() {
-    this.loadPastGoals()
+    this.loadPastGoals();
   },
-}
+};
 </script>
 <style scoped>
 .sidebar-wrapper {
@@ -234,6 +234,7 @@ export default {
 }
 
 .btn {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   border-radius: 18px;
 }
 

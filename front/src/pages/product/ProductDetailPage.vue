@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 
 import ProductSummaryCard from '@/components/product/detail/ProductSummaryCard.vue'
 import ProductSummaryNote from '@/components/product/detail/ProductSummaryNote.vue'
@@ -17,12 +18,19 @@ const props = defineProps({
 const route = useRoute()
 const router = useRouter()
 
-// prop이 없으면 /product/:fin_prdt_cd 에서 폴백
+// prop이 없으면 /product/:fin_prdt_cd 사용
 const finPrdtCd = computed(() => props.fin_prdt_cd || route.params.fin_prdt_cd)
 
 const product = ref(null)
 const isLoading = ref(true)
 const loadError = ref(null)
+
+// 요약 폴링 관련
+const loadingSummary = ref(false)
+let summaryTimer = null
+let pollTries = 0
+const MAX_TRIES = 5
+const DELAY_MS = 1200
 
 async function loadProduct() {
   if (!finPrdtCd.value) {
@@ -38,6 +46,19 @@ async function loadProduct() {
   try {
     const result = await fetchProductDetail(finPrdtCd.value)
     product.value = result
+
+    // 요약이 없으면: (A) GET 시 자동 생성된다면 폴링만
+    //                (B) 자동 생성이 아니라면 한 번 트리거 호출 후 폴링
+    if (!result?.summary) {
+      // ↓ 백엔드가 수동 트리거를 제공하는 경우만 사용하세요.
+      // 실패해도 폴링은 계속 진행하므로 catch 무시
+      await axios
+        .post(`/api/products/${finPrdtCd.value}/summary/refresh`)
+        .catch(() => {})
+      startSummaryPolling()
+    } else {
+      stopSummaryPolling()
+    }
   } catch (err) {
     console.error('상세 정보 불러오기 실패:', err)
     loadError.value = '해당 상품 정보를 불러오지 못했어요.'
@@ -48,12 +69,51 @@ async function loadProduct() {
   }
 }
 
+function startSummaryPolling() {
+  loadingSummary.value = true
+  pollTries = 0
+  scheduleNextPoll()
+}
+
+function scheduleNextPoll() {
+  clearTimeout(summaryTimer)
+  summaryTimer = setTimeout(async () => {
+    try {
+      const refreshed = await fetchProductDetail(finPrdtCd.value)
+      if (refreshed?.summary && refreshed.summary.trim()) {
+        product.value = { ...refreshed } // 최신 전체 데이터로 교체
+        stopSummaryPolling()
+        return
+      }
+      bumpAndMaybeContinue()
+    } catch (e) {
+      console.warn('요약 재조회 실패:', e)
+      bumpAndMaybeContinue()
+    }
+  }, DELAY_MS)
+}
+
+function bumpAndMaybeContinue() {
+  pollTries += 1
+  if (pollTries < MAX_TRIES) scheduleNextPoll()
+  else stopSummaryPolling()
+}
+
+function stopSummaryPolling() {
+  loadingSummary.value = false
+  if (summaryTimer) {
+    clearTimeout(summaryTimer)
+    summaryTimer = null
+  }
+}
+
+onBeforeUnmount(stopSummaryPolling)
 onMounted(loadProduct)
 
-// 코드가 바뀌면 상세 → 상세에서도 재조회
 watch(
   () => finPrdtCd.value,
   () => {
+    stopSummaryPolling()
     if (!isLoading.value) loadProduct()
   },
 )
@@ -77,7 +137,16 @@ function goBackToList() {
       <template v-else>
         <template v-if="product">
           <ProductSummaryCard :product="product" />
-          <ProductSummaryNote :product="product" />
+
+          <div v-if="loadingSummary" class="summary-loading-banner">
+            🔄 상품 요약을 생성 중입니다… 잠시만 기다려 주세요.
+          </div>
+
+          <ProductSummaryNote
+            :product="product"
+            :loadingSummary="loadingSummary"
+          />
+
           <ProductInfoBox :product="product" />
           <ProductRateBox :product="product" />
         </template>
@@ -111,6 +180,15 @@ function goBackToList() {
   margin: 1rem;
   display: inline-block;
   cursor: pointer;
+}
+.summary-loading-banner {
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  color: #ad6800;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-top: 12px;
+  font-size: 0.95rem;
 }
 .not-found {
   background: #fff;

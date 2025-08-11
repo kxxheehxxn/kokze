@@ -7,13 +7,13 @@
         id="mobile-category"
         v-model="selectedCategory"
         aria-label="카테고리 선택"
+        class="mt-4"
       >
         <option v-for="cat in categories" :key="cat" :value="cat">
           {{ cat }}
         </option>
       </select>
     </div>
-
     <TermsSidebar
       :categories="categories"
       v-model="selectedCategory"
@@ -37,37 +37,28 @@
       </div>
       <TermsAccordion :terms="filteredTerms" />
     </div>
-    <div class="scroll-top-btn" @click="scrollToTop">
-      <div class="scroll-top-icon">
-        <i class="fa-solid fa-chevron-up" style="color: #3573ee"></i>
-      </div>
-    </div>
+    <ScrollTopButton />
   </div>
 </template>
-
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import TermsSidebar from '@/components/TermsSidebar.vue';
 import TermsAccordion from '@/components/TermsAccordion.vue';
 import api from '@/api/termsApi.js';
-
+import ScrollTopButton from '@/components/layouts/ScrollTopButton.vue';
 const categories = ref([]);
 const selectedCategory = ref('');
 const search = ref('');
 const appliedSearch = ref('');
 const terms = ref([]);
-
 onMounted(async () => {
   try {
     const allTerms = await api.fetchTerms();
     terms.value = allTerms;
-
     const uniqueCategories = [
       ...new Set(allTerms.map((term) => term.category)),
     ].sort();
-
     categories.value = uniqueCategories;
-
     if (!selectedCategory.value && categories.value.length > 0) {
       selectedCategory.value = categories.value[0];
     }
@@ -75,7 +66,6 @@ onMounted(async () => {
     console.error('API에서 데이터를 불러오는 데 실패했습니다:', error);
   }
 });
-
 const filteredTerms = computed(() =>
   terms.value.filter(
     (term) =>
@@ -84,18 +74,15 @@ const filteredTerms = computed(() =>
         term.description.includes(appliedSearch.value))
   )
 );
-
 const handleSearch = () => {
   appliedSearch.value = search.value;
 };
-
 watch(selectedCategory, (newCategory, oldCategory) => {
   if (newCategory !== oldCategory && oldCategory !== '') {
     search.value = '';
     appliedSearch.value = '';
   }
 });
-
 const scrollToTop = () => {
   window.scrollTo({
     top: 0,
@@ -103,18 +90,17 @@ const scrollToTop = () => {
   });
 };
 </script>
-
 <style scoped>
 .terms-page {
   display: flex;
   gap: 0;
-  background: #f6f6f6;
+  background-color: #fbfbfb;
   min-height: 100vh;
 }
 .terms-content {
   flex: 1;
   padding: 40px 48px 0 20px;
-  background: #f6f6f6;
+  background-color: #fbfbfb;
 }
 .search-container {
   width: 320px;
@@ -172,27 +158,23 @@ const scrollToTop = () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
 }
-
 .scroll-top-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
-
 .scroll-top-icon {
   font-size: 20px;
   transition: transform 0.3s ease;
 }
-
 .scroll-top-btn:hover .scroll-top-icon {
   transform: translateY(-2px);
 } /* 기본 구조 유지 */
 .terms-page {
   display: flex;
   gap: 0;
-  background: #f6f6f6;
+  background: #fbfbfb;
   min-height: 100vh;
 }
-
 /* 모바일용 카테고리 select (기본 숨김) */
 .mobile-category-select {
   display: none;
@@ -211,19 +193,16 @@ const scrollToTop = () => {
   appearance: none;
   background: #fff;
 }
-
 /* 사이드바는 데스크탑 전용 표시, 모바일에서 숨김 처리 가능 */
 .desktop-sidebar {
   flex: 0 0 250px;
 }
-
 /* 콘텐츠 */
 .terms-content {
   flex: 1;
   padding: 40px 48px 0 20px;
-  background: #f6f6f6;
+  background: #fbfbfb;
 }
-
 /* 검색 컨테이너 기존 그대로 유지 */
 .search-container {
   width: 320px;
@@ -262,7 +241,6 @@ const scrollToTop = () => {
 .search-icon:hover {
   color: #333;
 }
-
 /* 스크롤탑 버튼 */
 .scroll-top-btn {
   cursor: pointer;
@@ -294,9 +272,8 @@ const scrollToTop = () => {
 .scroll-top-btn:hover .scroll-top-icon {
   transform: translateY(-2px);
 }
-
 /* -------- 반응형 -------- */
-@media (max-width: 1100px) {
+@media (max-width: 1024px) {
   .terms-content {
     padding: 24px 20px 0 16px;
   }
@@ -305,12 +282,10 @@ const scrollToTop = () => {
     max-width: 100%;
   }
 }
-
 @media (max-width: 900px) {
   .terms-page {
     flex-direction: column;
   }
-
   /* 데스크탑 사이드바 숨기고 모바일 select 노출 */
   .desktop-sidebar {
     display: none;
@@ -318,11 +293,9 @@ const scrollToTop = () => {
   .mobile-category-select {
     display: block;
   }
-
   .terms-content {
     padding: 16px 16px 0;
   }
-
   /* 스크롤탑 버튼 위치 조금 축소 */
   .scroll-top-btn {
     bottom: 20px;

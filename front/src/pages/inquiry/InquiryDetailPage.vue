@@ -5,13 +5,14 @@ import { ref, computed } from 'vue';
 import moment from 'moment';
 import { userAuthStore } from '@/stores/auth';
 const isLoading = ref(false);
+const MAX_CONTENT_LENGTH = 1000;
 const auth = userAuthStore();
 const route = useRoute();
 const router = useRouter();
 const infoId = route.params.no;
 const article = ref({});
 const isEditingAnswer = ref(false);
-const isAdmin = computed(() => auth.role.toLowerCase() === 'admin');
+const isAdmin = computed(() => (auth.role ?? '').toLowerCase() === 'admin');
 const back = () => {
   router.push({ name: 'inquiryList', query: route.query });
 };
@@ -20,12 +21,10 @@ const updateAnswer = async () => {
     isEditingAnswer.value = true;
     return;
   }
-
   if (!article.value.answeredContent || !article.value.answeredContent.trim()) {
     alert('답변 내용을 입력해주세요.');
     return;
   }
-
   if (!confirm('답변을 수정할까요?')) return;
   const updatedFields = {
     title: article.value.title,
@@ -33,12 +32,10 @@ const updateAnswer = async () => {
     userId: article.value.userId,
     answeredContent: article.value.answeredContent,
   };
-
   try {
     await api.updateAnswer(updatedFields);
     isEditingAnswer.value = false;
-    alert('답변이 성공적으로 수정되었습니다.');
-    await load(); // Reload data after successful update
+    await load();
   } catch (error) {
     console.error('답변 수정 중 오류 발생:', error);
     alert('답변 수정 중 오류가 발생했습니다.');
@@ -53,13 +50,11 @@ const update = () => {
 };
 const submit = async () => {
   if (!confirm('답변을 등록할까요?')) return;
-
   if (!article.value.answeredContent || !article.value.answeredContent.trim()) {
     alert('답변 내용을 입력해주세요.');
     return;
   }
   isLoading.value = true;
-
   const updatedFields = {
     title: article.value.title,
     infoId: article.value.infoId,
@@ -67,18 +62,15 @@ const submit = async () => {
     isAnswered: article.value.isAnswered,
     answeredContent: article.value.answeredContent,
   };
-
   try {
     await api.updateAnswer(updatedFields);
     alert('답변이 성공적으로 등록되었습니다.'); // Success feedback
-
     // 페이지 이동 후 새로고침 대신, 직접 데이터 로드 또는 필요한 상태 업데이트
     router.push({
       name: 'inquiryDetail',
       params: { no: article.value.infoId },
       query: route.query,
     });
-    // Note: window.location.reload() can be heavy. Consider re-fetching data with `load()`
     await load();
   } catch (error) {
     console.error('답변 등록 중 오류 발생:', error);
@@ -97,122 +89,141 @@ const load = async () => {
 };
 load();
 </script>
-
 <template>
-  <div class="custom-box-wrapper">
-    <div class="custom-box p-5">
-      <div class="m-2">
-        <h4 class="fw-bold">문의사항</h4>
-        <div class="ms-1">
-          <h5 class="fw-bold my-4">
-            <span v-if="article.isAnswered">[답변완료] </span
-            >{{ article.title }}
-          </h5>
-          <div class="inquiry-info">
-            <span>{{ article.userName }}</span>
-            <span v-if="article.createdAt" class="ms-5">
-              {{ moment(article.createdAt).format('YYYY-MM-DD HH:mm') }}
-            </span>
-          </div>
-          <div class="mt-3">
-            <hr />
-            <div class="content">{{ article.content }}</div>
-          </div>
-          <!-- 답변 페이지 -->
-          <!-- 1. 관리자 화면 -->
-          <div v-if="isAdmin">
-            <div v-if="!article.isAnswered">
-              <form @submit.prevent="submit">
-                <div class="d-flex mb-3 mt-3 align-items-start">
-                  <div class="textarea-container w-100">
-                    <textarea
-                      class="form-control textarea-input"
-                      v-model="article.answeredContent"
-                      rows="10"
-                    ></textarea>
+  <div class="container">
+    <div class="custom-box-wrapper">
+      <div class="custom-box p-5">
+        <div class="m-2 content-wrapper">
+          <h4 class="fw-bold">문의사항</h4>
+          <div class="ms-1">
+            <h5 class="fw-bold my-4">
+              <span v-if="article.isAnswered">[답변완료] </span
+              >{{ article.title }}
+            </h5>
+            <div class="inquiry-info">
+              <span>{{ article.userName }}</span>
+              <span v-if="article.createdAt" class="ms-5">
+                {{ moment(article.createdAt).format('YYYY-MM-DD HH:mm') }}
+              </span>
+            </div>
+            <div class="mt-3">
+              <hr />
+              <div class="content">{{ article.content }}</div>
+            </div>
+            <!-- 답변 페이지 -->
+            <!-- 1. 관리자 화면 -->
+            <div class="mt-5" v-if="isAdmin">
+              <div v-if="!article.isAnswered">
+                <form @submit.prevent="submit">
+                  <div class="d-flex mb-3 mt-3 align-items-start">
+                    <div class="textarea-container w-100">
+                      <textarea
+                        class="form-control textarea-input"
+                        v-model="article.answeredContent"
+                        rows="10"
+                      ></textarea>
+                    </div>
+                    <button
+                      class="btn ms-3 answer"
+                      type="submit"
+                      :disabled="!article.answeredContent || isLoading"
+                    >
+                      입력
+                    </button>
                   </div>
-                  <button
-                    class="btn ms-3 answer"
-                    type="submit"
-                    :disabled="!article.answeredContent || isLoading"
-                  >
-                    입력
+                </form>
+              </div>
+              <div v-else>
+                <div class="d-flex footer w-100 justify-content-between">
+                  <div class="w-100">
+                    <div v-if="!isEditingAnswer">
+                      {{ article.answeredContent }}
+                    </div>
+                    <div v-else class="textarea-container">
+                      <textarea
+                        class="form-control textarea-input"
+                        v-model="article.answeredContent"
+                        rows="10"
+                        :maxlength="MAX_CONTENT_LENGTH"
+                      ></textarea>
+                    </div>
+                  </div>
+                  <button class="btn ms-3 answer" @click="updateAnswer">
+                    {{ isEditingAnswer ? '입력' : '수정' }}
                   </button>
                 </div>
-              </form>
-            </div>
-            <div v-else>
-              <div class="d-flex mb-3 mt-3 align-items-start">
-                <div class="w-100">
-                  <div v-if="!isEditingAnswer">
-                    {{ article.answeredContent }}
-                  </div>
-                  <div v-else class="textarea-container">
-                    <textarea
-                      class="form-control textarea-input"
-                      v-model="article.answeredContent"
-                      rows="10"
-                    ></textarea>
-                  </div>
-                </div>
-                <button class="btn ms-3 answer" @click="updateAnswer">
-                  {{ isEditingAnswer ? '입력' : '수정' }}
-                </button>
               </div>
             </div>
-          </div>
-          <!-- 2. 유저 화면  -->
-          <div v-else>
-            <div class="d-flex mb-3 mt-3 align-items-start">
-              <div class="w-100" v-if="article.isAnswered">
-                <div class="fw-bold mb-3">답변</div>
-                {{ article.answeredContent }}
+            <!-- 2. 유저 화면  -->
+            <div v-else>
+              <div class="d-flex mb-3 mt-3 align-items-start">
+                <div class="w-100" v-if="article.isAnswered">
+                  <div class="fw-bold mb-3">답변</div>
+                  {{ article.answeredContent }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="d-flex mt-4 w-100 justify-content-between align-items-center">
-        <button class="btn back" @click="back">목록</button>
-        <button class="btn delete" @click="remove" v-if="isAdmin">
-          문의 삭제
-        </button>
-        <template
-          v-if="
-            !article.isAnswered && !isAdmin && auth.userId == article.userId
-          "
-          class="w-100 text-end"
+        <div
+          class="d-flex mt-4 w-100 justify-content-between align-items-center"
         >
-          <div class="ms-auto">
-            <button class="btn edit" @click="update">수정</button>
-            <button class="btn delete" @click="remove">삭제</button>
-          </div>
-        </template>
+          <button class="btn back" @click="back">목록</button>
+          <button class="btn delete" @click="remove" v-if="isAdmin">
+            문의 삭제
+          </button>
+          <template
+            v-if="
+              !article.isAnswered && !isAdmin && auth.userId == article.userId
+            "
+            class="w-100 text-end"
+          >
+            <div class="ms-auto">
+              <button class="btn edit" @click="update">수정</button>
+              <button class="btn delete" @click="remove">삭제</button>
+            </div>
+          </template>
+        </div>
       </div>
     </div>
-  </div>
-  <div v-if="isLoading" class="callback-container">
-    <div class="loading-spinner">
-      <div class="spinner"></div>
-      <p>이메일 전송 중...</p>
+    <div v-if="isLoading" class="callback-container">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>이메일 전송 중...</p>
+      </div>
     </div>
   </div>
 </template>
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .custom-box-wrapper {
   display: flex;
   justify-content: center;
-  padding-top: 70px;
+  padding-top: 60px;
   padding-bottom: 30px;
   margin: 0px 30px;
 }
 .custom-box {
   width: 920px;
-  min-height: 530px;
+  min-height: 565px;
   background-color: #fff;
   border-radius: 28px;
   padding: 2rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column; /* 세로 방향으로 배치 */
+}
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.footer {
+  margin-top: auto; /* 아래로 밀기 */
+  padding-bottom: 20px; /* 박스 하단으로부터 20px 띄우기 효과 */
+  gap: 8px;
 }
 .inquiry-info {
   margin-top: 15px;
@@ -229,7 +240,6 @@ load();
   border-radius: 20px;
   text-align: center;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  margin-top: 85px;
   font-weight: bold;
 }
 .back {
@@ -265,28 +275,23 @@ hr {
   margin-top: 20px;
   margin-bottom: 30px;
 }
-.answer-content {
-  font-size: 14px;
-}
 .callback-container {
-  position: fixed; /* Covers the entire viewport */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
-  flex-direction: column; /* Stack spinner and text vertically */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Ensures it's on top of everything */
-  color: white; /* Text color for the message */
+  z-index: 9999;
+  color: white;
 }
-
 .loading-spinner {
   text-align: center;
 }
-
 .spinner {
   width: 50px;
   height: 50px;
@@ -296,19 +301,23 @@ hr {
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
 }
-
 .loading-spinner p {
   font-size: 1.2em;
   font-weight: bold;
   margin: 0;
 }
-
 @keyframes spin {
   0% {
     transform: rotate(0deg);
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+/* 또는 뷰포트 기반으로 유연하게 */
+@media (max-width: 1024px) and (orientation: portrait) {
+  .custom-box {
+    min-height: 87vh; /* 화면 높이의 80% 이상 확보 */
   }
 }
 </style>

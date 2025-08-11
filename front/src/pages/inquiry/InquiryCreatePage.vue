@@ -3,14 +3,10 @@ import api from '@/api/inquiryApi';
 import { reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
-
 const auth = userAuthStore();
-
 const router = useRouter();
-
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
-
 const getUserInfo = () => {
   const authData = JSON.parse(localStorage.getItem('auth') || '{}');
   return {
@@ -19,7 +15,6 @@ const getUserInfo = () => {
     isLogin: !!authData.user?.email,
   };
 };
-
 const userInfo = getUserInfo();
 const article = reactive({
   userId: userInfo.userId,
@@ -27,28 +22,23 @@ const article = reactive({
   content: '',
   isAnswered: false,
 });
-
 const disableSubmit = computed(() => {
   return !article.title || !article.content;
 });
-
 const submit = async () => {
   if (!confirm('문의사항을 등록하시겠습니까?')) {
     return;
   }
-
   if (!auth.isLogin || !auth.userId) {
     alert('로그인이 필요합니다.');
     router.push('/login');
     return;
   }
-
   try {
     await api.create(article);
     router.push('/inquiry/list');
   } catch (e) {
     console.error('문의사항 등록 실패:', e);
-
     if (e.response && e.response.data && e.response.data.message) {
       alert(`문의사항 등록 실패: ${e.response.data.message}`);
     } else {
@@ -56,68 +46,70 @@ const submit = async () => {
     }
   }
 };
-
 const back = () => {
   router.back();
 };
 </script>
-
 <template>
-  <div class="custom-box-wrapper">
-    <div class="custom-box p-5">
-      <div class="m-2">
-        <h4 class="fw-bold">문의사항 작성</h4>
-        <form @submit.prevent="submit">
-          <div class="d-flex align-items-center title-box">
-            <label for="title" class="form-label ms-2">제목</label>
-            <div class="title-container w-100">
-              <input
-                type="text"
-                class="form-control title-input"
-                id="title"
-                v-model="article.title"
-                :maxlength="MAX_TITLE_LENGTH"
-              />
-              <span class="char-count"
-                >{{ article.title.length }} / {{ MAX_TITLE_LENGTH }}</span
-              >
+  <div class="container">
+    <div class="custom-box-wrapper">
+      <div class="custom-box p-5">
+        <div class="m-2">
+          <h4 class="fw-bold">문의사항 작성</h4>
+          <form @submit.prevent="submit">
+            <div class="d-flex align-items-center title-box">
+              <label for="title" class="form-label ms-2">제목</label>
+              <div class="title-container w-100">
+                <input
+                  type="text"
+                  class="form-control title-input"
+                  id="title"
+                  v-model="article.title"
+                  :maxlength="MAX_TITLE_LENGTH"
+                />
+                <span class="char-count"
+                  >{{ article.title.length }} / {{ MAX_TITLE_LENGTH }}</span
+                >
+              </div>
             </div>
-          </div>
-          <hr />
-          <div class="d-flex mb-3 mt-3 align-items-start">
-            <label for="content" class="form-label pt-2">내용</label>
-            <div class="textarea-container w-100">
-              <textarea
-                class="form-control textarea-input"
-                id="content"
-                v-model="article.content"
-                rows="10"
-                :maxlength="MAX_CONTENT_LENGTH"
-              ></textarea>
-              <span class="char-count textarea-count"
-                >{{ article.content.length }} / {{ MAX_CONTENT_LENGTH }}</span
-              >
+            <hr />
+            <div class="d-flex mb-3 mt-3 align-items-start">
+              <label for="content" class="form-label pt-2">내용</label>
+              <div class="textarea-container w-100">
+                <textarea
+                  class="form-control textarea-input"
+                  id="content"
+                  v-model="article.content"
+                  rows="10"
+                  :maxlength="MAX_CONTENT_LENGTH"
+                ></textarea>
+                <span class="char-count textarea-count"
+                  >{{ article.content.length }} / {{ MAX_CONTENT_LENGTH }}</span
+                >
+              </div>
             </div>
-          </div>
-          <div class="mt-5 text-center">
-            <button
-              type="submit"
-              class="btn fw-bold create"
-              :disabled="disableSubmit"
-            >
-              확인
-            </button>
-            <button type="button" class="btn ms-3 fw-bold back" @click="back">
-              취소
-            </button>
-          </div>
-        </form>
+            <div class="mt-5 text-center">
+              <button type="button" class="btn back" @click="back">
+                취소하기
+              </button>
+              <button
+                type="submit"
+                class="btn create ms-3"
+                :disabled="disableSubmit"
+              >
+                확인
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 </template>
-
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .custom-box-wrapper {
   display: flex;
   justify-content: center;
@@ -127,7 +119,7 @@ const back = () => {
 }
 .custom-box {
   width: 920px;
-  min-height: 530px;
+  min-height: 565px;
   background-color: #fff;
   border-radius: 28px;
   padding: 2rem;
@@ -139,6 +131,7 @@ const back = () => {
   border-radius: 20px;
   text-align: center;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
 }
 .create {
   background-color: #3573ee;
@@ -198,7 +191,6 @@ const back = () => {
   background: transparent;
   padding-bottom: 20px;
 }
-
 .char-count {
   position: absolute;
   right: 15px;
@@ -216,5 +208,14 @@ const back = () => {
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+/* 또는 뷰포트 기반으로 유연하게 */
+@media (max-width: 1024px) and (orientation: portrait) {
+  .custom-box {
+    min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
+  }
+  .textarea-input {
+    height: 50vh;
+  }
 }
 </style>

@@ -73,3 +73,23 @@ export const unlinkAccount = (accountId, token) => {
     },
   });
 };
+
+export const fetchPastGoals = async (userId) => {
+  const res = await axios.get('/api/goal/past', {
+    params: { userId },
+  });
+  return res.data;
+};
+
+// 추천 목표 API 호출
+export async function fetchRecommendedGoal(userId) {
+  try {
+    const response = await axios.get('/api/goal/recommend-next', {
+      params: { userId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('❌ 추천 목표 가져오기 실패:', error);
+    throw error;
+  }
+}

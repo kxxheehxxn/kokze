@@ -1,17 +1,13 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
 import axios from 'axios';
-
 const router = useRouter();
-
 const step = ref(0);
 const selectedList = ref([]);
 const scores = ref({ fast: 0, slow: 0, high: 0, low: 0 });
-
 const authStore = userAuthStore();
-
 const questions = [
   {
     question: '월급을 받았을 때 나는?',
@@ -72,7 +68,14 @@ const questions = [
     ],
   },
 ];
-
+onMounted(() => {
+  resetMbtiState();
+});
+function resetMbtiState() {
+  step.value = 0;
+  selectedList.value = [];
+  scores.value = { fast: 0, slow: 0, high: 0, low: 0 };
+}
 const mbtiResult = computed(() => {
   if (step.value < questions.length) return '';
   const isFast = scores.value.fast >= scores.value.slow;
@@ -82,7 +85,6 @@ const mbtiResult = computed(() => {
   if (isFast && !isHigh) return '신속한 분석가';
   return '신중한 분석가';
 });
-
 const mbtiDesc = computed(() => {
   switch (mbtiResult.value) {
     case '신속한 승부사':
@@ -97,31 +99,28 @@ const mbtiDesc = computed(() => {
       return '';
   }
 });
-
 function onNext() {
   const selected = selectedList.value[step.value];
   const choice = questions[step.value].choices[selected];
   scores.value[choice.type] += choice.score;
   step.value++;
 }
-
 function onPrev() {
   if (step.value === 0) {
     router.push('/signup/step2');
   } else {
     step.value--;
-    const selected = selectedList.value[step.value - 1];
-    const choice = questions[step.value - 1].choices[selected];
-    scores.value[choice.type] -= choice.score;
+    const selected = selectedList.value[step.value];
+    if (selected !== undefined) {
+      const choice = questions[step.value].choices[selected];
+      scores.value[choice.type] -= choice.score;
+    }
   }
 }
-
 const onSubmit = async () => {
   try {
     authStore.setUserInfo('mbti', mbtiResult.value);
-
     authStore.setUserInfo('kakao', authStore.isKakao);
-
     const requiredFields = [
       'name',
       'email',
@@ -132,22 +131,17 @@ const onSubmit = async () => {
       'payAmount',
       'mbti',
     ];
-
     const missing = requiredFields.filter((key) => !authStore.userInfo[key]);
-
     if (!authStore.isKakao && !(authStore.userInfo.password.length > 0)) {
       missing.push('password');
     }
-
     if (missing.length > 0) {
       alert(`다음 항목이 누락되었습니다: ${missing.join(', ')}`);
       return;
     }
-
     const apiUrl = authStore.isKakao
       ? 'http://localhost:8080/api/auth/signup/kakao'
       : 'http://localhost:8080/api/auth/signup';
-
     const response = await axios.post(apiUrl, authStore.userInfo);
     if (response.status === 200) {
       alert('회원가입이 완료되었습니다!');
@@ -162,25 +156,23 @@ const onSubmit = async () => {
   }
 };
 </script>
-
 <template>
   <div class="container">
-    <router-link to="/" class="logo-section text-decoration-none">
-      <div class="logo d-flex align-items-center">
-        <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
-      </div>
-    </router-link>
-
+    <div class="no-nav-header">
+      <router-link to="/" class="logo-section text-decoration-none">
+        <div class="logo d-flex align-items-center">
+          <img src="@/assets/logo.svg" alt="로고" class="logo-icon" />
+        </div>
+      </router-link>
+    </div>
     <div class="signup-box">
-      <div class="top">
+      <div class="sign-top">
         <div class="title">
           콕재 서비스를 이용하려면<br />회원 가입이 필요해요
         </div>
         <div class="page-num">3/3</div>
       </div>
-
       <hr />
-
       <template v-if="step < questions.length">
         <div class="title">
           금융 MBTI 찾기 ({{ step + 1 }} / {{ questions.length }})
@@ -209,18 +201,16 @@ const onSubmit = async () => {
           </button>
         </div>
       </template>
-
       <template v-else>
         <div class="mbti-type">{{ mbtiResult }}</div>
         <div class="mbti-desc">{{ mbtiDesc }}</div>
-        <div class="button-group">
+        <div class="submit-button">
           <button class="next-button" @click="onSubmit">가입하기</button>
         </div>
       </template>
     </div>
   </div>
 </template>
-
 <style scoped>
 .container {
   display: flex;
@@ -230,26 +220,6 @@ const onSubmit = async () => {
   padding: 0 16px 40px 16px;
   position: relative;
 }
-
-.logo-section {
-  cursor: pointer;
-  margin: 15px 0 0 20px;
-  align-self: flex-start;
-  transition: transform 0.2s ease;
-}
-
-.logo-section:hover {
-  transform: scale(1.05);
-}
-
-.logo-icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  padding: 2px;
-  object-fit: contain;
-}
-
 .signup-box {
   background-color: #fff;
   width: 100%;
@@ -261,21 +231,12 @@ const onSubmit = async () => {
   flex-direction: column;
   gap: 20px;
 }
-
-.top {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-}
-
 .title {
   font-size: 24px;
   font-weight: 600;
   text-align: left;
   flex-shrink: 0;
 }
-
 .page-num {
   display: flex;
   align-items: center;
@@ -285,28 +246,24 @@ const onSubmit = async () => {
   white-space: nowrap;
   flex-shrink: 0;
 }
-
 .page-num::after {
   content: '';
   flex-grow: 1;
   height: 1px;
   display: inline-block;
 }
-
 .question {
   font-size: 20px;
   font-weight: 500;
   text-align: center;
   margin-bottom: 24px;
 }
-
 .choices {
   display: flex;
   justify-content: center;
   gap: 32px;
   flex-wrap: nowrap;
 }
-
 .choice {
   width: 300px;
   height: 140px;
@@ -319,90 +276,60 @@ const onSubmit = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px 0 #e5e7eb;
   border: 2px solid transparent;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   transition: 0.2s;
 }
-
 .choice.selected {
   border-color: #2573ee;
   box-shadow: 0 4px 16px 0 #bcdcff;
 }
-
 .button-group {
   display: flex;
-  justify-content: center;
-  gap: 32px;
-  margin-top: 32px;
+  gap: 10px;
+  justify-content: space-between;
+  margin-top: 20px;
 }
-
+.submit-button {
+  display: flex;
+  justify-content: center;
+}
 .cancel-button,
 .next-button {
-  width: 180px;
-  height: 48px;
-  border-radius: 18px;
+  border: none;
+  border-radius: 30px;
+  padding: 14px 24px;
   font-size: 16px;
   font-weight: 500;
+  min-width: 200px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
-
 .cancel-button {
-  background: #f2f2f2;
+  background: #fafbfc;
   color: #222;
   border: none;
 }
-
 .next-button {
   background: #2573ee;
   color: white;
   border: none;
 }
-
 .next-button:disabled {
   background: #a5c2ff;
   cursor: not-allowed;
 }
-
 .mbti-type {
   font-size: 26px;
   font-weight: bold;
   text-align: center;
   margin-bottom: 16px;
 }
-
 .mbti-desc {
   font-size: 16px;
   color: #333;
   text-align: center;
   white-space: pre-line;
   margin-bottom: 24px;
-}
-
-@media (max-width: 768px) {
-  .signup-box {
-    padding: 40px 30px;
-  }
-
-  .title {
-    font-size: 22px;
-  }
-
-  .choices {
-    flex-direction: column;
-    align-items: center;
-    flex-wrap: nowrap;
-    gap: 24px;
-  }
-
-  .choice {
-    width: 100%;
-    max-width: 320px;
-  }
-
-  .cancel-button,
-  .next-button {
-    font-size: 14px;
-    padding: 12px 16px;
-  }
 }
 </style>

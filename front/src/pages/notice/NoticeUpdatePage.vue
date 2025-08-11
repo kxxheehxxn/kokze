@@ -3,32 +3,25 @@ import api from '@/api/noticeApi';
 import { computed, ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
-
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
-
 const auth = userAuthStore();
 const router = useRouter();
 const route = useRoute();
-
 const orgArticle = ref({});
 const noticeId = route.params.no;
 const article = reactive({});
-
 const disableSubmit = computed(() => !article.title);
-
 const back = () => {
   router.back();
 };
 const submit = async () => {
   if (!confirm('수정할까요?')) return;
-
   const updatedFields = {};
   updatedFields.noticeId = article.noticeId;
   updatedFields.title = article.title;
   updatedFields.content = article.content;
   await api.update(updatedFields);
-
   router.replace({
     name: 'noticeDetail',
     params: { no: article.noticeId },
@@ -42,10 +35,8 @@ const load = async () => {
     router.replace('/notice/list');
     return;
   }
-
   try {
     const data = await api.get(noticeId);
-
     if (!data || !data.noticeId) {
       throw new Error(
         'API 응답 데이터가 유효하지 않거나 게시글을 찾을 수 없습니다.'
@@ -62,7 +53,6 @@ const load = async () => {
     router.replace('/notice/list');
   }
 };
-
 onMounted(() => {
   if (auth.role.toLowerCase() !== 'admin') {
     alert('권한이 없습니다.');
@@ -73,61 +63,67 @@ onMounted(() => {
 load();
 </script>
 <template>
-  <div class="custom-box-wrapper">
-    <div class="custom-box p-5">
-      <div class="m-2">
-        <h4 class="fw-bold">공지사항 수정</h4>
-        <form @submit.prevent="submit">
-          <div class="d-flex align-items-center title-box">
-            <label for="title" class="form-label ms-2">제목</label>
-            <div class="title-container w-100">
-              <input
-                type="text"
-                class="form-control title-input"
-                id="title"
-                v-model="article.title"
-                :maxlength="MAX_TITLE_LENGTH"
-              />
-              <span class="char-count"
-                >{{ article.title.length }} / {{ MAX_TITLE_LENGTH }}</span
-              >
+  <div class="container">
+    <div class="custom-box-wrapper">
+      <div class="custom-box p-5">
+        <div class="m-2">
+          <h4 class="fw-bold">공지사항 수정</h4>
+          <form @submit.prevent="submit">
+            <div class="d-flex align-items-center title-box">
+              <label for="title" class="form-label ms-2">제목</label>
+              <div class="title-container w-100">
+                <input
+                  type="text"
+                  class="form-control title-input"
+                  id="title"
+                  v-model="article.title"
+                  :maxlength="MAX_TITLE_LENGTH"
+                />
+                <span class="char-count"
+                  >{{ article.title?.length ?? 0 }} /
+                  {{ MAX_TITLE_LENGTH }}</span
+                >
+              </div>
             </div>
-          </div>
-          <hr />
-          <div class="d-flex mb-3 mt-3 align-items-start">
-            <label for="content" class="form-label pt-2">내용</label>
-            <div class="textarea-container w-100">
-              <textarea
-                class="form-control textarea-input"
-                id="content"
-                v-model="article.content"
-                rows="10"
-                :maxlength="MAX_CONTENT_LENGTH"
-              ></textarea>
-              <span class="char-count textarea-count"
-                >{{ article.content.length }} / {{ MAX_CONTENT_LENGTH }}</span
-              >
+            <hr />
+            <div class="d-flex mb-3 mt-3 align-items-start">
+              <label for="content" class="form-label pt-2">내용</label>
+              <div class="textarea-container w-100">
+                <textarea
+                  class="form-control textarea-input"
+                  id="content"
+                  v-model="article.content"
+                  rows="10"
+                  :maxlength="MAX_CONTENT_LENGTH"
+                ></textarea>
+                <span class="char-count textarea-count"
+                  >{{ article.content?.length ?? 0 }} /
+                  {{ MAX_CONTENT_LENGTH }}</span
+                >
+              </div>
             </div>
-          </div>
-          <div class="mt-5 text-center">
-            <button
-              type="submit"
-              class="btn fw-bold create"
-              :disabled="disableSubmit"
-            >
-              확인
-            </button>
-            <button type="button" class="btn ms-3 fw-bold back" @click="back">
-              취소
-            </button>
-          </div>
-        </form>
+            <div class="mt-5 text-center">
+              <button type="button" class="btn fw-bold back" @click="back">
+                취소
+              </button>
+              <button
+                type="submit"
+                class="btn fw-bold create ms-3"
+                :disabled="disableSubmit"
+              >
+                확인
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 </template>
-
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .custom-box-wrapper {
   display: flex;
   justify-content: center;
@@ -226,5 +222,10 @@ load();
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+@media (max-width: 1024px) and (orientation: portrait) {
+  .custom-box {
+    min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
+  }
 }
 </style>

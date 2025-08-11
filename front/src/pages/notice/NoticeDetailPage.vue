@@ -9,7 +9,7 @@ const route = useRoute();
 const router = useRouter();
 const noticeId = route.params.no;
 const article = ref({});
-const isAdmin = computed(() => auth.role.toLowerCase() === 'admin');
+const isAdmin = computed(() => (auth.role ?? '').toLowerCase() === 'admin');
 const back = () => {
   router.push({ name: 'noticeList', query: route.query });
 };
@@ -31,38 +31,45 @@ const load = async () => {
 load();
 </script>
 <template>
-  <div class="custom-box-wrapper">
-    <div class="custom-box p-5">
-      <div class="m-2">
-        <h4 class="fw-bold">공지사항</h4>
-        <div class="ms-1 mt-5">
-          <h5 class="fw-bold my-4">
-            {{ article.title }}
-          </h5>
-          <div class="notice-date">
-            <span v-if="article.createdAt">
-              {{ moment(article.createdAt).format('YYYY-MM-DD HH:mm') }}
-            </span>
-          </div>
-          <div class="mt-3">
-            <hr />
-            <div class="content">{{ article.content }}</div>
+  <div class="container">
+    <div class="custom-box-wrapper">
+      <div class="custom-box p-5">
+        <div class="m-2 content-wrapper">
+          <h4 class="fw-bold">공지사항</h4>
+          <div class="ms-1 mt-5">
+            <h5 class="fw-bold my-4">
+              {{ article.title }}
+            </h5>
+            <div class="notice-date">
+              <span v-if="article.createdAt">
+                {{ moment(article.createdAt).format('YYYY-MM-DD HH:mm') }}
+              </span>
+            </div>
+            <div class="mt-3">
+              <hr />
+              <div class="content">{{ article.content }}</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="d-flex mt-4 w-100 justify-content-between align-items-center">
-        <button class="btn back" @click="back">목록</button>
-        <template v-if="!article.isAnswered && isAdmin" class="w-100 text-end"
-          ><div class="ms-auto">
-            <button class="btn edit" @click="update">수정</button>
-            <button class="btn delete" @click="remove">삭제</button>
-          </div>
-        </template>
+        <div
+          class="d-flex footer w-100 justify-content-between align-items-center"
+        >
+          <button class="btn back" @click="back">목록</button>
+          <template v-if="!article.isAnswered && isAdmin" class="w-100 text-end"
+            ><div class="ms-auto">
+              <button class="btn edit" @click="update">수정</button>
+              <button class="btn delete" @click="remove">삭제</button>
+            </div>
+          </template>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .custom-box-wrapper {
   display: flex;
   justify-content: center;
@@ -77,6 +84,19 @@ load();
   border-radius: 28px;
   padding: 2rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column; /* 세로 방향으로 배치 */
+}
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+/* 버튼 그룹을 하단으로 밀고, 아래에서 20px 띄우기 */
+.footer {
+  margin-top: auto; /* 아래로 밀기 */
+  padding-bottom: 20px; /* 박스 하단으로부터 20px 띄우기 효과 */
+  gap: 8px;
 }
 .notice-date {
   margin-top: 15px;
@@ -93,7 +113,6 @@ load();
   border-radius: 20px;
   text-align: center;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  margin-top: 85px;
   font-weight: bold;
 }
 .back {
@@ -131,5 +150,10 @@ hr {
 }
 .answer-content {
   font-size: 14px;
+}
+@media (max-width: 1024px) and (orientation: portrait) {
+  .custom-box {
+    min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
+  }
 }
 </style>

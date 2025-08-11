@@ -1,88 +1,110 @@
 <template>
-  <div class="goal-detail-page">
-    <router-link to="/goals" class="back-link">← 목표로 돌아가기</router-link>
-
-    <section class="summary-card">
-      <div class="title-row">
-        <h3>목표: {{ goal.title }} ({{ goal.progress }}%)</h3>
+  <div class="container">
+    <div class="goal-detail-page">
+      <router-link to="/goals" class="back-link">← 목표로 돌아가기</router-link>
+      <section class="summary-card">
+        <div class="header-row">
+          <h2 class="goal-title">
+            목표: {{ goal.title }} ({{ goal.progress }}%)
+          </h2>
+        </div>
+        <hr />
         <div class="progress-area">
           <div class="progress-bar">
             <div class="progress" :style="{ width: goal.progress + '%' }"></div>
+            <div class="progress-markers">
+              <span
+                v-for="mark in [0, 25, 50, 75, 100]"
+                :key="mark"
+                class="marker"
+                :style="{ left: mark + '%' }"
+              >
+                <div
+                  v-if="mark !== 0 && mark !== 100"
+                  class="marker-line"
+                ></div>
+                <div class="marker-label">{{ mark }}%</div>
+              </span>
+            </div>
           </div>
-          <span class="progress-percent">{{ goal.progress }}%</span>
+          <img src="/src/assets/images/gift.png" alt="목표 달성 선물 이미지" />
         </div>
-      </div>
-
-      <div class="details">
-        <p>
-          <strong>목표 기간:</strong> {{ goal.period1 }} ~ {{ goal.period2 }}
-        </p>
-        <p>
-          <strong>목표 금액:</strong> {{ goal.savedAmount.toLocaleString() }} 원
-          / {{ goal.totalAmount.toLocaleString() }} 원
-        </p>
-        <p>
-          <strong>입금 날짜:{{ goal.depositDate }}</strong>
-        </p>
-        <p>
-          <strong>연결된 금융 상품:</strong>
-          <span v-if="goal.linked_accounts.length > 0">
-            {{ goal.linked_accounts[0].bank_name }} -
-            {{ goal.linked_accounts[0].account_num }}
-          </span>
-          <span v-else>-</span>
-        </p>
-      </div>
-
-      <div class="button-row">
-        <button
-          class="btn btn-primary"
-          @click="
-            $router.push({ name: 'GoalEditPage', params: { goalId: goal.id } })
-          "
-        >
-          목표 수정하기
-        </button>
-
-        <button class="btn btn-danger" @click="handleDeleteGoal">
-          목표 삭제하기
-        </button>
-      </div>
-    </section>
-
-    <section class="recommendation-section" v-if="recommended.length">
-      <h4>✨ {{ userName }}님에게 추천하는 맞춤 금융 상품 ✨</h4>
-      <div class="product-grid">
-        <div
-          v-for="(product, idx) in recommended"
-          :key="idx"
-          class="product-card"
-        >
-          <p>금융사: {{ product.korCoNm }}</p>
-          <p>상품명: {{ product.finPrdtNm }}</p>
-          <p>
-            ✨ 적립 유형: {{ product.rsrvTypeNm }} / {{ product.saveTrm }}개월
-          </p>
-          <p>기본 금리: {{ product.intrRate }}%</p>
-          <p>우대 금리: {{ product.intrRate2 }}%</p>
+        <div class="details">
+          <div class="detail-row">
+            <span class="label">목표 기간</span>
+            <span class="value">
+              {{ formatDate(goal.period1) }} ~ {{ formatDate(goal.period2) }} (
+              약 {{ getPeriodDiff(goal.period1, goal.period2) }} )
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">목표 금액</span>
+            <span class="value">
+              {{ goal.savedAmount.toLocaleString() }} 원 /
+              {{ goal.totalAmount.toLocaleString() }} 원
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">연결된 금융 상품</span>
+            <span class="value">
+              <template v-if="goal.linked_accounts.length > 0">
+                {{ goal.linked_accounts[0].bank_name }} -
+                {{ goal.linked_accounts[0].account_num }}
+              </template>
+              <template v-else>-</template>
+            </span>
+          </div>
         </div>
-      </div>
-    </section>
+        <div class="button-row">
+          <button
+            class="btn btn-primary"
+            @click="
+              $router.push({
+                name: 'GoalEditPage',
+                params: { goalId: goal.id },
+              })
+            "
+          >
+            목표 수정하기
+          </button>
+          <button class="btn btn-danger" @click="handleDeleteGoal">
+            목표 삭제하기
+          </button>
+        </div>
+      </section>
+      <section class="recommendation-section">
+        <h4>✨ {{ userName }}님에게 추천하는 맞춤 금융 상품 ✨</h4>
+
+        <!-- 추천 상품이 있는 경우 -->
+        <div v-if="recommended.length" class="product-grid">
+          <RecommendedProductCard
+            v-for="(product, idx) in recommended"
+            :key="idx"
+            :product="product"
+            @click="$router.push(`/product/${product.finPrdtCd}`)"
+          />
+        </div>
+
+        <div v-else class="no-recommendation-message">
+          😢 기간과 금액이 충분하지 않아서 추천드릴 수 있는 상품이 없습니다.
+        </div>
+      </section>
+    </div>
   </div>
 </template>
-
 <script>
 import {
   getGoalById,
   getRecommendedProducts,
   deleteGoalById,
 } from '@/api/goalApi';
-
 import { userAuthStore } from '@/stores/auth';
-
+import RecommendedProductCard from '@/components/goal/RecommendedProductCard.vue';
 export default {
   name: 'GoalDetailPage',
   data() {
+    const auth = userAuthStore();
+
     return {
       goal: {
         id: '',
@@ -97,89 +119,130 @@ export default {
         linked_accounts: [],
       },
       recommended: [],
-      userName: '김콕재',
+      userName: auth.state.user.userName || '김콕재',
+      userId: auth.state.user.userId,
     };
   },
-  async created() {
-    const goalId = this.$route.params.goalId;
-    const auth = userAuthStore();
-    const token = auth.getToken();
-
-    try {
-      const response = await getGoalById(goalId, token);
-      const data = response.data;
-
-      const progress = data.target_amount
-        ? Math.floor((data.current_amount / data.target_amount) * 100)
-        : 0;
-
-      this.goal = {
-        id: data.goal_id,
-        title: data.goal_name,
-        progress,
-        period1: data.start_date,
-        period2: data.end_date,
-        savedAmount: data.current_amount,
-        totalAmount: data.target_amount,
-        depositDate: data.deposit_date,
-        linked_accounts: data.linked_accounts || [],
-        product: data.linked_accounts?.[0]?.product_name || '-',
-      };
-
-      const recommendRes = await getRecommendedProducts(goalId, token);
-      this.recommended = recommendRes.data;
-    } catch (err) {
-      console.error('❌ 상세 조회 실패:', err);
-    }
+  components: {
+    RecommendedProductCard,
   },
+  async created() {
+  const goalId = this.$route.params.goalId;
+  const auth = userAuthStore();
+  const token = auth.getToken();
+  try {
+    const response = await getGoalById(goalId, token);
+    const data = response.data;
+
+    // 계좌 잔액 (없으면 0)
+    const accountBalance = data.linked_accounts?.[0]?.balance || 0;
+
+    // 목표 퍼센트 (계좌 잔액 기준)
+    const progress = data.target_amount
+      ? Math.floor((accountBalance / data.target_amount) * 100)
+      : 0;
+
+    this.goal = {
+      id: data.goal_id,
+      title: data.goal_name,
+      progress,
+      period1: data.start_date,
+      period2: data.end_date,
+      savedAmount: accountBalance, // 🔹 현재 금액 = 계좌 잔액
+      totalAmount: data.target_amount,
+      depositDate: data.deposit_date,
+      linked_accounts: data.linked_accounts || [],
+      product: data.linked_accounts?.[0]?.product_name || '-',
+    };
+
+    const recommendRes = await getRecommendedProducts(goalId, token);
+    this.recommended = recommendRes.data;
+  } catch (err) {
+    console.error('Failed to load details:', err);
+  }
+},
+
   methods: {
     async handleDeleteGoal() {
       const confirmDelete = confirm('정말로 이 목표를 삭제하시겠습니까?');
       if (!confirmDelete) return;
-
       const auth = userAuthStore();
       const token = auth.getToken();
-
       try {
         await deleteGoalById(this.goal.id, token);
         alert('목표가 삭제되었습니다.');
         this.$router.push('/goals');
       } catch (error) {
-        console.error('❌ 목표 삭제 실패:', error);
+        console.error('Failed to delete goal:', error);
         alert('삭제 중 오류가 발생했습니다.');
+      }
+    },
+    formatDate(dateStr) {
+      if (!dateStr || dateStr.length !== 3) return '';
+      const [y, m, d] = dateStr;
+      return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
+        2,
+        '0'
+      )}일`;
+    },
+    getPeriodDiff(start, end) {
+      if (!start || !end) return '';
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+      let diffMonths =
+        (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+        (endDate.getMonth() - startDate.getMonth());
+      if (endDate.getDate() > startDate.getDate()) {
+        diffMonths += 1;
+      }
+      if (diffMonths < 24) {
+        return `${diffMonths}개월`;
+      } else {
+        const diffYears = diffMonths / 12;
+        return `${Math.round(diffYears)}년`;
       }
     },
   },
 };
 </script>
-
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .goal-detail-page {
   padding: 2rem;
 }
 .back-link {
   color: #007bff;
   text-decoration: none;
-  margin-bottom: 1rem;
+  margin: 1rem;
   display: inline-block;
 }
+/* 박스 */
 .summary-card {
   background: #fff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-.title-row {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+/* 타이틀 */
+.header-row {
+  margin-bottom: 0.5rem;
+}
+/* 진행률 영역 */
+.progress-area,
+.details,
+.button-row {
+  padding: 1rem 10rem;
 }
 .progress-area {
+  position: relative;
+  margin-bottom: 2rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
 }
 .progress-bar {
+  position: relative;
   flex: 1;
   height: 20px;
   background: #eee;
@@ -188,40 +251,89 @@ export default {
 }
 .progress {
   height: 100%;
-  background: linear-gradient(90deg, red, orange, green);
+  border-radius: 10px;
+  background: linear-gradient(90deg, #f44336, #ff9800, #4caf50);
 }
-.progress-percent {
-  font-weight: bold;
+.progress-markers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
 }
+.marker {
+  position: absolute;
+  height: 100%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+.marker-line {
+  height: 100%;
+  border-left: 1px dashed #888;
+}
+.marker-label {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  color: #555;
+}
+.progress-area img {
+  margin-left: 8px;
+  height: 40px;
+  width: auto;
+}
+/* 상세 정보 */
 .details {
   margin-top: 1rem;
-  line-height: 1.6;
 }
+.detail-row {
+  display: flex;
+  margin-bottom: 0.5rem;
+  gap: 0.5rem;
+}
+.label {
+  font-weight: bold;
+  min-width: 120px;
+  color: #444;
+}
+.value {
+  flex: 1;
+  color: #111;
+}
+/* 버튼 */
 .button-row {
   margin-top: 1.5rem;
   display: flex;
   gap: 1rem;
 }
+.btn {
+  border-radius: 16px;
+  padding: 0.2rem 2rem;
+}
+/* 추천 상품 */
 .recommendation-section {
   margin-top: 2rem;
 }
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(5, 1fr);
   margin-top: 1rem;
+  gap: 1.5rem;
 }
-.product-card {
-  background: #fff;
-  border: 1px solid #a2c3ff;
-  border-radius: 12px;
-  padding: 1rem;
-  text-align: center;
-  box-shadow: 0 0 6px rgba(0, 120, 255, 0.1);
+.product-grid > * {
+  width: 100%;
 }
-.reason {
-  font-size: 0.9rem;
-  color: #555;
-  margin-top: 0.5rem;
+@media (max-width: 1024px) {
+  .progress-area,
+  .details,
+  .button-row {
+    padding: 1rem;
+  }
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>

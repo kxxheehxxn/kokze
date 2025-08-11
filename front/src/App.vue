@@ -3,10 +3,7 @@ import { RouterView } from 'vue-router';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import DefaultLayout from './components/layouts/DefaultLayout.vue';
-
 const route = useRoute();
-
-// 헤더/풋터가 없어야 하는 페이지 목록
 const pagesWithoutHeaderFooter = [
     '/auth/login',
     '/signup/step1',
@@ -15,12 +12,10 @@ const pagesWithoutHeaderFooter = [
     '/signup/step2',
     '/signup/step3',
 ];
-
 const showHeaderFooter = computed(() => {
     return !pagesWithoutHeaderFooter.includes(route.path);
 });
 </script>
-
 <template>
     <DefaultLayout v-if="showHeaderFooter">
         <RouterView />
@@ -29,7 +24,6 @@ const showHeaderFooter = computed(() => {
         <RouterView />
     </div>
 </template>
-
 <style scoped>
 .no-layout-wrapper {
     min-height: 100vh;

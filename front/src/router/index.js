@@ -30,44 +30,46 @@ const router = createRouter({
       component: () => import('@/pages/term/TermsPage.vue'),
     },
     {
-      path: '/userpage',
+      path: '/user',
       name: 'UserPage',
-      component: () => import('@/pages/UserPage.vue'),
+      component: () => import('@/pages/mypage/UserPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
-      path: '/points',
+      path: '/user/point',
       name: 'PointPage',
-      component: () => import('@/pages/PointPage.vue'),
-    },
-    {
-      path: '/points',
-      name: 'PointPage',
-      component: () => import('@/pages/PointPage.vue'),
+      component: () => import('@/pages/mypage/PointPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/user/asset',
       name: 'UserAssetEditPage',
-      component: () => import('@/pages/UserAssetEditPage.vue'),
+      component: () => import('@/pages/mypage/UserAssetEditPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/user/mbti',
       name: 'UserMbtiEditPage',
-      component: () => import('@/pages/UserMbtiEditPage.vue'),
+      component: () => import('@/pages/mypage/UserMbtiEditPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/user/password',
       name: 'UserPasswordEditPage',
-      component: () => import('@/pages/UserPasswordEditPage.vue'),
+      component: () => import('@/pages/mypage/UserPasswordEditPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/user/withdraw',
       name: 'UserWithdrawPage',
-      component: () => import('@/pages/UserWithdrawPage.vue'),
+      component: () => import('@/pages/mypage/UserWithdrawPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/goals',
       name: 'GoalPage',
       component: () => import('@/pages/goal/GoalPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/goals/:goalId', // 상세 페이지 경로
@@ -86,7 +88,6 @@ const router = createRouter({
       component: () => import('@/pages/goal/GoalEditPage.vue'),
       props: true, // goalId param을 props로 전달
     },
-
     {
       path: '/find-password',
       name: 'FindPasswordPage',
@@ -94,19 +95,21 @@ const router = createRouter({
     },
     {
       path: '/tax-management',
-      name: 'TaxPage.vue',
+      name: 'TaxPage',
       component: () => import('@/pages/tax/TaxPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/product',
       name: 'ProductRecommendPage',
       component: () => import('@/pages/product/ProductRecommendPage.vue'),
+      beforeEnter: isAuthenticated,
     },
     {
       path: '/product/:fin_prdt_cd',
       name: 'ProductDetailPage',
       component: () => import('@/pages/product/ProductDetailPage.vue'),
-      props: true, //
+      props: true,
     },
     ...authRoutes,
     ...inquiryRoutes,

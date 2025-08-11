@@ -30,21 +30,6 @@ export const userAuthStore = defineStore('auth', () => {
 
   const isLogin = computed(() => !!state.value.user.email);
   const userId = computed(() => state.value.user.userId);
-  const userName = computed(() => {
-    try {
-      const authData = localStorage.getItem('auth');
-      if (authData) {
-        const parsed = JSON.parse(authData);
-        const name = parsed.user?.userName;
-        return name || '';
-      }
-    } catch (error) {
-      console.error('localStorage 파싱 오류:', error);
-    }
-    
-    const name = state.value.user.userName;
-    return name || '';
-  });
   const email = computed(() => state.value.user.email);
   const role = computed(() => state.value.user.role);
   const userInfo = reactive({ ...initialUserInfo });
@@ -59,17 +44,21 @@ export const userAuthStore = defineStore('auth', () => {
           userName: member.userName,
           email: member.email,
           role: 'USER',
+          kakao: true,
         };
       } else {
-        const response = await axios.post('http://localhost:8080/api/auth/login', member);
+        const response = await axios.post(
+          'http://localhost:8080/api/auth/login',
+          member
+        );
 
         if (response.data && response.data.success) {
-          state.value.token = response.data.token;
+          state.value.token = response.data.data.token;
           state.value.user = {
-            userId: response.data.user.userId || '',
-            userName: response.data.user.name,
-            email: response.data.user.email,
-            role: response.data.user.role,
+            userId: response.data.data.user.userId || '',
+            userName: response.data.data.user.name,
+            email: response.data.data.user.email,
+            role: response.data.data.user.role,
           };
         } else {
           throw new Error(response.data.message || '로그인에 실패했습니다.');
@@ -98,9 +87,9 @@ export const userAuthStore = defineStore('auth', () => {
   const getToken = () => state.value.token;
 
   const setToken = (token) => {
-    state.value.token = token
-    localStorage.setItem('auth', JSON.stringify(state.value))
-  }
+    state.value.token = token;
+    localStorage.setItem('auth', JSON.stringify(state.value));
+  };
 
   const load = () => {
     const auth = localStorage.getItem('auth');
@@ -130,6 +119,7 @@ export const userAuthStore = defineStore('auth', () => {
     state,
     email,
     userId,
+    role,
     isLogin,
     login,
     logout,

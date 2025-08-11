@@ -14,10 +14,8 @@
             <p class="tax-amount">{{ taxAmounts[label] || '0원' }}</p>
           </div>
         </div>
-
         <div class="tax-info">
           <DefaultInfo v-if="!selected" />
-
           <component
             v-else
             :is="detailComponentName"
@@ -28,10 +26,9 @@
     </div>
   </div>
 </template>
-
 <script>
 import DefaultInfo from './details/DefaultInfo.vue'
-import MedicalDetail from './details/MEdicalDetail.vue' 
+import MedicalDetail from './details/MEdicalDetail.vue'
 import InsuranceDetail from './details/InsuranceDetail.vue'
 import PensionDetail from './details/PensionDetail.vue'
 import DebitCardDetail from './details/DebitCardDetail.vue'
@@ -44,8 +41,6 @@ import OverIncomeDetail from './details/OverIncomeDetail.vue'
 import HealthInsuranceDetail from './details/HealthInsuranceDetail.vue'
 import NationalPensionDetail from './details/NationalPensionDetail.vue'
 import CashReceiptDetail from './details/CashReceiptDetail.vue'
-
-
 export default {
   name: 'TaxPage',
   components: {
@@ -53,10 +48,8 @@ export default {
     MedicalDetail,
     InsuranceDetail,
     PensionDetail,
-
     CashDetail,
     DebitCardDetail,
-
     SavingDetail,
     RentDetail,
     HouseSavingDetail,
@@ -133,7 +126,6 @@ export default {
   }
 }
 </script>
-
 <style scoped>
 /* 기존 스타일 유지 */
 .tax-page {
@@ -241,12 +233,10 @@ export default {
   cursor: pointer;
   transform: translateY(-2px);
 }
-
 .tax-card.active {
   border: 2px solid #1d4ed8;
   background-color: #1d4ed8;
 }
-
 .tax-card.active .tax-label,
 .tax-card.active .tax-amount {
   color: #ffffff;

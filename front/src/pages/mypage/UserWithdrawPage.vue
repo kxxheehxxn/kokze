@@ -4,12 +4,25 @@
     <div class="desc">
       <p>회원탈퇴를 신청하기 전에 안내 사항을 꼭 확인해 주세요.</p>
       <ul>
-        <li>사용하고 계신 이메일은 탈퇴한 경우 재사용 및 복구가 불가능합니다.</li>
-        <li>탈퇴한 아이디는 본인과 타인 모두 재사용 및 복구가 불가하오니 신중하게 선택하시기 바랍니다.</li>
-        <li>부정 가입 또는 부정 이용이 의심되는 아이디는 탈퇴 후 6개월간 동일한 실명정보로 재가입 할 수 없습니다.</li>
+        <li>
+          사용하고 계신 이메일은 탈퇴한 경우 재사용 및 복구가 불가능합니다.
+        </li>
+        <li>
+          탈퇴한 아이디는 본인과 타인 모두 재사용 및 복구가 불가하오니 신중하게
+          선택하시기 바랍니다.
+        </li>
+        <li>
+          부정 가입 또는 부정 이용이 의심되는 아이디는 탈퇴 후 6개월간 동일한
+          실명정보로 재가입 할 수 없습니다.
+        </li>
         <li>탈퇴 후 회원정보 및 개인형 서비스 이용기록은 모두 삭제됩니다.</li>
-        <li>회원정보 등 개인형 서비스 이용기록은 모두 삭제되며, 삭제된 데이터는 복구되지 않습니다.</li>
-        <li>삭제되는 내용을 확인하시고 필요한 데이터는 미리 백업을 해주세요.</li>
+        <li>
+          회원정보 등 개인형 서비스 이용기록은 모두 삭제되며, 삭제된 데이터는
+          복구되지 않습니다.
+        </li>
+        <li>
+          삭제되는 내용을 확인하시고 필요한 데이터는 미리 백업을 해주세요.
+        </li>
       </ul>
       <p class="warn">탈퇴 후에는 아이디와 데이터는 복구할 수 없습니다.</p>
       <table>
@@ -48,12 +61,25 @@
           </tr>
         </tbody>
       </table>
-      <p class="info">※ 0zea는 결제 시스템을 사용하지 않기 때문에, 결제 및 환불 관련 기록은 별도로 보관하지 않습니다.</p>
+      <p class="info">
+        ※ 0zea는 결제 시스템을 사용하지 않기 때문에, 결제 및 환불 관련 기록은
+        별도로 보관하지 않습니다.
+      </p>
       <ul>
-        <li>SNS 계정(카카오, 네이버 등)으로 가입한 회원도 동일하게 탈퇴할 수 있으며, 연동된 SNS 정보도 함께 삭제됩니다.</li>
-        <li>서비스 이용 중 생성된 게시글, 댓글 등은 탈퇴 시 함께 삭제됩니다.</li>
-        <li>일부 데이터는 관련 법령에 따라 일정 기간 보관 후 안전하게 삭제됩니다.</li>
-        <li>탈퇴 관련 문의는 고객센터 이메일 또는 문의하기 페이지를 통해 가능합니다.</li>
+        <li>
+          SNS 계정(카카오, 네이버 등)으로 가입한 회원도 동일하게 탈퇴할 수
+          있으며, 연동된 SNS 정보도 함께 삭제됩니다.
+        </li>
+        <li>
+          서비스 이용 중 생성된 게시글, 댓글 등은 탈퇴 시 함께 삭제됩니다.
+        </li>
+        <li>
+          일부 데이터는 관련 법령에 따라 일정 기간 보관 후 안전하게 삭제됩니다.
+        </li>
+        <li>
+          탈퇴 관련 문의는 고객센터 이메일 또는 문의하기 페이지를 통해
+          가능합니다.
+        </li>
       </ul>
     </div>
     <div class="agree-row">
@@ -61,53 +87,52 @@
       <label for="agree">안내 사항을 모두 확인하였으며, 이에 동의합니다.</label>
     </div>
     <div class="button-row">
-      <button class="submit-btn" :disabled="!agree || loading" @click="onWithdraw">
+      <button
+        class="submit-btn"
+        :disabled="!agree || loading"
+        @click="onWithdraw"
+      >
         {{ loading ? '처리 중...' : '확인' }}
       </button>
     </div>
     <div v-if="error" class="error-msg">{{ error }}</div>
   </UserCardLayout>
 </template>
-
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import UserCardLayout from '@/components/UserCardLayout.vue'
-import { userAuthStore } from '@/stores/auth.js'
-import { withdrawUser } from '@/api/userApi'
-
-const agree = ref(false)
-const loading = ref(false)
-const error = ref('')
-const router = useRouter()
-const auth = userAuthStore()
-
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import UserCardLayout from '@/components/UserCardLayout.vue';
+import { userAuthStore } from '@/stores/auth.js';
+import { withdrawUser } from '@/api/userApi';
+const agree = ref(false);
+const loading = ref(false);
+const error = ref('');
+const router = useRouter();
+const auth = userAuthStore();
 async function onWithdraw() {
-  if (!agree.value) return
-  
-  loading.value = true
-  error.value = ''
-  
+  if (!agree.value) return;
+  loading.value = true;
+  error.value = '';
   try {
     // 회원탈퇴 처리
-    const result = await withdrawUser()
-    
+    const result = await withdrawUser();
     if (result.success) {
-      alert('탈퇴가 처리되었습니다.')
-      auth.logout()
-      router.push('/')
+      alert('탈퇴가 처리되었습니다.');
+      auth.logout();
+      router.push('/');
     } else {
-      error.value = '회원 탈퇴 처리에 실패했습니다: ' + (result.message || '알 수 없는 오류')
+      error.value =
+        '회원 탈퇴 처리에 실패했습니다: ' +
+        (result.message || '알 수 없는 오류');
     }
   } catch (error) {
-    error.value = '회원 탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.'
-    console.error('회원 탈퇴 실패:', error)
+    error.value = '회원 탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.';
+    console.error('회원 탈퇴 실패:', error);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>
-
 <style scoped>
 .title {
   font-size: 28px;
@@ -142,7 +167,8 @@ table {
   margin: 18px 0 18px 0;
   font-size: 15px;
 }
-th, td {
+th,
+td {
   border: 1px solid #e5e7eb;
   padding: 10px 12px;
   text-align: left;
@@ -173,6 +199,7 @@ th {
   background: #e74c3c;
   color: #fff;
   cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   transition: background 0.2s;
 }
 .submit-btn:disabled {
@@ -186,4 +213,4 @@ th {
   margin-top: 12px;
   text-align: center;
 }
-</style> 
+</style>

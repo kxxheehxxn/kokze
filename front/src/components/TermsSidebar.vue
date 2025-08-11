@@ -12,7 +12,6 @@
     </ul>
   </div>
 </template>
-
 <script setup>
 const props = defineProps({
   categories: Array,
@@ -20,15 +19,14 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:modelValue']);
 </script>
-
 <style scoped>
 .terms-sidebar {
   min-width: 200px;
   background: #fff;
   border-radius: 0 18px 18px 0;
-  box-shadow: 0 2px 8px 0 #e5e7eb;
-  padding: 36px 0 36px 0;
-  margin: 40px 0 0 0;
+  box-shadow: 0 2px 8px 0 #cccccc;
+  padding: 36px 0;
+  margin: 40px 10px 0 0;
 }
 .terms-sidebar ul {
   list-style: none;

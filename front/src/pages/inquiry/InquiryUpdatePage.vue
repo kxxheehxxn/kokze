@@ -3,19 +3,13 @@ import api from '@/api/inquiryApi';
 import { reactive, computed, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
-
 const auth = userAuthStore();
-
 const router = useRouter();
 const route = useRoute();
-
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
-
 const infoId = route.params.no;
-
 const orgArticle = ref({});
-
 const article = reactive({
   infoId: infoId,
   userId: '',
@@ -24,26 +18,21 @@ const article = reactive({
   content: '',
   isAnswered: false,
 });
-
 const disableSubmit = computed(() => {
   return !article.title || !article.content;
 });
-
 const submit = async () => {
   if (!confirm('문의사항을 수정하시겠습니까?')) {
     return;
   }
-
   const updatedFields = {
     infoId: article.infoId,
     userId: article.userId,
     title: article.title,
     content: article.content,
   };
-
   try {
     await api.update(updatedFields);
-
     router.replace({
       name: 'inquiryDetail',
       params: { no: article.infoId },
@@ -54,7 +43,6 @@ const submit = async () => {
     alert('문의사항 수정에 실패했습니다. 다시 시도해주세요.');
   }
 };
-
 const load = async () => {
   if (!infoId) {
     console.error('유효하지 않은 infoId:', infoId);
@@ -62,16 +50,13 @@ const load = async () => {
     router.replace('/inquiry/list');
     return;
   }
-
   try {
     const data = await api.get(infoId);
-
     if (!data || !data.infoId) {
       throw new Error(
         'API 응답 데이터가 유효하지 않거나 게시글을 찾을 수 없습니다.'
       );
     }
-
     orgArticle.value = { ...data };
     article.infoId = orgArticle.value.infoId;
     article.userId = orgArticle.value.userId;
@@ -84,7 +69,6 @@ const load = async () => {
     router.replace('/inquiry/list');
   }
 };
-
 const back = () => {
   router.replace({
     name: 'inquiryDetail',
@@ -92,72 +76,76 @@ const back = () => {
     query: route.query,
   });
 };
-
 onMounted(() => {
   load();
 });
 </script>
-
 <template>
-  <div class="custom-box-wrapper">
-    <div class="custom-box p-5">
-      <div class="m-2">
-        <h4 class="fw-bold">문의사항 수정</h4>
-        <form @submit.prevent="submit">
-          <div class="d-flex align-items-center title-box">
-            <label for="title" class="form-label ms-2">제목</label>
-            <div class="title-container w-100">
-              <input
-                type="text"
-                class="form-control title-input"
-                id="title"
-                v-model="article.title"
-                :maxlength="MAX_TITLE_LENGTH"
-              />
-              <span class="char-count"
-                >{{ article.title.length }} / {{ MAX_TITLE_LENGTH }}</span
-              >
+  <div class="container">
+    <div class="custom-box-wrapper">
+      <div class="custom-box p-5">
+        <div class="m-2">
+          <h4 class="fw-bold">문의사항 수정</h4>
+          <form @submit.prevent="submit">
+            <div class="d-flex align-items-center title-box">
+              <label for="title" class="form-label ms-2">제목</label>
+              <div class="title-container w-100">
+                <input
+                  type="text"
+                  class="form-control title-input"
+                  id="title"
+                  v-model="article.title"
+                  :maxlength="MAX_TITLE_LENGTH"
+                />
+                <span class="char-count"
+                  >{{ article.title?.length ?? 0 }} /
+                  {{ MAX_TITLE_LENGTH }}</span
+                >
+              </div>
             </div>
-          </div>
-          <hr />
-          <div class="d-flex mb-3 mt-3 align-items-start">
-            <label for="content" class="form-label pt-2">내용</label>
-            <div class="textarea-container w-100">
-              <textarea
-                class="form-control textarea-input"
-                id="content"
-                v-model="article.content"
-                rows="10"
-                :maxlength="MAX_CONTENT_LENGTH"
-              ></textarea>
-              <span class="char-count textarea-count"
-                >{{ article.content.length }} / {{ MAX_CONTENT_LENGTH }}</span
-              >
+            <hr />
+            <div class="d-flex mb-3 mt-3 align-items-start">
+              <label for="content" class="form-label pt-2">내용</label>
+              <div class="textarea-container w-100">
+                <textarea
+                  class="form-control textarea-input"
+                  id="content"
+                  v-model="article.content"
+                  rows="10"
+                  :maxlength="MAX_CONTENT_LENGTH"
+                ></textarea>
+                <span class="char-count textarea-count"
+                  >{{ article.content?.length ?? 0 }} /
+                  {{ MAX_CONTENT_LENGTH }}</span
+                >
+              </div>
             </div>
-          </div>
-          <div class="mt-5 text-center">
-            <button
-              type="submit"
-              class="btn fw-bold create"
-              :disabled="disableSubmit"
-            >
-              확인
-            </button>
-            <button type="button" class="btn ms-3 fw-bold back" @click="back">
-              취소
-            </button>
-          </div>
-        </form>
+            <div class="mt-5 text-center">
+              <button type="button" class="btn ms-3 fw-bold back" @click="back">
+                취소하기
+              </button>
+              <button
+                type="submit"
+                class="btn fw-bold create ms-3"
+                :disabled="disableSubmit"
+              >
+                확인
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 </template>
-
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .custom-box-wrapper {
   display: flex;
   justify-content: center;
-  padding-top: 70px;
+  padding-top: 60px;
   padding-bottom: 30px;
   margin: 0px 30px;
 }
@@ -252,5 +240,14 @@ onMounted(() => {
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+/* 또는 뷰포트 기반으로 유연하게 */
+@media (max-width: 1024px) and (orientation: portrait) {
+  .custom-box {
+    min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
+  }
+  .textarea-input {
+    height: 50vh;
+  }
 }
 </style>

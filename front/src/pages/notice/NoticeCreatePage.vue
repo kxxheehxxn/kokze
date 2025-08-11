@@ -21,7 +21,6 @@ const submit = async () => {
   await api.create(article);
   router.push('/notice/list');
 };
-
 onMounted(() => {
   if (auth.role.toLowerCase() !== 'admin') {
     alert('권한이 없습니다.');
@@ -31,60 +30,65 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="custom-box-wrapper">
-    <div class="custom-box p-5">
-      <div class="m-2">
-        <h4 class="fw-bold">공지사항 작성</h4>
-        <form @submit.prevent="submit">
-          <div class="d-flex align-items-center title-box">
-            <label for="title" class="form-label ms-2">제목</label>
-            <div class="title-container w-100">
-              <input
-                type="text"
-                class="form-control title-input"
-                id="title"
-                v-model="article.title"
-                :maxlength="MAX_TITLE_LENGTH"
-              />
-              <span class="char-count"
-                >{{ article.title.length }} / {{ MAX_TITLE_LENGTH }}</span
-              >
+  <div class="container">
+    <div class="custom-box-wrapper">
+      <div class="custom-box p-5">
+        <div class="m-2">
+          <h4 class="fw-bold">공지사항 작성</h4>
+          <form @submit.prevent="submit">
+            <div class="d-flex align-items-center title-box">
+              <label for="title" class="form-label ms-2">제목</label>
+              <div class="title-container w-100">
+                <input
+                  type="text"
+                  class="form-control title-input"
+                  id="title"
+                  v-model="article.title"
+                  :maxlength="MAX_TITLE_LENGTH"
+                />
+                <span class="char-count"
+                  >{{ article.title.length }} / {{ MAX_TITLE_LENGTH }}</span
+                >
+              </div>
             </div>
-          </div>
-          <hr />
-          <div class="d-flex mb-3 mt-3 align-items-start">
-            <label for="content" class="form-label pt-2">내용</label>
-            <div class="textarea-container w-100">
-              <textarea
-                class="form-control textarea-input"
-                id="content"
-                v-model="article.content"
-                rows="10"
-                :maxlength="MAX_CONTENT_LENGTH"
-              ></textarea>
-              <span class="char-count textarea-count"
-                >{{ article.content.length }} / {{ MAX_CONTENT_LENGTH }}</span
-              >
+            <hr />
+            <div class="d-flex mb-3 mt-3 align-items-start">
+              <label for="content" class="form-label pt-2">내용</label>
+              <div class="textarea-container w-100">
+                <textarea
+                  class="form-control textarea-input"
+                  id="content"
+                  v-model="article.content"
+                  rows="10"
+                  :maxlength="MAX_CONTENT_LENGTH"
+                ></textarea>
+                <span class="char-count textarea-count"
+                  >{{ article.content.length }} / {{ MAX_CONTENT_LENGTH }}</span
+                >
+              </div>
             </div>
-          </div>
-          <div class="mt-5 text-center">
-            <button
-              type="submit"
-              class="btn fw-bold create"
-              :disabled="disableSubmit"
-            >
-              확인
-            </button>
-            <button type="button" class="btn ms-3 fw-bold back" @click="back">
-              취소
-            </button>
-          </div>
-        </form>
+            <div class="mt-5 text-center">
+              <button type="button" class="btn fw-bold back" @click="back">
+                취소
+              </button>
+              <button
+                type="submit"
+                class="btn fw-bold create ms-3"
+                :disabled="disableSubmit"
+              >
+                확인
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
+.container {
+  background-color: #fbfbfb;
+}
 .custom-box-wrapper {
   display: flex;
   justify-content: center;
@@ -165,7 +169,6 @@ onMounted(() => {
   background: transparent;
   padding-bottom: 20px; /* 글자 수 표시 공간 확보 */
 }
-
 /* ⭐ 새로 추가된 글자 수 표시 스타일 ⭐ */
 .char-count {
   position: absolute;
@@ -185,5 +188,10 @@ onMounted(() => {
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+@media (max-width: 1024px) and (orientation: portrait) {
+  .custom-box {
+    min-height: 80vh; /* 화면 높이의 80% 이상 확보 */
+  }
 }
 </style>

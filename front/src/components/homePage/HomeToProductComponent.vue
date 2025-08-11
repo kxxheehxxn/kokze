@@ -1,26 +1,18 @@
 <template>
-  <div class="home-to-product-card" @click="handleProductManagement">
+  <div class="home-to-product-card">
     <div class="card-header">
       <div>2025년 연말정산</div>
       <h3 class="card-title">금융 상품 추천</h3>
     </div>
     <div class="card-content">
-      <img src="@/assets/images/product_recommand_logo.svg" alt="금융 상품 로고" class="logo" />
+      <img src="@/assets/images/product_recommand_logo.svg" alt="금융 상품 로고" />
     </div>
   </div>
 </template>
-
 <script setup>
 import { useRouter } from 'vue-router';
-
 const router = useRouter();
-
-// 금융 상품 추천 페이지로 이동
-const handleProductManagement = () => {
-  router.push('/product');
-};
 </script>
-
 <style scoped>
 .home-to-product-card {
   background-color: #ffffff;
@@ -37,71 +29,58 @@ const handleProductManagement = () => {
   display: flex;
   flex-direction: column;
 }
-
 .card-header {
   margin-bottom: 20px;
 }
-
 .card-title {
   font-size: 20px;
   font-weight: 700;
   margin: 0;
   color: rgb(0, 0, 0);
 }
-
 .card-content {
   height: 150px;
   width: 100%;
   display: flex;
   justify-content: center;
 }
-
 .card-header,
 .card-content {
   position: relative;
   z-index: 1;
 }
-
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .home-to-product-card {
     padding: 20px;
   }
-
   .card-title {
     font-size: 18px;
   }
-
   .card-content {
     height: 120px;
     width: 100%;
   }
 }
-
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .home-to-product-card {
     padding: 20px;
   }
-
   .card-title {
     font-size: 18px;
   }
-
   .card-content {
     height: 100px;
     width: 100%;
   }
 }
-
 @media (max-width: 480px) {
   .home-to-product-card {
     padding: 16px;
   }
-
   .card-title {
     font-size: 16px;
   }
-
   .card-content {
     height: 50px;
     width: 100%;

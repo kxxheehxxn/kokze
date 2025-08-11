@@ -69,28 +69,104 @@
 
 <script>
   export default {
-    name: "DefaultInfo",
+  name: "DefaultInfo",
+    components: {
+      CreditCardDetail,
+      DefaultInfo,
+      MedicalDetail,
+      InsuranceDetail,
+      PensionDetail,
+      DebitCardDetail,
+      HousingDetail,
+      HousingSavingDetail,
+      EducationDetail,
+      FunVentureDetail,
+      DonationDetail,
+      OverIncomeDetail,
+      HealthInsuranceDetail,
+      NationalPensionDetail,
+      CashReceiptDetail
+    },
     data() {
       return {
         showModal: false,
-        step: "agreement",
-        selectedYear: "",
+        step: 'agreement',
+        selectedYear: '',
         yearOptions: [2022, 2023, 2024],
-        agree: ""
+        agree: '',
+        isVerified: false,
+        loading: false,
+        rawKakaoData: null
       };
     },
     methods: {
-      startVerification() {
-        if (!this.selectedYear) {
-          alert("연도를 선택해주세요.");
-          return;
-        }
-        if (this.agree !== "Y") {
-          alert("동의해야 진행 가능합니다.");
-          return;
-        }
+      async startVerification() {
+        if (!this.selectedYear) return alert('연도를 선택해주세요.');
+        if (this.agree !== 'Y') return alert('동의해야 진행 가능합니다.');
+        this.step = 'verifying';
 
-        this.step = "verifying";
+        try {
+          const { userId } = storeToRefs(userAuthStore());
+          const uid = userId.value;
+          if (!uid) {
+            alert('로그인 후 이용해주세요.');
+            this.step = 'agreement';
+            return;
+          }
+
+          const res = await fetch(`/tax/auth?userId=${encodeURIComponent(uid)}&year=${encodeURIComponent(this.selectedYear)}`);
+          if (!res.ok) {
+            console.error('서버 오류 응답:', await res.text());
+            alert('서버 오류 발생');
+            this.step = 'agreement';
+            return;
+          }
+
+          const data = await res.json();
+          if (data.result?.code === 'CF-00000') {
+            this.isVerified = true;
+            this.rawKakaoData = data.data || [];
+            this.step = 'completed';
+          } else {
+            alert(`인증 실패: ${data.result?.message || '알 수 없는 오류'}`);
+            this.step = 'verifying';
+            this.isVerified = false;
+          }
+        } catch (e) {
+          console.error(e);
+          alert('서버 요청 중 오류 발생');
+          this.isVerified = false;
+          this.step = 'agreement';
+        }
+      },
+      async fetchTaxSummary() {
+        if (!this.isVerified) return alert('인증을 먼저 완료해주세요.');
+        this.loading = true;
+        try {
+          const { userId } = storeToRefs(userAuthStore());
+          const uid = userId.value;
+
+          const res = await fetch('/taxinfo/save-and-summary', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: uid,
+              year: this.selectedYear,
+              data: this.rawKakaoData || []
+            })
+          });
+          if (!res.ok) throw new Error(await res.text());
+
+          const summary = await res.json();
+          // 부모(TaxPage)로 요약 전달
+          this.$emit('update-tax-data', summary);
+          this.closePopup();
+        } catch (err) {
+          console.error('세금 정보 조회 오류:', err);
+          alert('세금 정보 조회에 실패했습니다.');
+        } finally {
+          this.loading = false;
+        }
       },
       goToCompleted() {
           this.step = 'completed';

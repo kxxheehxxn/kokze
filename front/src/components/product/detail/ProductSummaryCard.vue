@@ -72,9 +72,13 @@ const bestOption = computed(() => {
       <p class="label">금리 정보가 없습니다</p>
     </div>
 
-    <button class="cta-button" @click="openBankHomepage">공식 홈페이지 더 알아보기</button>
+    <button class="cta-button" @click="openBankHomepage">
+      공식 홈페이지 더 알아보기
+    </button>
 
-    <div class="footer-note">금융 상품 가입 후 ‘홈에서 자산 조회’를 클릭하여 금융 상품을 연결하세요!</div>
+    <div class="footer-note">
+      금융 상품 가입 후 ‘홈에서 자산 조회’를 클릭하여 금융 상품을 연결하세요!
+    </div>
   </div>
 </template>
 <style scoped>

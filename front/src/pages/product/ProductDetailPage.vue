@@ -18,14 +18,12 @@ const props = defineProps({
 const route = useRoute()
 const router = useRouter()
 
-// prop이 없으면 /product/:fin_prdt_cd 사용
 const finPrdtCd = computed(() => props.fin_prdt_cd || route.params.fin_prdt_cd)
 
 const product = ref(null)
 const isLoading = ref(true)
 const loadError = ref(null)
 
-// 요약 폴링 관련
 const loadingSummary = ref(false)
 let summaryTimer = null
 let pollTries = 0
@@ -47,11 +45,7 @@ async function loadProduct() {
     const result = await fetchProductDetail(finPrdtCd.value)
     product.value = result
 
-    // 요약이 없으면: (A) GET 시 자동 생성된다면 폴링만
-    //                (B) 자동 생성이 아니라면 한 번 트리거 호출 후 폴링
     if (!result?.summary) {
-      // ↓ 백엔드가 수동 트리거를 제공하는 경우만 사용하세요.
-      // 실패해도 폴링은 계속 진행하므로 catch 무시
       await axios
         .post(`/api/products/${finPrdtCd.value}/summary/refresh`)
         .catch(() => {})
@@ -81,7 +75,7 @@ function scheduleNextPoll() {
     try {
       const refreshed = await fetchProductDetail(finPrdtCd.value)
       if (refreshed?.summary && refreshed.summary.trim()) {
-        product.value = { ...refreshed } // 최신 전체 데이터로 교체
+        product.value = { ...refreshed }
         stopSummaryPolling()
         return
       }

@@ -188,7 +188,7 @@ const getGroupedAccountType = (accountType) => {
   } else if (accountType.includes('채권')) {
     return '채권';
   } else {
-    return accountType; // 기타 타입은 그대로 유지
+    return '기타'; // 기타 타입
   }
 };
 // 백엔드에서 계좌 데이터를 가져와서 accountType별로 그룹화
@@ -285,13 +285,15 @@ onMounted(() => {
 .legend-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* 가로 중앙 정렬 */
+  justify-content: flex-start; 
   gap: 16px; /* 모든 방향으로 동일한 간격 */
-  margin-bottom: 32px;
-  margin-top: 48px;
+  margin-bottom: 12px;
+  margin-top: 12px;
   width: 100%; /* 부모 너비에 맞춤 */
   padding: 0 10px; /* 좌우 패딩을 추가하여 아이템이 가장자리에서 튀어나오지 않도록 함 */
   box-sizing: border-box; /* 패딩을 너비에 포함 */
+  height: 140px;
+  align-content: flex-start;
 }
 .legend-item {
   display: flex;
@@ -305,6 +307,14 @@ onMounted(() => {
   max-width: calc(50% - 8px);
   min-width: 140px; /* 최소 너비를 약간 줄임 */
   justify-content: flex-start;
+  padding: 12px 16px;
+  min-height: 40px;
+  flex-shrink: 1;
+}
+/* 더 간단한 방법: 5번째가 존재할 때 컨테이너 내 모든 항목 축소 */
+.legend-container:has(.legend-item:nth-child(5)) .legend-item {
+  padding: 8px 12px !important;
+  min-height: 28px !important;
 }
 .legend-item:hover,
 .legend-hover {
@@ -397,15 +407,19 @@ onMounted(() => {
     height: 250px;
   }
   .legend-container {
+    justify-content: flex-start;
     padding: 0; /* 모바일에서는 굳이 필요 없으므로 패딩 제거 */
     gap: 12px; /* 간격 조정 */
     flex-direction: column; /* 세로로 정렬 */
+    height: auto;
+    align-content: normal;
   }
   .legend-item {
     flex-basis: calc(50% - 6px); /* 2개씩 배치 (gap 12px의 절반인 6px을 뺌) */
     max-width: none;
     padding: 10px 12px; /* 패딩 추가 조정 */
     min-width: unset; /* 최소 너비 제한 해제하여 더 유연하게 */
+    min-height: auto;
   }
   .asset-amount {
     font-size: 14px; /* 폰트 크기 줄임 */

@@ -105,7 +105,7 @@ async function onSubmit() {
     if (result.success) {
       success.value = true;
       setTimeout(() => {
-        router.push('/userpage');
+        router.push('/user');
       }, 1200);
     } else {
       error.value =

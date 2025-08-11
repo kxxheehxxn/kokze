@@ -141,7 +141,7 @@ async function saveMbtiResult() {
     const result = await updateMbti(mbtiResult.value);
     if (result.success) {
       alert('MBTI가 성공적으로 저장되었습니다!');
-      router.push('/userpage');
+      router.push('/user');
     } else {
       alert(
         'MBTI 저장에 실패했습니다: ' + (result.message || '알 수 없는 오류')

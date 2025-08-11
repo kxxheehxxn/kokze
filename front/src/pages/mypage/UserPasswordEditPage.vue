@@ -114,7 +114,7 @@ async function onSubmit() {
     const result = await updatePassword(currentPassword.value, password.value);
     if (result.success) {
       alert('비밀번호가 성공적으로 변경되었습니다!');
-      router.push('/userpage');
+      router.push('/user');
     } else {
       error.value =
         '비밀번호 변경에 실패했습니다: ' +

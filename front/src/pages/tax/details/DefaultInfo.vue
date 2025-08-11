@@ -52,9 +52,26 @@
   </div>
 </template>
 <script>
+import DebitCardDetail from './DebitCardDetail.vue';
+import DefaultInfo from './DefaultInfo.vue';
+import MedicalDetail from './MEdicalDetail.vue';
+import InsuranceDetail from './InsuranceDetail.vue';
+import PensionDetail from './PensionDetail.vue';
+import FunVentureDetail from './FunVentureDetail.vue';
+import DonationDetail from './DonationDetail.vue';
+import OverIncomeDetail from './OverIncomeDetail.vue';
+import HealthInsuranceDetail from './HealthInsuranceDetail.vue';
+import NationalPensionDetail from './NationalPensionDetail.vue';
+import CashReceiptDetail from './CashReceiptDetail.vue';
+import HousingSavingDetail from './HousingSavingDetail.vue';
+import EducationDetail from './EducationDetail.vue';
+import CreditCardDetail from './CreditCardDetail.vue';
+import HousingDetail from './HousingDetail.vue';
+
+
   export default {
   name: "DefaultInfo",
-    components: {
+  components: {
       CreditCardDetail,
       DefaultInfo,
       MedicalDetail,

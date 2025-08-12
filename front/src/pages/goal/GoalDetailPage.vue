@@ -162,47 +162,66 @@ export default {
   }
 },
 
-  methods: {
-    async handleDeleteGoal() {
-      const confirmDelete = confirm('정말로 이 목표를 삭제하시겠습니까?');
-      if (!confirmDelete) return;
-      const auth = userAuthStore();
-      const token = auth.getToken();
-      try {
-        await deleteGoalById(this.goal.id, token);
-        alert('목표가 삭제되었습니다.');
-        this.$router.push('/goals');
-      } catch (error) {
-        console.error('Failed to delete goal:', error);
-        alert('삭제 중 오류가 발생했습니다.');
-      }
-    },
-    formatDate(dateStr) {
-      if (!dateStr || dateStr.length !== 3) return '';
-      const [y, m, d] = dateStr;
-      return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
-        2,
-        '0'
-      )}일`;
-    },
-    getPeriodDiff(start, end) {
-      if (!start || !end) return '';
-      const startDate = new Date(start);
-      const endDate = new Date(end);
-      let diffMonths =
-        (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-        (endDate.getMonth() - startDate.getMonth());
-      if (endDate.getDate() > startDate.getDate()) {
-        diffMonths += 1;
-      }
-      if (diffMonths < 24) {
-        return `${diffMonths}개월`;
-      } else {
-        const diffYears = diffMonths / 12;
-        return `${Math.round(diffYears)}년`;
-      }
-    },
+methods: {
+  async handleDeleteGoal() {
+    const confirmDelete = confirm('정말로 이 목표를 삭제하시겠습니까?');
+    if (!confirmDelete) return;
+    const auth = userAuthStore();
+    const token = auth.getToken();
+    try {
+      await deleteGoalById(this.goal.id, token);
+      alert('목표가 삭제되었습니다.');
+      this.$router.push('/goals');
+    } catch (error) {
+      console.error('Failed to delete goal:', error);
+      alert('삭제 중 오류가 발생했습니다.');
+    }
   },
+
+  // ✅ 어떤 형태든 Date로 변환: [y,m,d] | "YYYY-MM-DD" | Date
+  toDate(val) {
+    if (!val) return null;
+    if (val instanceof Date) return val;
+    if (Array.isArray(val) && val.length === 3) {
+      const [y, m, d] = val;
+      return new Date(Number(y), Number(m) - 1, Number(d));
+    }
+    if (typeof val === 'string') {
+      const parts = val.split(/[-/.]/);
+      if (parts.length >= 3) {
+        return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      }
+      const d = new Date(val);
+      return isNaN(d) ? null : d;
+    }
+    return null;
+  },
+
+  // ✅ "YYYY년 MM월 DD일" 로 표기
+  formatDate(input) {
+    const d = this.toDate(input);
+    if (!d) return '';
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}년 ${m}월 ${day}일`;
+  },
+
+  // ✅ 기간(개월/년) 계산
+  getPeriodDiff(start, end) {
+    const s = this.toDate(start);
+    const e = this.toDate(end);
+    if (!s || !e) return '';
+    let diffMonths =
+      (e.getFullYear() - s.getFullYear()) * 12 +
+      (e.getMonth() - s.getMonth());
+    if (e.getDate() > s.getDate()) diffMonths += 1;
+    return diffMonths < 24
+      ? `${diffMonths}개월`
+      : `${Math.round(diffMonths / 12)}년`;
+  },
+},
+
 };
 </script>
 <style scoped>

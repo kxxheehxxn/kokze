@@ -105,7 +105,6 @@ async function onSubmit() {
   }
   loading.value = true;
   error.value = null;
-  success.value = false;
   try {
     const result = await updateUserProfile({
       salary: salary.value,
@@ -223,14 +222,10 @@ function numberToKorean(num) {
   background: #b3d0fa;
   cursor: not-allowed;
 }
-.error-msg,
-.success-msg {
+.error-msg {
   font-size: 14px;
   margin-top: 8px;
   color: #e74c3c;
-}
-.success-msg {
-  color: #2573ee;
 }
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {

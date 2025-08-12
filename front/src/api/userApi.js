@@ -1,63 +1,126 @@
 import axios from 'axios'
+
 const api = axios.create({
   baseURL: '/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
 })
 
+const LOGIN_PATH = '/auth/login'
+
+function getAuth() {
+  const raw = localStorage.getItem('auth')
+  if (!raw) return null
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
+}
+function setToken(token) {
+  const current = getAuth() || {}
+  localStorage.setItem('auth', JSON.stringify({ ...current, token }))
+}
+function clearAuthAndRedirect() {
+  localStorage.removeItem('auth')
+  setTimeout(() => {
+    window.location.assign(LOGIN_PATH)
+  }, 0)
+}
+
 api.interceptors.request.use(config => {
-  const auth = localStorage.getItem('auth')
-
-  if (auth) {
-    try {
-      const { token } = JSON.parse(auth)
-
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`
-      }
-    } catch (error) {
-    }
+  const auth = getAuth()
+  if (auth?.token) {
+    config.headers = config.headers || {}
+    config.headers.Authorization = `Bearer ${auth.token}`
   }
   return config
 })
 
+let isRefreshing = false
+let pendingQueue = []
+
+async function processQueue(error, newToken = null) {
+  pendingQueue.forEach(({ resolve, reject, original }) => {
+    if (newToken) {
+      original.headers = original.headers || {}
+      original.headers.Authorization = `Bearer ${newToken}`
+      resolve(api(original))
+    } else {
+      reject(error)
+    }
+  })
+  pendingQueue = []
+}
+
+async function refreshAccessToken() {
+  const auth = getAuth()
+  if (!auth?.token) throw new Error('no token to refresh')
+  const res = await axios.post('/api/auth/refresh-token', null, {
+    headers: { Authorization: `Bearer ${auth.token}` },
+    baseURL: '/api',
+  })
+  if (!res.data?.success || !res.data?.token) {
+    throw new Error(res.data?.message || 'refresh failed')
+  }
+  return res.data.token
+}
+
 api.interceptors.response.use(
   response => {
+    const newToken = response.headers?.['x-new-token']
+    if (newToken) setToken(newToken)
     return response
   },
-  error => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('auth')
-      window.location.href = '/auth/login'
+  async error => {
+    const original = error.config
+
+    if (!error.response || !original) {
+      return Promise.reject(error)
     }
-    return Promise.reject(error)
+    if (original._retry) {
+      return Promise.reject(error)
+    }
+    if (error.response.status !== 401) {
+      return Promise.reject(error)
+    }
+
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        pendingQueue.push({ resolve, reject, original })
+      })
+    }
+
+    isRefreshing = true
+    original._retry = true
+
+    try {
+      const newToken = await refreshAccessToken()
+      setToken(newToken)
+
+      await processQueue(null, newToken)
+
+      original.headers = original.headers || {}
+      original.headers.Authorization = `Bearer ${newToken}`
+      return api(original)
+    } catch (e) {
+      await processQueue(e, null)
+      clearAuthAndRedirect()
+      return Promise.reject(e)
+    } finally {
+      isRefreshing = false
+    }
   },
 )
 
 export async function fetchUserInfo() {
-  try {
-    const { data } = await api.get('/auth/profile')
-    return data.user
-  } catch (error) {
-    console.error('Failed to fetch user info:', error)
-    throw error
-  }
+  const { data } = await api.get('/auth/profile')
+  return data.user
 }
-
 export async function fetchUserPoint(user_id) {
-  if (!user_id) {
-    throw new Error('user_id is required')
-  }
-  try {
-    const { data } = await api.get(`/point/${user_id}`)
-    return data.point_amount
-  } catch (error) {
-    console.error('Failed to fetch user points:', error)
-    throw error
-  }
+  if (!user_id) throw new Error('user_id is required')
+  const { data } = await api.get(`/point/${user_id}`)
+  return data.point_amount
 }
-
 export async function getUserInfo() {
   try {
     const { data } = await api.get('/auth/profile')
@@ -81,106 +144,62 @@ export async function getUserInfo() {
     return { name: '사용자', mbti: '미입력', user_id: null }
   }
 }
-
 export async function getUserPoints() {
   try {
     const { data } = await api.get('/auth/points')
-    if (data.success) {
-      return data.totalPoints
-    } else {
-      console.error('포인트 조회 실패:', data.message)
-      return 0
-    }
+    if (data.success) return data.totalPoints
+    console.error('포인트 조회 실패:', data.message)
+    return 0
   } catch (error) {
     console.error('Failed to get user points:', error)
     return 0
   }
 }
-
 export async function updateUserProfile(profileData) {
-  try {
-    const { data } = await api.put('/auth/asset', profileData)
-    return data
-  } catch (error) {
-    console.error('Failed to update user profile:', error)
-    throw error
-  }
+  const { data } = await api.put('/auth/asset', profileData)
+  return data
 }
-
 export async function updateMbti(mbti) {
-  try {
-    const { data } = await api.put('/auth/mbti', { mbti })
-    return data
-  } catch (error) {
-    console.error('Failed to update MBTI:', error)
-    throw error
-  }
+  const { data } = await api.put('/auth/mbti', { mbti })
+  return data
 }
-
 export async function updatePassword(currentPassword, newPassword) {
-  try {
-    const { data } = await api.put('/auth/password', {
-      currentPassword: currentPassword,
-      newPassword: newPassword,
-    })
-    return data
-  } catch (error) {
-    console.error('Failed to update password:', error)
-    throw error
-  }
+  const { data } = await api.put('/auth/password', {
+    currentPassword,
+    newPassword,
+  })
+  return data
 }
-
 export async function withdrawUser() {
-  try {
-    const { data } = await api.delete('/auth/withdraw')
-    return data
-  } catch (error) {
-    console.error('Failed to withdraw user:', error)
-    throw error
-  }
+  const { data } = await api.delete('/auth/withdraw')
+  return data
 }
-
 export async function getMyPoints() {
   const { data } = await api.get('/auth/points')
   return data
 }
-
 export async function getMyPointHistory() {
   const { data } = await api.get('/auth/points/history')
   return data
 }
-
 export async function withdrawPoints(amount, reason) {
-  const { data } = await api.post('/points/withdraw', {
-    amount,
-    reason,
-  })
+  const { data } = await api.post('/points/withdraw', { amount, reason })
   return data
 }
-
 export async function getBankList() {
   const { data } = await api.get('/banks')
   return data
 }
 export async function createTestUser() {
-  try {
-    const { data } = await api.post('/auth/test-user')
-    if (data.success) {
-      localStorage.setItem('auth', JSON.stringify({ token: data.token }))
-    }
-    return data
-  } catch (error) {
-    console.error('Failed to create test user:', error)
-    throw error
+  const { data } = await api.post('/auth/test-user')
+  if (data.success && data.token) {
+    setToken(data.token)
   }
+  return data
+}
+export async function signupUser(userInfo) {
+  const response = await axios.post('/api/user/signup', userInfo)
+  return response.data
 }
 
-export async function signupUser(userInfo) {
-  try {
-    const response = await axios.post('/api/user/signup', userInfo)
-    return response.data
-  } catch (error) {
-    console.error('회원가입 실패:', error)
-    throw error
-  }
-}
+export default api

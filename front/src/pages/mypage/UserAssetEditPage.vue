@@ -44,46 +44,46 @@
   </UserCardLayout>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { getUserInfo, updateUserProfile, createTestUser } from '@/api/userApi';
-import UserCardLayout from '@/components/UserCardLayout.vue';
-const salary = ref(0);
-const payAmount = ref(0);
-const loading = ref(false);
-const error = ref(null);
-const success = ref(false);
-const router = useRouter();
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { getUserInfo, updateUserProfile, createTestUser } from '@/api/userApi'
+import UserCardLayout from '@/components/UserCardLayout.vue'
+const salary = ref(0)
+const payAmount = ref(0)
+const loading = ref(false)
+const error = ref(null)
+const success = ref(false)
+const router = useRouter()
 async function loadUserAsset() {
-  error.value = null;
+  error.value = null
   try {
-    const user = await getUserInfo();
-    salary.value = user.salary || 0;
-    payAmount.value = user.payAmount || 0;
+    const user = await getUserInfo()
+    salary.value = user.salary || 0
+    payAmount.value = user.payAmount || 0
   } catch (e) {
-    error.value = '사용자 정보를 불러올 수 없습니다.';
+    error.value = '사용자 정보를 불러올 수 없습니다.'
     try {
-      await createTestUser();
-      const user = await getUserInfo();
-      salary.value = user.salary || 0;
-      payAmount.value = user.payAmount || 0;
-      error.value = null;
+      await createTestUser()
+      const user = await getUserInfo()
+      salary.value = user.salary || 0
+      payAmount.value = user.payAmount || 0
+      error.value = null
     } catch (testError) {
-      error.value = '테스트용 사용자 생성에도 실패했습니다.';
+      error.value = '테스트용 사용자 생성에도 실패했습니다.'
     }
   }
 }
 function formatNumber(value) {
-  if (value === null || value === undefined) return '';
-  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  if (value === null || value === undefined) return ''
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 function parseNumber(value) {
-  const cleaned = value.replace(/[^0-9]/g, '');
-  return cleaned ? parseInt(cleaned, 10) : 0;
+  const cleaned = value.replace(/[^0-9]/g, '')
+  return cleaned ? parseInt(cleaned, 10) : 0
 }
 onMounted(() => {
-  loadUserAsset();
-});
+  loadUserAsset()
+})
 async function onSubmit() {
   if (
     salary.value === null ||
@@ -91,35 +91,35 @@ async function onSubmit() {
     isNaN(salary.value) ||
     isNaN(payAmount.value)
   ) {
-    error.value = '모든 필드를 숫자로 정확히 입력해주세요.';
-    return;
+    error.value = '모든 필드를 숫자로 정확히 입력해주세요.'
+    return
   }
-  loading.value = true;
-  error.value = null;
-  success.value = false;
+  loading.value = true
+  error.value = null
+  success.value = false
   try {
     const result = await updateUserProfile({
       salary: salary.value,
       payAmount: payAmount.value,
-    });
+    })
     if (result.success) {
-      success.value = true;
+      success.value = true
       setTimeout(() => {
-        router.push('/user');
-      }, 1200);
+        router.push('/user')
+      }, 1200)
     } else {
       error.value =
         '자산 정보 수정에 실패했습니다: ' +
-        (result.message || '알 수 없는 오류');
+        (result.message || '알 수 없는 오류')
     }
   } catch (e) {
-    error.value = '자산 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.';
+    error.value = '자산 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 function onCancel() {
-  router.back();
+  router.back()
 }
 </script>
 <style scoped>

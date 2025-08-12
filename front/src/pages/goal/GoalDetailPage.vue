@@ -138,40 +138,38 @@ export default {
     BaseModal,
   },
   async created() {
-    const goalId = this.$route.params.goalId;
-    const auth = userAuthStore();
-    const token = auth.getToken();
-    try {
-      const response = await getGoalById(goalId, token);
-      const data = response.data;
+  const goalId = this.$route.params.goalId;
+  const auth = userAuthStore();
+  const token = auth.getToken();
+  try {
+    const response = await getGoalById(goalId, token);
+    const data = response.data;
 
-      // 계좌 잔액 (없으면 0)
-      const accountBalance = data.linked_accounts?.[0]?.balance || 0;
+    const accountBalance = data.linked_accounts?.[0]?.balance || 0;
 
-      // 목표 퍼센트 (계좌 잔액 기준)
-      const progress = data.target_amount
-        ? Math.floor((accountBalance / data.target_amount) * 100)
-        : 0;
+    const progress = data.target_amount
+      ? Math.floor((accountBalance / data.target_amount) * 100)
+      : 0;
 
-      this.goal = {
-        id: data.goal_id,
-        title: data.goal_name,
-        progress,
-        period1: data.start_date,
-        period2: data.end_date,
-        savedAmount: accountBalance, // 🔹 현재 금액 = 계좌 잔액
-        totalAmount: data.target_amount,
-        depositDate: data.deposit_date,
-        linked_accounts: data.linked_accounts || [],
-        product: data.linked_accounts?.[0]?.product_name || '-',
-      };
+    this.goal = {
+      id: data.goal_id,
+      title: data.goal_name,
+      progress,
+      period1: data.start_date,
+      period2: data.end_date,
+      savedAmount: accountBalance, // 🔹 현재 금액 = 계좌 잔액
+      totalAmount: data.target_amount,
+      depositDate: data.deposit_date,
+      linked_accounts: data.linked_accounts || [],
+      product: data.linked_accounts?.[0]?.product_name || '-',
+    };
 
-      const recommendRes = await getRecommendedProducts(goalId, token);
-      this.recommended = recommendRes.data;
-    } catch (err) {
-      console.error('Failed to load details:', err);
-    }
-  },
+    const recommendRes = await getRecommendedProducts(goalId, token);
+    this.recommended = recommendRes.data;
+  } catch (err) {
+    console.error('Failed to load details:', err);
+  }
+},
 
   methods: {
     showModal(message, buttons) {
@@ -211,32 +209,47 @@ export default {
         ]);
       }
     },
-    formatDate(dateStr) {
-      if (!dateStr || dateStr.length !== 3) return '';
-      const [y, m, d] = dateStr;
-      return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
-        2,
-        '0'
-      )}일`;
-    },
-    getPeriodDiff(start, end) {
-      if (!start || !end) return '';
-      const startDate = new Date(start);
-      const endDate = new Date(end);
-      let diffMonths =
-        (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-        (endDate.getMonth() - startDate.getMonth());
-      if (endDate.getDate() > startDate.getDate()) {
-        diffMonths += 1;
+    toDate(val) {
+    if (!val) return null;
+    if (val instanceof Date) return val;
+    if (Array.isArray(val) && val.length === 3) {
+      const [y, m, d] = val;
+      return new Date(Number(y), Number(m) - 1, Number(d));
+    }
+    if (typeof val === 'string') {
+      const parts = val.split(/[-/.]/);
+      if (parts.length >= 3) {
+        return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
       }
-      if (diffMonths < 24) {
-        return `${diffMonths}개월`;
-      } else {
-        const diffYears = diffMonths / 12;
-        return `${Math.round(diffYears)}년`;
-      }
-    },
+      const d = new Date(val);
+      return isNaN(d) ? null : d;
+    }
+    return null;
   },
+
+  formatDate(input) {
+    const d = this.toDate(input);
+    if (!d) return '';
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}년 ${m}월 ${day}일`;
+  },
+
+  getPeriodDiff(start, end) {
+    const s = this.toDate(start);
+    const e = this.toDate(end);
+    if (!s || !e) return '';
+    let diffMonths =
+      (e.getFullYear() - s.getFullYear()) * 12 +
+      (e.getMonth() - s.getMonth());
+    if (e.getDate() > s.getDate()) diffMonths += 1;
+    return diffMonths < 24
+      ? `${diffMonths}개월`
+      : `${Math.round(diffMonths / 12)}년`;
+  },
+},
+ 
 };
 </script>
 <style scoped>

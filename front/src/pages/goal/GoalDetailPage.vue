@@ -67,7 +67,7 @@
           >
             목표 수정하기
           </button>
-          <button class="btn btn-danger" @click="handleDeleteGoal">
+          <button class="btn btn-danger" @click="confirmDeleteGoal">
             목표 삭제하기
           </button>
         </div>
@@ -90,6 +90,11 @@
         </div>
       </section>
     </div>
+    <BaseModal
+      :visible="modalVisible"
+      :message="modalMessage"
+      :buttons="modalButtons"
+    />
   </div>
 </template>
 <script>
@@ -100,6 +105,8 @@ import {
 } from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth';
 import RecommendedProductCard from '@/components/goal/RecommendedProductCard.vue';
+import BaseModal from '@/components/BaseModal.vue';
+
 export default {
   name: 'GoalDetailPage',
   data() {
@@ -121,60 +128,87 @@ export default {
       recommended: [],
       userName: auth.state.user.userName || '김콕재',
       userId: auth.state.user.userId,
+      modalVisible: false,
+      modalMessage: '',
+      modalButtons: [],
     };
   },
   components: {
     RecommendedProductCard,
+    BaseModal,
   },
   async created() {
-  const goalId = this.$route.params.goalId;
-  const auth = userAuthStore();
-  const token = auth.getToken();
-  try {
-    const response = await getGoalById(goalId, token);
-    const data = response.data;
+    const goalId = this.$route.params.goalId;
+    const auth = userAuthStore();
+    const token = auth.getToken();
+    try {
+      const response = await getGoalById(goalId, token);
+      const data = response.data;
 
-    // 계좌 잔액 (없으면 0)
-    const accountBalance = data.linked_accounts?.[0]?.balance || 0;
+      // 계좌 잔액 (없으면 0)
+      const accountBalance = data.linked_accounts?.[0]?.balance || 0;
 
-    // 목표 퍼센트 (계좌 잔액 기준)
-    const progress = data.target_amount
-      ? Math.floor((accountBalance / data.target_amount) * 100)
-      : 0;
+      // 목표 퍼센트 (계좌 잔액 기준)
+      const progress = data.target_amount
+        ? Math.floor((accountBalance / data.target_amount) * 100)
+        : 0;
 
-    this.goal = {
-      id: data.goal_id,
-      title: data.goal_name,
-      progress,
-      period1: data.start_date,
-      period2: data.end_date,
-      savedAmount: accountBalance, // 🔹 현재 금액 = 계좌 잔액
-      totalAmount: data.target_amount,
-      depositDate: data.deposit_date,
-      linked_accounts: data.linked_accounts || [],
-      product: data.linked_accounts?.[0]?.product_name || '-',
-    };
+      this.goal = {
+        id: data.goal_id,
+        title: data.goal_name,
+        progress,
+        period1: data.start_date,
+        period2: data.end_date,
+        savedAmount: accountBalance, // 🔹 현재 금액 = 계좌 잔액
+        totalAmount: data.target_amount,
+        depositDate: data.deposit_date,
+        linked_accounts: data.linked_accounts || [],
+        product: data.linked_accounts?.[0]?.product_name || '-',
+      };
 
-    const recommendRes = await getRecommendedProducts(goalId, token);
-    this.recommended = recommendRes.data;
-  } catch (err) {
-    console.error('Failed to load details:', err);
-  }
-},
+      const recommendRes = await getRecommendedProducts(goalId, token);
+      this.recommended = recommendRes.data;
+    } catch (err) {
+      console.error('Failed to load details:', err);
+    }
+  },
 
   methods: {
+    showModal(message, buttons) {
+      this.modalMessage = message;
+      this.modalButtons = buttons;
+      this.modalVisible = true;
+    },
+    hideModal() {
+      this.modalVisible = false;
+    },
+
+    confirmDeleteGoal() {
+      this.showModal('정말로 이 목표를 삭제하시겠습니까?', [
+        { text: '취소', onClick: this.hideModal },
+        { text: '삭제', onClick: this.handleDeleteGoal },
+      ]);
+    },
     async handleDeleteGoal() {
-      const confirmDelete = confirm('정말로 이 목표를 삭제하시겠습니까?');
-      if (!confirmDelete) return;
+      this.hideModal();
       const auth = userAuthStore();
       const token = auth.getToken();
       try {
         await deleteGoalById(this.goal.id, token);
-        alert('목표가 삭제되었습니다.');
-        this.$router.push('/goals');
+        this.showModal('목표가 삭제되었습니다.', [
+          {
+            text: '확인',
+            onClick: () => {
+              this.hideModal();
+              this.$router.push('/goals');
+            },
+          },
+        ]);
       } catch (error) {
         console.error('Failed to delete goal:', error);
-        alert('삭제 중 오류가 발생했습니다.');
+        this.showModal('삭제 중 오류가 발생했습니다.', [
+          { text: '확인', onClick: this.hideModal },
+        ]);
       }
     },
     formatDate(dateStr) {
@@ -305,12 +339,14 @@ export default {
 }
 /* 버튼 */
 .button-row {
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   display: flex;
   gap: 1rem;
 }
 .btn {
-  border-radius: 16px;
+  height: 35px;
+  border-radius: 18px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   padding: 0.2rem 2rem;
 }
 /* 추천 상품 */

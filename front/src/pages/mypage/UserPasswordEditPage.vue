@@ -63,6 +63,11 @@
       </div>
       <div v-if="error" class="error-msg">{{ error }}</div>
     </form>
+    <BaseModal
+      :visible="modalVisible"
+      :message="modalMessage"
+      :buttons="modalButtons"
+    />
   </UserCardLayout>
 </template>
 <script setup>
@@ -71,6 +76,7 @@ import { useRouter } from 'vue-router';
 import UserCardLayout from '@/components/UserCardLayout.vue';
 import { updatePassword } from '@/api/userApi';
 import { userAuthStore } from '@/stores/auth';
+import BaseModal from '@/components/BaseModal.vue';
 const auth = userAuthStore();
 const currentPassword = ref('');
 const password = ref('');
@@ -78,6 +84,9 @@ const passwordCheck = ref('');
 const loading = ref(false);
 const error = ref('');
 const router = useRouter();
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
 const passwordStrength = computed(() => {
   const pwd = password.value;
 
@@ -113,8 +122,17 @@ async function onSubmit() {
   try {
     const result = await updatePassword(currentPassword.value, password.value);
     if (result.success) {
-      alert('비밀번호가 성공적으로 변경되었습니다!');
-      router.push('/user');
+      modalMessage.value = '비밀번호가 성공적으로 변경되었습니다!';
+      modalButtons.value = [
+        {
+          text: '확인',
+          onClick: () => {
+            modalVisible.value = false;
+            router.push('/user');
+          },
+        },
+      ];
+      modalVisible.value = true;
     } else {
       error.value =
         '비밀번호 변경에 실패했습니다: ' +
@@ -127,12 +145,6 @@ async function onSubmit() {
     loading.value = false;
   }
 }
-onMounted(() => {
-  if (auth.state.user.kakao) {
-    alert('카카오 로그인 사용자는 비밀번호를 수정할 수 없습니다.');
-    router.back();
-  }
-});
 </script>
 <style scoped>
 .title {

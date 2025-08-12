@@ -63,15 +63,24 @@
       </div>
     </div>
   </div>
+  <BaseModal
+    :visible="modalVisible"
+    :message="modalMessage"
+    :buttons="modalButtons"
+  />
 </template>
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { getMyPoints, withdrawPoints } from '@/api/userApi';
 import PointHistoryComponent from '@/components/PointHistoryComponent.vue';
+import BaseModal from '@/components/BaseModal.vue';
 const totalPoints = ref(0);
 const showWithdrawModal = ref(false);
 const withdrawAmount = ref(10000);
 const withdrawReason = ref('');
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
 const canWithdraw = computed(() => {
   return (
     withdrawAmount.value >= 10000 &&
@@ -91,7 +100,7 @@ const loadTotalPoints = async () => {
 };
 const handleWithdraw = async () => {
   if (!canWithdraw.value) {
-    alert('출금 조건을 확인해주세요.');
+    await showAlert('출금 조건을 확인해주세요.');
     return;
   }
   try {
@@ -100,19 +109,34 @@ const handleWithdraw = async () => {
       withdrawReason.value
     );
     if (response.success) {
-      alert('포인트 출금이 완료되었습니다.');
+      await showAlert('포인트 출금이 완료되었습니다.');
       showWithdrawModal.value = false;
       withdrawAmount.value = 10000;
       withdrawReason.value = '';
       await loadTotalPoints();
     } else {
-      alert(response.message || '출금 처리 중 오류가 발생했습니다.');
+      await showAlert(response.message || '출금 처리 중 오류가 발생했습니다.');
     }
   } catch (err) {
     console.error('Withdraw failed:', err);
-    alert('출금 처리 중 오류가 발생했습니다.');
+    await showAlert('출금 처리 중 오류가 발생했습니다.');
   }
 };
+function showAlert(message) {
+  return new Promise((resolve) => {
+    modalMessage.value = message;
+    modalButtons.value = [
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve();
+        },
+      },
+    ];
+    modalVisible.value = true;
+  });
+}
 onMounted(() => {
   loadTotalPoints();
 });
@@ -161,7 +185,7 @@ onMounted(() => {
   background: #3573ee;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -238,7 +262,7 @@ onMounted(() => {
 .btn {
   padding: 10px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;

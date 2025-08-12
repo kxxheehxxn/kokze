@@ -10,7 +10,6 @@ export const quizApi = {
       });
       return response.data;
     } catch (error) {
-
       if (error.response) {
         const status = error.response.status;
 
@@ -21,7 +20,9 @@ export const quizApi = {
             // 409 응답: 이미 푼 퀴즈 데이터 반환
             throw error;
           case 500:
-            throw new Error('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            throw new Error(
+              '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+            );
           default:
             throw new Error('퀴즈를 불러오는데 실패했습니다.');
         }
@@ -44,7 +45,6 @@ export const quizApi = {
         }
       );
 
-  
       return response.data;
     } catch (error) {
       console.error('정답 제출 실패:', error);
@@ -60,7 +60,9 @@ export const quizApi = {
           case 409:
             throw new Error('오늘은 이미 퀴즈를 풀었습니다.');
           case 500:
-            throw new Error('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            throw new Error(
+              '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+            );
           default:
             throw new Error('정답 제출에 실패했습니다.');
         }

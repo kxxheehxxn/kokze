@@ -12,10 +12,23 @@
         <div v-if="isLoading" class="loading-section">
           <p>퀴즈를 불러오는 중...</p>
         </div>
-        <div v-else-if="alreadySolved && solvedQuizData" class="already-solved-section">
-          <div class="solved-icon">{{ solvedQuizData.isCorrect ? '✅' : '❌' }}</div>
-          <div class="solved-title" :class="{ correct: solvedQuizData.isCorrect, incorrect: !solvedQuizData.isCorrect }">
-            {{ solvedQuizData.isCorrect ? '정답입니다!' : '아쉽게도 틀렸습니다' }}
+        <div
+          v-else-if="alreadySolved && solvedQuizData"
+          class="already-solved-section"
+        >
+          <div class="solved-icon">
+            {{ solvedQuizData.isCorrect ? '✅' : '❌' }}
+          </div>
+          <div
+            class="solved-title"
+            :class="{
+              correct: solvedQuizData.isCorrect,
+              incorrect: !solvedQuizData.isCorrect,
+            }"
+          >
+            {{
+              solvedQuizData.isCorrect ? '정답입니다!' : '아쉽게도 틀렸습니다'
+            }}
           </div>
 
           <!-- 문제 표시 -->
@@ -31,10 +44,10 @@
 
           <div class="solved-message" v-if="solvedQuizData.isCorrect">
             🎉 내일도 도전해보세요! 🎉
-          </div>   
+          </div>
           <div class="solved-message" v-else="solvedQuizData.isCorrect">
             😅 내일 다시 도전해보세요!
-          </div>   
+          </div>
         </div>
         <div v-else-if="errorMessage" class="error-section">
           <p>{{ errorMessage }}</p>
@@ -138,8 +151,8 @@ const selectedAnswer = ref(null);
 const currentQuiz = ref(null);
 const isLoading = ref(false);
 const errorMessage = ref('');
-const alreadySolved = ref(false); // 추가
-const solvedQuizData = ref(null) // 추가
+const alreadySolved = ref(false);
+const solvedQuizData = ref(null);
 // 답 선택 함수
 const selectAnswer = (answer) => {
   selectedAnswer.value = answer;
@@ -151,7 +164,7 @@ const fetchQuiz = async () => {
   currentQuiz.value = null;
   selectedAnswer.value = null;
   alreadySolved.value = false; // 초기화
-  solvedQuizData.value = null; // 추가  
+  solvedQuizData.value = null;
   if (!auth.userId) {
     errorMessage.value = '로그인이 필요합니다. (사용자 ID 없음)';
     isLoading.value = false;
@@ -159,6 +172,7 @@ const fetchQuiz = async () => {
   }
   try {
     const quizData = await quizApi.getTodayQuiz(auth.userId);
+    console.log('quizData', quizData);
     currentQuiz.value = quizData;
     alreadySolved.value = false;
   } catch (error) {
@@ -168,13 +182,16 @@ const fetchQuiz = async () => {
       solvedQuizData.value = {
         question: responseData.question,
         explanation: responseData.explanation,
-        isCorrect: responseData.correct  // correct → isCorrect
+        isCorrect: responseData.correct, // correct → isCorrect
       };
-      
+
       console.log('solvedQuizData 설정됨:', solvedQuizData.value);
     } else {
       // 다른 에러들
-      if (error.message && error.message.includes('오늘은 이미 퀴즈를 풀었습니다')) {
+      if (
+        error.message &&
+        error.message.includes('오늘은 이미 퀴즈를 풀었습니다')
+      ) {
         alreadySolved.value = true;
       } else {
         errorMessage.value = error.message || '퀴즈를 불러오는데 실패했습니다.';
@@ -210,7 +227,7 @@ const closeModal = () => {
   currentQuiz.value = null;
   errorMessage.value = '';
   alreadySolved.value = false;
-  solvedQuizData.value = null
+  solvedQuizData.value = null;
   isLoading.value = false;
   emit('close');
 };
@@ -239,25 +256,27 @@ const submitAnswer = async () => {
       currentQuiz.value.quiz_id,
       selectedAnswer.value
     );
-    if (result.correct) {
-      alert('정답입니다! 🎉');
-    } else {
-      alert('오답입니다. 😔');
-    }
+    alreadySolved.value = true;
+    solvedQuizData.value = {
+      question: currentQuiz.value.question,
+      explanation: currentQuiz.value.explanation || '',
+      isCorrect: result.correct,
+    };
+    currentQuiz.value = null; // 문제 숨기기
+
     emit('quizSubmitted', result.correct);
-    closeModal();
   } catch (error) {
     console.error('퀴즈 제출 실패:', error);
     errorMessage.value = error.message;
-    // 이미 풀었다는 메시지면 alreadySolved 상태로 변경
     if (error.message.includes('오늘은 이미 퀴즈를 풀었습니다')) {
       alreadySolved.value = true;
-      currentQuiz.value = null; // 퀴즈 숨기기
+      currentQuiz.value = null;
     }
   } finally {
     isLoading.value = false;
   }
 };
+
 // ESC 키로 모달 닫기
 const handleKeydown = (event) => {
   if (event.key === 'Escape') {
@@ -407,7 +426,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 24px;
+  padding: 15px 38px;
   background-color: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(76, 76, 76, 0.2);
   border-radius: 12px;
@@ -517,10 +536,10 @@ onUnmounted(() => {
   margin-bottom: 16px;
 }
 .solved-title.correct {
-  color: #22c55e; 
+  color: #22c55e;
 }
 .solved-title.incorrect {
-  color: #ef4444; 
+  color: #ef4444;
 }
 .solved-message {
   font-size: 16px;

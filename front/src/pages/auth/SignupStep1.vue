@@ -1,5 +1,12 @@
 <script setup>
-import { reactive, ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import {
+  reactive,
+  ref,
+  computed,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { userAuthStore } from '@/stores/auth';
@@ -8,6 +15,18 @@ import {
   sendSignupVerificationCode,
   verifySignupCode,
 } from '@/api/passwordApi.js';
+import BaseModal from '@/components/BaseModal.vue';
+
+// 모달 상태
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
+
+function showModal(message, buttons) {
+  modalMessage.value = message;
+  modalButtons.value = buttons;
+  modalVisible.value = true;
+}
 const router = useRouter();
 const authStore = userAuthStore();
 const isKakao = computed(() => authStore.isKakao);
@@ -36,7 +55,8 @@ onMounted(() => {
     userInfo.name = authStore.userInfo.name;
     userInfo.gender = authStore.userInfo.sex || 'male';
     userInfo.birth = authStore.userInfo.birthDate;
-    [userInfo.phone1, userInfo.phone2, userInfo.phone3] = authStore.userInfo.phoneNum?.split('-') || [];
+    [userInfo.phone1, userInfo.phone2, userInfo.phone3] =
+      authStore.userInfo.phoneNum?.split('-') || [];
     userInfo.emailId = emailParts[0] || '';
     userInfo.emailDomain = emailParts[1] || '';
     userInfo.password = '';
@@ -62,7 +82,14 @@ const sendEmailVerification = async () => {
   const fullEmail = `${userInfo.emailId}@${userInfo.emailDomain}`;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (emailVerified.value) {
-    alert('이미 이메일 인증이 완료되었습니다.');
+    showModal('이미 이메일 인증이 완료되었습니다.', [
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+        },
+      },
+    ]);
     return;
   }
   if (!emailRegex.test(fullEmail)) {
@@ -71,7 +98,14 @@ const sendEmailVerification = async () => {
     return;
   }
   if (isCooldown.value) {
-    alert('인증 버튼은 1분 후 다시 누를 수 있습니다.');
+    showModal('인증 버튼은 1분 후 다시 누를 수 있습니다.', [
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+        },
+      },
+    ]);
     return;
   }
   userInfo.emailCode = '';
@@ -232,14 +266,6 @@ const goNext = () => {
     email: `${userInfo.emailId}@${userInfo.emailDomain}`,
     // 나머지 필요한 값도 넣을 수 있음
   });
-  // authStore.setUserInfo('name', userInfo.name);
-  // authStore.setUserInfo('sex', userInfo.gender);
-  // authStore.setUserInfo('birthDate', userInfo.birth);
-  // authStore.setUserInfo(
-  //   'phoneNum',
-  //   `${userInfo.phone1}-${userInfo.phone2}-${userInfo.phone3}`
-  // );
-  // authStore.setUserInfo('email', `${userInfo.emailId}@${userInfo.emailDomain}`);
   if (!isKakao.value) {
     authStore.setUserInfo('password', userInfo.password);
   }
@@ -326,7 +352,7 @@ const goNext = () => {
           <button
             @click="sendEmailVerification"
             :disabled="isKakao || isCooldown"
-            :class="[{ 'cooldown': isCooldown, 'readonly-button': isKakao }]"
+            :class="[{ cooldown: isCooldown, 'readonly-button': isKakao }]"
           >
             인증
           </button>
@@ -443,6 +469,11 @@ const goNext = () => {
     v-if="isPolicyModalOpen"
     @close="isPolicyModalOpen = false"
     @agree="handlePolicyAgree"
+  />
+  <BaseModal
+    :visible="modalVisible"
+    :message="modalMessage"
+    :buttons="modalButtons"
   />
 </template>
 <style scoped>

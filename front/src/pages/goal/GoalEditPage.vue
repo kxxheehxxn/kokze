@@ -71,6 +71,11 @@
       </div>
     </div>
   </div>
+  <BaseModal
+    :visible="modalVisible"
+    :message="modalMessage"
+    :buttons="modalButtons"
+  />
 </template>
 <script>
 import {
@@ -82,9 +87,11 @@ import {
 } from '@/api/goalApi';
 import ProductModal from '@/components/goal/ProductModal.vue';
 import { userAuthStore } from '@/stores/auth';
+import BaseModal from '@/components/BaseModal.vue';
+
 export default {
   name: 'GoalEditPage',
-  components: { ProductModal },
+  components: { ProductModal, BaseModal },
   data() {
     return {
       goal: {
@@ -98,6 +105,9 @@ export default {
       prevAccountId: null,
       showProductModal: false,
       accounts: [],
+      modalVisible: false,
+      modalMessage: '',
+      modalButtons: [],
     };
   },
   computed: {
@@ -123,6 +133,11 @@ export default {
     this.fetchGoalDetail();
   },
   methods: {
+    showModal(message, buttons) {
+      this.modalMessage = message;
+      this.modalButtons = buttons;
+      this.modalVisible = true;
+    },
     onInputChange(e) {
       this.goal.amount = e.target.value.replace(/\D/g, '');
     },
@@ -207,10 +222,24 @@ export default {
             await linkAccountToGoal(goalId, selectedId, token);
           }
         }
-        alert('목표가 성공적으로 수정되었습니다!');
-        this.$router.push('/goals');
+        this.showModal('목표가 성공적으로 수정되었습니다!', [
+          {
+            text: '확인',
+            onClick: () => {
+              this.modalVisible = false;
+              this.$router.push('/goals');
+            },
+          },
+        ]);
       } catch (err) {
-        alert('목표 수정 실패');
+        this.showModal('목표 수정 실패', [
+          {
+            text: '확인',
+            onClick: () => {
+              this.modalVisible = false;
+            },
+          },
+        ]);
         console.error(err);
       }
     },

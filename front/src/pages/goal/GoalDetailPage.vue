@@ -67,7 +67,7 @@
           >
             목표 수정하기
           </button>
-          <button class="btn btn-danger" @click="handleDeleteGoal">
+          <button class="btn btn-danger" @click="confirmDeleteGoal">
             목표 삭제하기
           </button>
         </div>
@@ -90,6 +90,11 @@
         </div>
       </section>
     </div>
+    <BaseModal
+      :visible="modalVisible"
+      :message="modalMessage"
+      :buttons="modalButtons"
+    />
   </div>
 </template>
 <script>
@@ -100,6 +105,8 @@ import {
 } from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth';
 import RecommendedProductCard from '@/components/goal/RecommendedProductCard.vue';
+import BaseModal from '@/components/BaseModal.vue';
+
 export default {
   name: 'GoalDetailPage',
   data() {
@@ -121,10 +128,14 @@ export default {
       recommended: [],
       userName: auth.state.user.userName || '김콕재',
       userId: auth.state.user.userId,
+      modalVisible: false,
+      modalMessage: '',
+      modalButtons: [],
     };
   },
   components: {
     RecommendedProductCard,
+    BaseModal,
   },
   async created() {
   const goalId = this.$route.params.goalId;
@@ -134,10 +145,8 @@ export default {
     const response = await getGoalById(goalId, token);
     const data = response.data;
 
-    // 계좌 잔액 (없으면 0)
     const accountBalance = data.linked_accounts?.[0]?.balance || 0;
 
-    // 목표 퍼센트 (계좌 잔액 기준)
     const progress = data.target_amount
       ? Math.floor((accountBalance / data.target_amount) * 100)
       : 0;
@@ -162,24 +171,45 @@ export default {
   }
 },
 
-methods: {
-  async handleDeleteGoal() {
-    const confirmDelete = confirm('정말로 이 목표를 삭제하시겠습니까?');
-    if (!confirmDelete) return;
-    const auth = userAuthStore();
-    const token = auth.getToken();
-    try {
-      await deleteGoalById(this.goal.id, token);
-      alert('목표가 삭제되었습니다.');
-      this.$router.push('/goals');
-    } catch (error) {
-      console.error('Failed to delete goal:', error);
-      alert('삭제 중 오류가 발생했습니다.');
-    }
-  },
+  methods: {
+    showModal(message, buttons) {
+      this.modalMessage = message;
+      this.modalButtons = buttons;
+      this.modalVisible = true;
+    },
+    hideModal() {
+      this.modalVisible = false;
+    },
 
-  // ✅ 어떤 형태든 Date로 변환: [y,m,d] | "YYYY-MM-DD" | Date
-  toDate(val) {
+    confirmDeleteGoal() {
+      this.showModal('정말로 이 목표를 삭제하시겠습니까?', [
+        { text: '취소', onClick: this.hideModal },
+        { text: '삭제', onClick: this.handleDeleteGoal },
+      ]);
+    },
+    async handleDeleteGoal() {
+      this.hideModal();
+      const auth = userAuthStore();
+      const token = auth.getToken();
+      try {
+        await deleteGoalById(this.goal.id, token);
+        this.showModal('목표가 삭제되었습니다.', [
+          {
+            text: '확인',
+            onClick: () => {
+              this.hideModal();
+              this.$router.push('/goals');
+            },
+          },
+        ]);
+      } catch (error) {
+        console.error('Failed to delete goal:', error);
+        this.showModal('삭제 중 오류가 발생했습니다.', [
+          { text: '확인', onClick: this.hideModal },
+        ]);
+      }
+    },
+    toDate(val) {
     if (!val) return null;
     if (val instanceof Date) return val;
     if (Array.isArray(val) && val.length === 3) {
@@ -197,7 +227,6 @@ methods: {
     return null;
   },
 
-  // ✅ "YYYY년 MM월 DD일" 로 표기
   formatDate(input) {
     const d = this.toDate(input);
     if (!d) return '';
@@ -207,7 +236,6 @@ methods: {
     return `${y}년 ${m}월 ${day}일`;
   },
 
-  // ✅ 기간(개월/년) 계산
   getPeriodDiff(start, end) {
     const s = this.toDate(start);
     const e = this.toDate(end);
@@ -221,7 +249,7 @@ methods: {
       : `${Math.round(diffMonths / 12)}년`;
   },
 },
-
+ 
 };
 </script>
 <style scoped>
@@ -324,12 +352,14 @@ methods: {
 }
 /* 버튼 */
 .button-row {
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
   display: flex;
   gap: 1rem;
 }
 .btn {
-  border-radius: 16px;
+  height: 35px;
+  border-radius: 18px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   padding: 0.2rem 2rem;
 }
 /* 추천 상품 */

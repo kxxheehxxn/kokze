@@ -18,9 +18,18 @@ function goTo(page) {
   }
 }
 </script>
+
 <template>
   <div class="pagination">
-    <button @click="goTo(page - 1)" :disabled="page <= 1">＜</button>
+    <!-- << 맨 처음 페이지 -->
+    <button @click="goTo(1)" :disabled="page === 1">
+      <i class="fa-solid fa-angles-left" />
+    </button>
+    <!-- 이전 페이지 -->
+    <button @click="goTo(page - 1)" :disabled="page <= 1">
+      <i class="fa-solid fa-angle-left" />
+    </button>
+
     <button
       v-for="p in pages"
       :key="p"
@@ -29,26 +38,33 @@ function goTo(page) {
     >
       {{ p }}
     </button>
-    <button @click="goTo(page + 1)" :disabled="page >= totalPages">＞</button>
+    <!-- 다음 페이지 -->
+    <button @click="goTo(page + 1)" :disabled="page >= totalPages">
+      <i class="fa-solid fa-angle-right" />
+    </button>
+    <!-- >> 맨 마지막 페이지 -->
+    <button @click="goTo(totalPages)" :disabled="page === totalPages">
+      <i class="fa-solid fa-angles-right" />
+    </button>
   </div>
 </template>
+
 <style scoped>
 .pagination {
   display: flex;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
   margin-top: 2rem;
 }
 button {
   padding: 0.4rem 0.8rem;
-  border: 1px solid #ccc;
+  border: none;
   background: white;
   border-radius: 0.3rem;
   cursor: pointer;
 }
 button.active {
-  background: #1d4ed8;
-  color: white;
+  color: black;
   font-weight: bold;
 }
 button:disabled {

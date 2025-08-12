@@ -1,21 +1,22 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { bankNameMap } from '@/utils/bankMap'
-import ProductPagination from './ProductPagination.vue'
-import { fetchProductList, filterProducts } from '@/api/productApi'
-const router = useRouter()
-const sortKey = ref('max')
-const currentPage = ref(1)
-const itemsPerPage = 8
+import { ref, computed, watch, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { bankNameMap } from '@/utils/bankMap';
+import ProductPagination from './ProductPagination.vue';
+import { fetchProductList, filterProducts } from '@/api/productApi';
+const router = useRouter();
+const sortKey = ref('max');
+const currentPage = ref(1);
+const itemsPerPage = 8;
 const props = defineProps({
   filters: Object,
-})
-const products = ref([])
-const totalPages = ref(0)
+});
+const products = ref([]);
+const totalPages = ref(0);
+const totalCount = ref(0);
 // ✅ 필터 적용 여부 판단
 const isFiltering = computed(() => {
-  const f = props.filters || {}
+  const f = props.filters || {};
   return (
     f.bankNames?.length > 0 ||
     f.joinMembers?.length > 0 ||
@@ -25,63 +26,64 @@ const isFiltering = computed(() => {
     f.minAmount ||
     f.maxAmount ||
     f.spclCndKeywords?.length > 0
-  )
-})
+  );
+});
 // 🔽 상품 리스트 가져오기
 const loadProducts = async () => {
   try {
     if (isFiltering.value) {
-      const result = await filterProducts(props.filters)
-      products.value = Array.isArray(result) ? result : result.products
-      totalPages.value = 1 // 의미 없는 값
+      const result = await filterProducts(props.filters);
+      products.value = Array.isArray(result) ? result : result.products;
+      totalPages.value = 1; // 의미 없는 값
     } else {
-      const result = await fetchProductList(currentPage.value, itemsPerPage)
-      products.value = result.products
-      totalPages.value = result.totalPages
+      const result = await fetchProductList(currentPage.value, itemsPerPage);
+      products.value = result.products;
+      totalCount.value = result.totalCount;
+      totalPages.value = result.totalPages;
     }
   } catch (err) {
-    console.error('상품 목록 불러오기 실패:', err)
-    products.value = []
-    totalPages.value = 0
+    console.error('상품 목록 불러오기 실패:', err);
+    products.value = [];
+    totalPages.value = 0;
   }
-}
+};
 watch(currentPage, () => {
-  if (!isFiltering.value) loadProducts()
-})
+  if (!isFiltering.value) loadProducts();
+});
 watch(
   () => props.filters,
   () => {
-    console.log('🔥 필터 객체:', props.filters) // ← 추가해서 콘솔 확인
-    currentPage.value = 1 // 필터 적용 시 첫 페이지로 초기화
-    loadProducts()
-  },
-)
-onMounted(loadProducts)
+    console.log('🔥 필터 객체:', props.filters); // ← 추가해서 콘솔 확인
+    currentPage.value = 1; // 필터 적용 시 첫 페이지로 초기화
+    loadProducts();
+  }
+);
+onMounted(loadProducts);
 // 🔽 아이콘 처리
 const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
   eager: true,
   import: 'default',
-})
+});
 const defaultIcon = new URL(
   '@/assets/images/bankIcon/default.png',
-  import.meta.url,
-).href
-const getBankIcon = bankName => {
-  const english = bankNameMap[bankName]
-  if (!english) return defaultIcon
+  import.meta.url
+).href;
+const getBankIcon = (bankName) => {
+  const english = bankNameMap[bankName];
+  if (!english) return defaultIcon;
   const match = Object.entries(iconModules).find(([path]) =>
-    path.includes(`/${english}.png`),
-  )
-  return match ? match[1] : defaultIcon
-}
+    path.includes(`/${english}.png`)
+  );
+  return match ? match[1] : defaultIcon;
+};
 // 🔽 정렬
 const sortedProducts = computed(() => {
   return [...products.value].sort((a, b) =>
     sortKey.value === 'max'
       ? b.intrRate2 - a.intrRate2
-      : b.intrRate - a.intrRate,
-  )
-})
+      : b.intrRate - a.intrRate
+  );
+});
 // 🔽 상세 이동
 function goToDetail(product) {
   router
@@ -89,17 +91,18 @@ function goToDetail(product) {
       path: `/product/${product.finPrdtCd}`,
       state: { product },
     })
-    .then(() => window.scrollTo(0, 0))
+    .then(() => window.scrollTo(0, 0));
 }
 // 🔽 페이지 변경
 function handlePageChange(page) {
-  currentPage.value = page
+  currentPage.value = page;
 }
 </script>
 <template>
   <div class="product-list-wrapper">
     <div class="header-row">
-      <div class="count">{{ sortedProducts.length }}개</div>
+      <div v-if="!isFiltering" class="count">{{ totalCount }} 개</div>
+      <div v-else class="count">{{ sortedProducts.length }} 개</div>
       <div class="sort">
         <select v-model="sortKey">
           <option value="max">최고금리순</option>
@@ -145,7 +148,9 @@ function handlePageChange(page) {
   background: #ffffff;
   padding: 2rem;
   border-radius: 20px;
-  box-shadow: inset 0 0 12px #3573ee;
+  /* box-shadow: inset 0 0 12px #bfbfbf; */
+  /* box-shadow: inset 0 0 12px #3573ee; */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 .header-row {
   display: flex;

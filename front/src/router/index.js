@@ -91,7 +91,7 @@ const router = createRouter({
     {
       path: '/find-password',
       name: 'FindPasswordPage',
-      component: () => import('@/pages/FindPasswordPage.vue'),
+      component: () => import('@/pages/auth/FindPasswordPage.vue'),
     },
     {
       path: '/tax-management',

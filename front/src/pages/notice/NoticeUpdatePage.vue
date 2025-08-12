@@ -3,6 +3,7 @@ import api from '@/api/noticeApi';
 import { computed, ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
+import BaseModal from '@/components/BaseModal.vue';
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
 const auth = userAuthStore();
@@ -11,12 +12,38 @@ const route = useRoute();
 const orgArticle = ref({});
 const noticeId = route.params.no;
 const article = reactive({});
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
 const disableSubmit = computed(() => !article.title);
 const back = () => {
   router.back();
 };
+function showConfirm(message) {
+  return new Promise((resolve) => {
+    modalMessage.value = message;
+    modalButtons.value = [
+      {
+        text: '취소',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve(false);
+        },
+      },
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve(true);
+        },
+      },
+    ];
+    modalVisible.value = true;
+  });
+}
+
 const submit = async () => {
-  if (!confirm('수정할까요?')) return;
+  if (!(await showConfirm('수정할까요?'))) return;
   const updatedFields = {};
   updatedFields.noticeId = article.noticeId;
   updatedFields.title = article.title;
@@ -28,6 +55,7 @@ const submit = async () => {
     query: route.query,
   });
 };
+
 const load = async () => {
   if (!noticeId) {
     console.error('유효하지 않은 noticeId:', noticeId);
@@ -118,6 +146,11 @@ load();
         </div>
       </div>
     </div>
+    <BaseModal
+      :visible="modalVisible"
+      :message="modalMessage"
+      :buttons="modalButtons"
+    />
   </div>
 </template>
 <style scoped>

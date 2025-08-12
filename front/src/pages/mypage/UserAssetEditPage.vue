@@ -14,6 +14,9 @@
           />
           <span class="unit">원</span>
         </div>
+        <div class="korean-amount">
+          {{ numberToKorean(salary) }}
+        </div>
       </div>
       <div class="form-group">
         <label class="label">월 지출비</label>
@@ -27,6 +30,7 @@
           />
           <span class="unit">원</span>
         </div>
+        <div class="korean-amount">{{ numberToKorean(payAmount) }}</div>
       </div>
       <div class="mt-5 text-center">
         <button type="button" class="btn cancel-btn" @click="onCancel">
@@ -37,53 +41,58 @@
         </button>
       </div>
       <div v-if="error" class="error-msg">{{ error }}</div>
-      <div v-if="success" class="success-msg">
-        자산 정보가 성공적으로 수정되었습니다.
-      </div>
     </form>
+    <BaseModal
+      :visible="modalVisible"
+      :message="modalMessage"
+      :buttons="modalButtons"
+    />
   </UserCardLayout>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { getUserInfo, updateUserProfile, createTestUser } from '@/api/userApi'
-import UserCardLayout from '@/components/UserCardLayout.vue'
-const salary = ref(0)
-const payAmount = ref(0)
-const loading = ref(false)
-const error = ref(null)
-const success = ref(false)
-const router = useRouter()
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { getUserInfo, updateUserProfile, createTestUser } from '@/api/userApi';
+import UserCardLayout from '@/components/UserCardLayout.vue';
+import BaseModal from '@/components/BaseModal.vue';
+const salary = ref(0);
+const payAmount = ref(0);
+const loading = ref(false);
+const error = ref(null);
+const router = useRouter();
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
 async function loadUserAsset() {
-  error.value = null
+  error.value = null;
   try {
-    const user = await getUserInfo()
-    salary.value = user.salary || 0
-    payAmount.value = user.payAmount || 0
+    const user = await getUserInfo();
+    salary.value = user.salary || 0;
+    payAmount.value = user.payAmount || 0;
   } catch (e) {
-    error.value = '사용자 정보를 불러올 수 없습니다.'
+    error.value = '사용자 정보를 불러올 수 없습니다.';
     try {
-      await createTestUser()
-      const user = await getUserInfo()
-      salary.value = user.salary || 0
-      payAmount.value = user.payAmount || 0
-      error.value = null
+      await createTestUser();
+      const user = await getUserInfo();
+      salary.value = user.salary || 0;
+      payAmount.value = user.payAmount || 0;
+      error.value = null;
     } catch (testError) {
-      error.value = '테스트용 사용자 생성에도 실패했습니다.'
+      error.value = '테스트용 사용자 생성에도 실패했습니다.';
     }
   }
 }
 function formatNumber(value) {
-  if (value === null || value === undefined) return ''
-  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  if (value === null || value === undefined) return '';
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 function parseNumber(value) {
-  const cleaned = value.replace(/[^0-9]/g, '')
-  return cleaned ? parseInt(cleaned, 10) : 0
+  const cleaned = value.replace(/[^0-9]/g, '');
+  return cleaned ? parseInt(cleaned, 10) : 0;
 }
 onMounted(() => {
-  loadUserAsset()
-})
+  loadUserAsset();
+});
 async function onSubmit() {
   if (
     salary.value === null ||
@@ -91,35 +100,57 @@ async function onSubmit() {
     isNaN(salary.value) ||
     isNaN(payAmount.value)
   ) {
-    error.value = '모든 필드를 숫자로 정확히 입력해주세요.'
-    return
+    error.value = '모든 필드를 숫자로 정확히 입력해주세요.';
+    return;
   }
-  loading.value = true
-  error.value = null
-  success.value = false
+  loading.value = true;
+  error.value = null;
   try {
     const result = await updateUserProfile({
       salary: salary.value,
       payAmount: payAmount.value,
-    })
+    });
     if (result.success) {
-      success.value = true
-      setTimeout(() => {
-        router.push('/user')
-      }, 1200)
+      // 성공 시 모달 띄우기
+      modalMessage.value = '자산 정보가 성공적으로 수정되었습니다.';
+      modalButtons.value = [
+        {
+          text: '확인',
+          onClick: () => {
+            modalVisible.value = false;
+            router.push('/user');
+          },
+        },
+      ];
+      modalVisible.value = true;
     } else {
       error.value =
         '자산 정보 수정에 실패했습니다: ' +
-        (result.message || '알 수 없는 오류')
+        (result.message || '알 수 없는 오류');
     }
   } catch (e) {
-    error.value = '자산 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.'
+    error.value = '자산 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.';
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 function onCancel() {
-  router.back()
+  router.back();
+}
+function numberToKorean(num) {
+  const units = ['', '만', '억', '조'];
+  const result = [];
+  let strNum = String(num);
+  let i = 0;
+  while (strNum.length > 0) {
+    const chunk = strNum.length >= 4 ? strNum.slice(-4) : strNum;
+    strNum = strNum.slice(0, -4);
+    if (Number(chunk) !== 0) {
+      result.unshift(`${Number(chunk)}${units[i]}`);
+    }
+    i++;
+  }
+  return result.length > 0 ? result.join(' ') + ' 원' : ' 원';
 }
 </script>
 <style scoped>
@@ -156,10 +187,9 @@ function onCancel() {
   border-radius: 24px;
   background: #f6f6f6;
   box-shadow: 0 2px 8px 0 #e5e7eb inset;
-  font-size: 18px;
+  font-size: 16px;
   padding: 12px 16px;
   outline: none;
-  text-align: right;
   box-sizing: border-box;
 }
 .unit {
@@ -192,14 +222,10 @@ function onCancel() {
   background: #b3d0fa;
   cursor: not-allowed;
 }
-.error-msg,
-.success-msg {
+.error-msg {
   font-size: 14px;
   margin-top: 8px;
   color: #e74c3c;
-}
-.success-msg {
-  color: #2573ee;
 }
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
@@ -208,5 +234,11 @@ input[type='number']::-webkit-inner-spin-button {
 }
 input[type='number'] {
   -moz-appearance: textfield;
+}
+.korean-amount {
+  margin-top: 4px;
+  padding-left: 10px;
+  color: #777;
+  font-size: 14px;
 }
 </style>

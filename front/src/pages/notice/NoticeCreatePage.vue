@@ -1,12 +1,16 @@
 <script setup>
 import api from '@/api/noticeApi';
-import { computed, reactive, onMounted } from 'vue';
+import { computed, reactive, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import BaseModal from '@/components/BaseModal.vue';
 import { userAuthStore } from '@/stores/auth';
 const auth = userAuthStore();
 const router = useRouter();
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
 const back = () => {
   router.back();
 };
@@ -17,10 +21,32 @@ const article = reactive({
 });
 const disableSubmit = computed(() => !article.title);
 const submit = async () => {
-  if (!confirm('등록할까요?')) return;
+  if (!(await showConfirm('등록할까요?'))) return;
   await api.create(article);
   router.push('/notice/list');
 };
+function showConfirm(message) {
+  return new Promise((resolve) => {
+    modalMessage.value = message;
+    modalButtons.value = [
+      {
+        text: '취소',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve(false);
+        },
+      },
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve(true);
+        },
+      },
+    ];
+    modalVisible.value = true;
+  });
+}
 onMounted(() => {
   if (auth.role.toLowerCase() !== 'admin') {
     alert('권한이 없습니다.');
@@ -84,6 +110,11 @@ onMounted(() => {
       </div>
     </div>
   </div>
+  <BaseModal
+    :visible="modalVisible"
+    :message="modalMessage"
+    :buttons="modalButtons"
+  />
 </template>
 <style scoped>
 .container {

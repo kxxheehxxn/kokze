@@ -3,11 +3,26 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
 import axios from 'axios';
+import BaseModal from '@/components/BaseModal.vue';
+const loading = ref(false);
 const router = useRouter();
 const step = ref(0);
 const selectedList = ref([]);
 const scores = ref({ fast: 0, slow: 0, high: 0, low: 0 });
 const authStore = userAuthStore();
+// 모달 상태
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
+
+function showModal(message, buttons) {
+  modalMessage.value = message;
+  modalButtons.value = buttons;
+  modalVisible.value = true;
+}
+function hideModal() {
+  modalVisible.value = false;
+}
 const questions = [
   {
     question: '월급을 받았을 때 나는?',
@@ -118,7 +133,9 @@ function onPrev() {
   }
 }
 const onSubmit = async () => {
+  if (loading.value) return;
   try {
+    loading.value = true;
     authStore.setUserInfo('mbti', mbtiResult.value);
     authStore.setUserInfo('kakao', authStore.isKakao);
     const requiredFields = [
@@ -137,6 +154,7 @@ const onSubmit = async () => {
     }
     if (missing.length > 0) {
       alert(`다음 항목이 누락되었습니다: ${missing.join(', ')}`);
+      loading.value = false;
       return;
     }
     const apiUrl = authStore.isKakao
@@ -144,15 +162,24 @@ const onSubmit = async () => {
       : 'http://localhost:8080/api/auth/signup';
     const response = await axios.post(apiUrl, authStore.userInfo);
     if (response.status === 200) {
-      alert('회원가입이 완료되었습니다!');
       authStore.resetUserInfo();
-      router.push('/auth/login');
+      showModal('회원가입이 완료되었습니다!', [
+        {
+          text: '확인',
+          onClick: () => {
+            hideModal();
+            router.push('/auth/login');
+          },
+        },
+      ]);
     } else {
       alert('회원가입 실패: 서버 응답 코드 ' + response.status);
     }
   } catch (error) {
     console.error('회원가입 중 오류:', error);
     alert('회원가입 중 오류가 발생했습니다.');
+  } finally {
+    loading.value = false; // 요청 끝나면 다시 false로
   }
 };
 </script>
@@ -205,11 +232,18 @@ const onSubmit = async () => {
         <div class="mbti-type">{{ mbtiResult }}</div>
         <div class="mbti-desc">{{ mbtiDesc }}</div>
         <div class="submit-button">
-          <button class="next-button" @click="onSubmit">가입하기</button>
+          <button class="next-button" @click="onSubmit" :disabled="loading">
+            가입하기
+          </button>
         </div>
       </template>
     </div>
   </div>
+  <BaseModal
+    :visible="modalVisible"
+    :message="modalMessage"
+    :buttons="modalButtons"
+  />
 </template>
 <style scoped>
 .container {

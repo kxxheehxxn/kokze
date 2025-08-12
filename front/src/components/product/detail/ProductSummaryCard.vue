@@ -1,49 +1,67 @@
 <script setup>
-import { bankNameMap } from '@/utils/bankMap'
-import { bankUriMap } from '@/utils/bankUriMap' // 🔽 새로 추가
-import { computed } from 'vue'
+import { bankNameMap } from '@/utils/bankMap';
+import { bankUriMap } from '@/utils/bankUriMap'; // 🔽 새로 추가
+import { computed, ref } from 'vue';
+import BaseModal from '@/components/BaseModal.vue';
 
 const props = defineProps({
   product: Object,
-})
+});
+// 모달 상태
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
+
+function showModal(message, buttons) {
+  modalMessage.value = message;
+  modalButtons.value = buttons;
+  modalVisible.value = true;
+}
 // 은행 아이콘 처리
 const iconModules = import.meta.glob('@/assets/images/bankIcon/*.png', {
   eager: true,
   import: 'default',
-})
+});
 const defaultIcon = new URL(
   '@/assets/images/bankIcon/default.png',
-  import.meta.url,
-).href
+  import.meta.url
+).href;
 
-const getBankIcon = bankName => {
-  const english = bankNameMap[bankName]
-  if (!english) return defaultIcon
+const getBankIcon = (bankName) => {
+  const english = bankNameMap[bankName];
+  if (!english) return defaultIcon;
   const match = Object.entries(iconModules).find(([path]) =>
-    path.includes(`/${english}.png`),
-  )
-  return match ? match[1] : defaultIcon
-}
+    path.includes(`/${english}.png`)
+  );
+  return match ? match[1] : defaultIcon;
+};
 // 🔽 은행 URI 찾기
-const getBankUri = bankName => bankUriMap[bankName] || null
+const getBankUri = (bankName) => bankUriMap[bankName] || null;
 // 🔽 버튼 클릭 시 이동
 const openBankHomepage = () => {
-  const url = getBankUri(props.product.bankName)
+  const url = getBankUri(props.product.bankName);
   if (url) {
-    window.open(url, '_blank')
+    window.open(url, '_blank');
   } else {
-    alert('해당 은행의 공식 홈페이지 주소가 등록되지 않았습니다.')
+    showModal('해당 은행의 공식 홈페이지 주소가 등록되지 않았습니다.', [
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+        },
+      },
+    ]);
   }
-}
+};
 const bestOption = computed(() => {
-  const options = props.product.options || []
-  if (options.length === 0) return null
+  const options = props.product.options || [];
+  if (options.length === 0) return null;
 
   // 우대금리 높은 옵션 선택
   return options.reduce((max, option) =>
-    (option.intrRate2 || 0) > (max.intrRate2 || 0) ? option : max,
-  )
-})
+    (option.intrRate2 || 0) > (max.intrRate2 || 0) ? option : max
+  );
+});
 </script>
 <template>
   <div class="summary-card">
@@ -80,6 +98,11 @@ const bestOption = computed(() => {
       금융 상품 가입 후 ‘홈에서 자산 조회’를 클릭하여 금융 상품을 연결하세요!
     </div>
   </div>
+  <BaseModal
+    :visible="modalVisible"
+    :message="modalMessage"
+    :buttons="modalButtons"
+  />
 </template>
 <style scoped>
 .summary-card {

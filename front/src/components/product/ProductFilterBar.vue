@@ -1,13 +1,13 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
-import BankFilter from './filter/BankFilter.vue'
-import PeriodFilter from './filter/PeriodFilter.vue'
-import TypeFilter from './filter/TypeFilter.vue'
-import ConditionFilter from './filter/ConditionFilter.vue'
+import { ref, computed, watch } from 'vue';
+import BankFilter from './filter/BankFilter.vue';
+import PeriodFilter from './filter/PeriodFilter.vue';
+import TypeFilter from './filter/TypeFilter.vue';
+import ConditionFilter from './filter/ConditionFilter.vue';
 const props = defineProps({
   filters: Object,
-})
-const emit = defineEmits(['update:filters'])
+});
+const emit = defineEmits(['update:filters']);
 // 입력 전용 상태 (UI용)
 const localFilters = ref({
   banks: [],
@@ -15,56 +15,56 @@ const localFilters = ref({
   amount: '',
   type: [],
   conditions: [],
-})
+});
 // 외부 필터 active 상태
-const activeFilter = ref(null)
+const activeFilter = ref(null);
 // 외부 filters가 변경되면 localFilters도 초기화
 watch(
   () => props.filters,
-  newVal => {
+  (newVal) => {
     localFilters.value = {
       banks: newVal.bankNames || [],
       period: getPeriodFromRange(newVal.minSaveTrm, newVal.maxSaveTrm),
       amount: newVal.minAmount?.toString() || '',
       type: newVal.productType || [],
       conditions: newVal.spclCndKeywords || [],
-    }
-    activeFilter.value = newVal.__active || null
+    };
+    activeFilter.value = newVal.__active || null;
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 function emitFilterDto() {
-  const f = localFilters.value
+  const f = localFilters.value;
   emit('update:filters', {
     bankNames: f.banks || [], // 은행 필터
-    productType: f.type || [],
+    productType: f.type && f.type.length > 0 ? f.type : null,
     minSaveTrm: getMinSaveTrm(f.period),
     maxSaveTrm: getMaxSaveTrm(f.period),
     minAmount: parseAmount(f.amount),
     maxAmount: null,
     spclCndKeywords: f.conditions || [], // 우대조건 필터
     __active: activeFilter.value,
-  })
+  });
 }
 // 저장 기간 매핑
 function getMinSaveTrm(period) {
-  if (!period || period === 0) return null
-  if (period === 25) return 25
-  return period
+  if (!period || period === 0) return null;
+  if (period === 25) return 25;
+  return period;
 }
 function getMaxSaveTrm(period) {
-  if (!period || period === 0) return null
-  if (period === 25) return null
-  return period
+  if (!period || period === 0) return null;
+  if (period === 25) return null;
+  return period;
 }
 function getPeriodFromRange(min, max) {
-  if (!min && !max) return 0
-  if (min === 25) return 25
-  return min
+  if (!min && !max) return 0;
+  if (min === 25) return 25;
+  return min;
 }
 function parseAmount(amount) {
-  const parsed = parseInt(amount)
-  return isNaN(parsed) ? null : parsed
+  const parsed = parseInt(amount);
+  return isNaN(parsed) ? null : parsed;
 }
 // UI 표시용
 const periodMap = {
@@ -72,42 +72,42 @@ const periodMap = {
   12: '12개월',
   24: '24개월',
   25: '24개월 이상',
-}
+};
 function formatKoreanCurrency(num) {
-  if (isNaN(num) || num <= 0) return ''
-  const jo = Math.floor(num / 1_0000_0000_0000)
-  const uk = Math.floor((num % 1_0000_0000_0000) / 1_0000_0000)
-  const man = Math.floor((num % 1_0000_0000) / 10000)
-  const rest = num % 10000
-  let result = ''
-  if (jo > 0) result += `${jo}조`
-  if (uk > 0) result += `${uk}억`
-  if (man > 0) result += `${man}만`
-  if (rest > 0) result += rest.toLocaleString()
-  result += '원'
-  return result
+  if (isNaN(num) || num <= 0) return '';
+  const jo = Math.floor(num / 1_0000_0000_0000);
+  const uk = Math.floor((num % 1_0000_0000_0000) / 1_0000_0000);
+  const man = Math.floor((num % 1_0000_0000) / 10000);
+  const rest = num % 10000;
+  let result = '';
+  if (jo > 0) result += `${jo}조`;
+  if (uk > 0) result += `${uk}억`;
+  if (man > 0) result += `${man}만`;
+  if (rest > 0) result += rest.toLocaleString();
+  result += '원';
+  return result;
 }
 const chips = computed(() => {
-  const f = localFilters.value
+  const f = localFilters.value;
   return [
     ...f.banks,
     periodMap[f.period] || null,
     f.amount ? formatKoreanCurrency(Number(f.amount)) : null,
     ...f.type,
     ...f.conditions,
-  ].filter(Boolean)
-})
+  ].filter(Boolean);
+});
 function removeChip(chip) {
-  const f = localFilters.value
-  f.banks = f.banks.filter(b => b !== chip)
+  const f = localFilters.value;
+  f.banks = f.banks.filter((b) => b !== chip);
   const periodKey = Object.entries(periodMap).find(
-    ([, label]) => label === chip,
-  )?.[0]
-  if (periodKey) f.period = 0
-  if (chip === formatKoreanCurrency(Number(f.amount))) f.amount = ''
-  f.type = f.type.filter(t => t !== chip)
-  f.conditions = f.conditions.filter(c => c !== chip)
-  emitFilterDto()
+    ([, label]) => label === chip
+  )?.[0];
+  if (periodKey) f.period = 0;
+  if (chip === formatKoreanCurrency(Number(f.amount))) f.amount = '';
+  f.type = f.type.filter((t) => t !== chip);
+  f.conditions = f.conditions.filter((c) => c !== chip);
+  emitFilterDto();
 }
 function resetFilters() {
   localFilters.value = {
@@ -116,9 +116,9 @@ function resetFilters() {
     amount: '',
     type: [],
     conditions: [],
-  }
-  activeFilter.value = null
-  emitFilterDto() // 필터 초기화 반영
+  };
+  activeFilter.value = null;
+  emitFilterDto(); // 필터 초기화 반영
 }
 </script>
 <template>
@@ -218,7 +218,8 @@ function resetFilters() {
   background: #ffffff;
   padding: 32px;
   border-radius: 20px;
-  box-shadow: inset 0 0 12px #3573ee;
+  /* box-shadow: inset 0 0 12px #bfbfbf; */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   text-align: center;
   margin-bottom: 32px;
 }

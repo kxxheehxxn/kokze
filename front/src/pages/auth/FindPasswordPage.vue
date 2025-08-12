@@ -110,12 +110,12 @@
         </button>
       </div>
     </form>
+    <BaseModal
+      :visible="modalVisible"
+      :message="modalMessage"
+      :buttons="modalButtons"
+    />
   </UserCardLayout>
-  <BaseModal
-    :visible="modalVisible"
-    :message="modalMessage"
-    :buttons="modalButtons"
-  />
 </template>
 <script setup>
 import { ref, computed } from 'vue';

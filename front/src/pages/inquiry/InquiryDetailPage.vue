@@ -5,6 +5,7 @@ import { ref, computed } from 'vue';
 import moment from 'moment';
 import { userAuthStore } from '@/stores/auth';
 import BaseModal from '@/components/BaseModal.vue';
+
 const isLoading = ref(false);
 const MAX_CONTENT_LENGTH = 1000;
 const auth = userAuthStore();
@@ -14,19 +15,64 @@ const infoId = route.params.no;
 const article = ref({});
 const isEditingAnswer = ref(false);
 const isAdmin = computed(() => (auth.role ?? '').toLowerCase() === 'admin');
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
+function showModal(message) {
+  return new Promise((resolve) => {
+    modalMessage.value = message;
+    modalButtons.value = [
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve();
+        },
+      },
+    ];
+    modalVisible.value = true;
+  });
+}
+
+// confirm 대체
+function showConfirm(message) {
+  return new Promise((resolve) => {
+    modalMessage.value = message;
+    modalButtons.value = [
+      {
+        text: '취소',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve(false);
+        },
+      },
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve(true);
+        },
+      },
+    ];
+    modalVisible.value = true;
+  });
+}
+
 const back = () => {
   router.push({ name: 'inquiryList', query: route.query });
 };
+
 const updateAnswer = async () => {
   if (!isEditingAnswer.value) {
     isEditingAnswer.value = true;
     return;
   }
   if (!article.value.answeredContent || !article.value.answeredContent.trim()) {
-    alert('답변 내용을 입력해주세요.');
+    await showModal('답변 내용을 입력해주세요.');
     return;
   }
-  if (!confirm('답변을 수정할까요?')) return;
+  if (!(await showConfirm('답변을 수정할까요?'))) return;
+
   const updatedFields = {
     title: article.value.title,
     infoId: article.value.infoId,
@@ -39,9 +85,10 @@ const updateAnswer = async () => {
     await load();
   } catch (error) {
     console.error('답변 수정 중 오류 발생:', error);
-    alert('답변 수정 중 오류가 발생했습니다.');
+    await showModal('답변 수정 중 오류가 발생했습니다.');
   }
 };
+
 const update = () => {
   router.push({
     name: 'inquiryUpdate',
@@ -49,10 +96,11 @@ const update = () => {
     query: route.query,
   });
 };
+
 const submit = async () => {
-  if (!confirm('답변을 등록할까요?')) return;
+  if (!(await showConfirm('답변을 등록할까요?'))) return;
   if (!article.value.answeredContent || !article.value.answeredContent.trim()) {
-    alert('답변 내용을 입력해주세요.');
+    await showModal('답변 내용을 입력해주세요.');
     return;
   }
   isLoading.value = true;
@@ -65,8 +113,8 @@ const submit = async () => {
   };
   try {
     await api.updateAnswer(updatedFields);
-    alert('답변이 성공적으로 등록되었습니다.'); // Success feedback
-    // 페이지 이동 후 새로고침 대신, 직접 데이터 로드 또는 필요한 상태 업데이트
+    isLoading.value = false; // 먼저 로딩 끔
+    await showModal('답변이 성공적으로 등록되었습니다.');
     router.push({
       name: 'inquiryDetail',
       params: { no: article.value.infoId },
@@ -74,17 +122,17 @@ const submit = async () => {
     });
     await load();
   } catch (error) {
-    console.error('답변 등록 중 오류 발생:', error);
-    alert('답변 등록 중 오류가 발생했습니다.'); // Error feedback
-  } finally {
     isLoading.value = false;
+    await showModal('답변 등록 중 오류가 발생했습니다.');
   }
 };
+
 const remove = async () => {
-  if (!confirm('삭제할까요?')) return;
+  if (!(await showConfirm('게시글을 삭제할까요?'))) return;
   await api.delete(infoId);
   router.push({ name: 'inquiryList', query: route.query });
 };
+
 const load = async () => {
   article.value = await api.get(infoId);
 };

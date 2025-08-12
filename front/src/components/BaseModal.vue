@@ -1,6 +1,6 @@
 <template>
-  <div v-if="visible" class="modal-backdrop">
-    <div class="modal-container">
+  <div v-if="visible" class="modal-backdrop" @click.prevent.stop>
+    <div class="modal-container" @click.stop>
       <div class="modal-message text-center">
         {{ message }}
       </div>
@@ -71,12 +71,12 @@ function buttonClass(idx) {
   font-size: 20px;
 }
 button {
-  width: 60px;
+  width: 70px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: 20px;
   margin: 10px 5px 0 5px;
   text-align: center;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   border: none;
   cursor: pointer;
 }

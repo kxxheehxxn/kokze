@@ -96,6 +96,11 @@
       </button>
     </div>
     <div v-if="error" class="error-msg">{{ error }}</div>
+    <BaseModal
+      :visible="modalVisible"
+      :message="modalMessage"
+      :buttons="modalButtons"
+    />
   </UserCardLayout>
 </template>
 <script setup>
@@ -104,20 +109,38 @@ import { useRouter } from 'vue-router';
 import UserCardLayout from '@/components/UserCardLayout.vue';
 import { userAuthStore } from '@/stores/auth.js';
 import { withdrawUser } from '@/api/userApi';
+import BaseModal from '@/components/BaseModal.vue';
 const agree = ref(false);
 const loading = ref(false);
 const error = ref('');
 const router = useRouter();
 const auth = userAuthStore();
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
+function showModal(message) {
+  return new Promise((resolve) => {
+    modalMessage.value = message;
+    modalButtons.value = [
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve();
+        },
+      },
+    ];
+    modalVisible.value = true;
+  });
+}
 async function onWithdraw() {
   if (!agree.value) return;
   loading.value = true;
   error.value = '';
   try {
-    // 회원탈퇴 처리
     const result = await withdrawUser();
     if (result.success) {
-      alert('탈퇴가 처리되었습니다.');
+      await showModal('탈퇴가 처리되었습니다.');
       auth.logout();
       router.push('/');
     } else {
@@ -125,9 +148,9 @@ async function onWithdraw() {
         '회원 탈퇴 처리에 실패했습니다: ' +
         (result.message || '알 수 없는 오류');
     }
-  } catch (error) {
+  } catch (err) {
     error.value = '회원 탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.';
-    console.error('회원 탈퇴 실패:', error);
+    console.error('회원 탈퇴 실패:', err);
   } finally {
     loading.value = false;
   }

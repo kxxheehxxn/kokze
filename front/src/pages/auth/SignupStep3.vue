@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
 import axios from 'axios';
 import BaseModal from '@/components/BaseModal.vue';
-
+const loading = ref(false);
 const router = useRouter();
 const step = ref(0);
 const selectedList = ref([]);
@@ -133,7 +133,9 @@ function onPrev() {
   }
 }
 const onSubmit = async () => {
+  if (loading.value) return;
   try {
+    loading.value = true;
     authStore.setUserInfo('mbti', mbtiResult.value);
     authStore.setUserInfo('kakao', authStore.isKakao);
     const requiredFields = [
@@ -152,6 +154,7 @@ const onSubmit = async () => {
     }
     if (missing.length > 0) {
       alert(`다음 항목이 누락되었습니다: ${missing.join(', ')}`);
+      loading.value = false;
       return;
     }
     const apiUrl = authStore.isKakao
@@ -175,6 +178,8 @@ const onSubmit = async () => {
   } catch (error) {
     console.error('회원가입 중 오류:', error);
     alert('회원가입 중 오류가 발생했습니다.');
+  } finally {
+    loading.value = false; // 요청 끝나면 다시 false로
   }
 };
 </script>
@@ -227,7 +232,9 @@ const onSubmit = async () => {
         <div class="mbti-type">{{ mbtiResult }}</div>
         <div class="mbti-desc">{{ mbtiDesc }}</div>
         <div class="submit-button">
-          <button class="next-button" @click="onSubmit">가입하기</button>
+          <button class="next-button" @click="onSubmit" :disabled="loading">
+            가입하기
+          </button>
         </div>
       </template>
     </div>

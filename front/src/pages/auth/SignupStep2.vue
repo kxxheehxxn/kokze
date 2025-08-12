@@ -134,9 +134,7 @@ const goNext = () => {
         <div class="visual-display">{{ koreanExpense }}</div>
       </div>
       <div class="button-group">
-        <button class="cancel-button" @click="goBack">
-          뒤로가기
-        </button>
+        <button class="cancel-button" @click="goBack">뒤로가기</button>
         <button :disabled="!isFormValid" class="next-button" @click="goNext">
           다음 단계
         </button>

@@ -153,21 +153,6 @@ function numberToKorean(num) {
   }
   return result.length > 0 ? result.join(' ') + ' 원' : ' 원';
 }
-function numberToKorean(num) {
-  const units = ['', '만', '억', '조'];
-  const result = [];
-  let strNum = String(num);
-  let i = 0;
-  while (strNum.length > 0) {
-    const chunk = strNum.length >= 4 ? strNum.slice(-4) : strNum;
-    strNum = strNum.slice(0, -4);
-    if (Number(chunk) !== 0) {
-      result.unshift(`${Number(chunk)}${units[i]}`);
-    }
-    i++;
-  }
-  return result.length > 0 ? result.join(' ') + ' 원' : ' 원';
-}
 </script>
 <style scoped>
 .title {

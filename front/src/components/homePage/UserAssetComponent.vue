@@ -117,31 +117,25 @@ const formatCurrency = amount => {
       .replace('₩', '') + ' 원'
   )
 }
-const handleAssetLookup = () => {
+const handleAssetLookup = async () => {
   if (isUpdating.value) return
-  emit('asset-lookup')
-  fetchUserAssetData()
-}
-// yeomsky95 자산 연동 메서드
-const handleYeomsky95Sync = async () => {
-  syncing.value = true
-  syncMessage.value = ''
-  syncData.value = null
+  
+  isUpdating.value = true
+  
   try {
-    const result = await assetApi.getYeomsky95Assets()
-    syncData.value = result
-    syncMessage.value =
-      'yeomsky95 사용자의 자산 정보가 성공적으로 연동되었습니다.'
-    showSyncModal.value = true
-  } catch (err) {
-    console.error('Failed to sync yeomsky95 assets:', err)
-    syncMessage.value =
-      '자산 연동에 실패했습니다: ' + (err.message || '알 수 없는 오류')
-    showSyncModal.value = true
+    // 1. 첫 번째 API 호출: CODEF 계좌 정보 업데이트
+    await assetApi.updateBankAccount(props.userId)
+    emit('asset-lookup')
+    await fetchUserAssetData()
+  } catch (error) {
+    // 첫 번째 통신 실패 시에도 기존 데이터는 조회
+    emit('asset-lookup')
+    await fetchUserAssetData()
   } finally {
-    syncing.value = false
+    isUpdating.value = false
   }
 }
+
 const closeSyncModal = () => {
   showSyncModal.value = false
   syncMessage.value = ''

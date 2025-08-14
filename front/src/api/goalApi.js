@@ -81,6 +81,19 @@ export const fetchPastGoals = async (userId) => {
   return res.data;
 };
 
+export const isGoalRewarded = (goalId, userId, token) =>
+  axios.get(`/api/goal/${goalId}/rewarded`, {
+    params: { userId },
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+
+export const claimGoalReward = (goalId, userId, token) =>
+  axios.post(`/api/goal/${goalId}/claim-reward`, null, {
+    params: { userId },
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+
+
 // 추천 목표 API 호출
 export async function fetchRecommendedGoal(userId) {
   try {

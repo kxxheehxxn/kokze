@@ -25,18 +25,46 @@
         </ul>
       </div>
     </div>
+    <BaseModal
+      :visible="modalVisible"
+      :message="modalMessage"
+      :buttons="modalButtons"
+    />
   </div>
 </template>
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { getUserInfo, getUserPoints } from '@/api/userApi';
+import BaseModal from '@/components/BaseModal.vue';
+import { userAuthStore } from '@/stores/auth';
+
 const user = ref({ name: '', mbti: '', user_id: null });
+const auth = userAuthStore();
 const point = ref(0);
 const loading = ref(true);
 const error = ref(null);
 const router = useRouter();
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
 function goTo(path) {
+  // 비밀번호 수정 경로일 때 카카오 로그인 체크 후 모달 띄우기
+  if (path === '/user/password' && auth.state.user.kakao) {
+    modalMessage.value =
+      '카카오 로그인 사용자는 비밀번호를 수정할 수 없습니다.';
+    modalButtons.value = [
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+        },
+      },
+    ];
+    modalVisible.value = true;
+    return; // 이동 막음
+  }
+
   router.push(path).catch((err) => {
     console.error('Navigation error:', err);
   });

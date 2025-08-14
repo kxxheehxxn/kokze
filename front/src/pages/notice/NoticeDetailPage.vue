@@ -4,12 +4,16 @@ import api from '@/api/noticeApi';
 import { ref, computed } from 'vue';
 import moment from 'moment';
 import { userAuthStore } from '@/stores/auth';
+import BaseModal from '@/components/BaseModal.vue';
 const auth = userAuthStore();
 const route = useRoute();
 const router = useRouter();
 const noticeId = route.params.no;
 const article = ref({});
 const isAdmin = computed(() => (auth.role ?? '').toLowerCase() === 'admin');
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
 const back = () => {
   router.push({ name: 'noticeList', query: route.query });
 };
@@ -21,13 +25,35 @@ const update = () => {
   });
 };
 const remove = async () => {
-  if (!confirm('삭제할까요?')) return;
+  if (!(await showConfirm('삭제할까요?'))) return;
   await api.delete(noticeId);
   router.push({ name: 'noticeList', query: route.query });
 };
 const load = async () => {
   article.value = await api.get(noticeId);
 };
+function showConfirm(message) {
+  return new Promise((resolve) => {
+    modalMessage.value = message;
+    modalButtons.value = [
+      {
+        text: '취소',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve(false);
+        },
+      },
+      {
+        text: '삭제',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve(true);
+        },
+      },
+    ];
+    modalVisible.value = true;
+  });
+}
 load();
 </script>
 <template>
@@ -64,6 +90,11 @@ load();
         </div>
       </div>
     </div>
+    <BaseModal
+      :visible="modalVisible"
+      :message="modalMessage"
+      :buttons="modalButtons"
+    />
   </div>
 </template>
 <style scoped>

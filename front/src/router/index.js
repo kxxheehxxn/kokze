@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { nextTick } from 'vue';
 import HomeView from '../pages/HomePage.vue';
 import inquiryRoutes from './inquiry';
 import noticeRoutes from './notice';
@@ -91,7 +92,7 @@ const router = createRouter({
     {
       path: '/find-password',
       name: 'FindPasswordPage',
-      component: () => import('@/pages/FindPasswordPage.vue'),
+      component: () => import('@/pages/auth/FindPasswordPage.vue'),
     },
     {
       path: '/tax-management',
@@ -115,6 +116,31 @@ const router = createRouter({
     ...inquiryRoutes,
     ...noticeRoutes,
   ],
+
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    if (to.hash) {
+      return {
+        el: to.hash,
+        behavior: 'smooth',
+        top: 80 
+      }
+    }
+    return {
+      top: 0,
+      behavior: 'smooth'
+    }
+  }
+});
+
+router.afterEach((to, from) => {
+  nextTick(() => {
+    if (to.path !== from.path) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
 });
 
 export default router;

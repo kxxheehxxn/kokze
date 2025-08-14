@@ -1,12 +1,16 @@
 <script setup>
 import api from '@/api/inquiryApi';
-import { reactive, computed } from 'vue';
+import { reactive, computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
+import BaseModal from '@/components/BaseModal.vue';
+
 const auth = userAuthStore();
 const router = useRouter();
+
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
+
 const getUserInfo = () => {
   const authData = JSON.parse(localStorage.getItem('auth') || '{}');
   return {
@@ -15,25 +19,35 @@ const getUserInfo = () => {
     isLogin: !!authData.user?.email,
   };
 };
+
 const userInfo = getUserInfo();
+
 const article = reactive({
   userId: userInfo.userId,
   title: '',
   content: '',
   isAnswered: false,
 });
+
 const disableSubmit = computed(() => {
   return !article.title || !article.content;
 });
-const submit = async () => {
-  if (!confirm('문의사항을 등록하시겠습니까?')) {
-    return;
-  }
+
+// 모달 관련 상태
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
+
+// 실제 등록 함수 (모달 확인 시 호출)
+const confirmSubmit = async () => {
+  modalVisible.value = false;
+
   if (!auth.isLogin || !auth.userId) {
     alert('로그인이 필요합니다.');
     router.push('/login');
     return;
   }
+
   try {
     await api.create(article);
     router.push('/inquiry/list');
@@ -46,6 +60,25 @@ const submit = async () => {
     }
   }
 };
+
+// submit 함수: confirm 대신 모달 띄우기
+const submit = () => {
+  modalMessage.value = '문의사항을 등록하시겠습니까?';
+  modalButtons.value = [
+    {
+      text: '취소',
+      onClick: () => {
+        modalVisible.value = false;
+      },
+    },
+    {
+      text: '확인',
+      onClick: confirmSubmit,
+    },
+  ];
+  modalVisible.value = true;
+};
+
 const back = () => {
   router.back();
 };
@@ -105,6 +138,11 @@ const back = () => {
       </div>
     </div>
   </div>
+  <BaseModal
+    :visible="modalVisible"
+    :message="modalMessage"
+    :buttons="modalButtons"
+  />
 </template>
 <style scoped>
 .container {

@@ -3,12 +3,15 @@ import api from '@/api/inquiryApi';
 import { reactive, computed, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { userAuthStore } from '@/stores/auth';
+import BaseModal from '@/components/BaseModal.vue';
+
 const auth = userAuthStore();
 const router = useRouter();
 const route = useRoute();
 const MAX_TITLE_LENGTH = 500;
 const MAX_CONTENT_LENGTH = 1000;
 const infoId = route.params.no;
+
 const orgArticle = ref({});
 const article = reactive({
   infoId: infoId,
@@ -18,11 +21,55 @@ const article = reactive({
   content: '',
   isAnswered: false,
 });
+
 const disableSubmit = computed(() => {
   return !article.title || !article.content;
 });
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
+function showModal(message) {
+  return new Promise((resolve) => {
+    modalMessage.value = message;
+    modalButtons.value = [
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve();
+        },
+      },
+    ];
+    modalVisible.value = true;
+  });
+}
+
+// confirm 대체
+function showConfirm(message) {
+  return new Promise((resolve) => {
+    modalMessage.value = message;
+    modalButtons.value = [
+      {
+        text: '취소',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve(false);
+        },
+      },
+      {
+        text: '확인',
+        onClick: () => {
+          modalVisible.value = false;
+          resolve(true);
+        },
+      },
+    ];
+    modalVisible.value = true;
+  });
+}
+
 const submit = async () => {
-  if (!confirm('문의사항을 수정하시겠습니까?')) {
+  if (!(await showConfirm('문의사항을 수정하시겠습니까?'))) {
     return;
   }
   const updatedFields = {
@@ -40,13 +87,14 @@ const submit = async () => {
     });
   } catch (e) {
     console.error('문의사항 수정 실패:', e);
-    alert('문의사항 수정에 실패했습니다. 다시 시도해주세요.');
+    await showModal('문의사항 수정에 실패했습니다. 다시 시도해주세요.');
   }
 };
+
 const load = async () => {
   if (!infoId) {
     console.error('유효하지 않은 infoId:', infoId);
-    alert('유효하지 않은 게시글 ID입니다.');
+    await showModal('유효하지 않은 게시글 ID입니다.');
     router.replace('/inquiry/list');
     return;
   }
@@ -65,10 +113,11 @@ const load = async () => {
     article.content = orgArticle.value.content;
   } catch (e) {
     console.error('게시글 로드 중 오류 발생:', e);
-    alert('게시글을 불러오는 데 실패했습니다.');
+    await showModal('게시글을 불러오는 데 실패했습니다.');
     router.replace('/inquiry/list');
   }
 };
+
 const back = () => {
   router.replace({
     name: 'inquiryDetail',
@@ -76,6 +125,7 @@ const back = () => {
     query: route.query,
   });
 };
+
 onMounted(() => {
   load();
 });
@@ -129,13 +179,18 @@ onMounted(() => {
                 class="btn fw-bold create ms-3"
                 :disabled="disableSubmit"
               >
-                확인
+                수정
               </button>
             </div>
           </form>
         </div>
       </div>
     </div>
+    <BaseModal
+      :visible="modalVisible"
+      :message="modalMessage"
+      :buttons="modalButtons"
+    />
   </div>
 </template>
 <style scoped>

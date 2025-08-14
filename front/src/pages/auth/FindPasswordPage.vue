@@ -110,12 +110,18 @@
         </button>
       </div>
     </form>
+    <BaseModal
+      :visible="modalVisible"
+      :message="modalMessage"
+      :buttons="modalButtons"
+    />
   </UserCardLayout>
 </template>
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import UserCardLayout from '@/components/UserCardLayout.vue';
+import BaseModal from '@/components/BaseModal.vue';
 import {
   verifyUserInfo,
   sendVerificationCode,
@@ -131,9 +137,25 @@ const passwordCheck = ref('');
 const userVerified = ref(null);
 const codeChecked = ref(null);
 const router = useRouter();
+// 모달 상태
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const modalButtons = ref([]);
+
+function showModal(message, buttons) {
+  modalMessage.value = message;
+  modalButtons.value = buttons;
+  modalVisible.value = true;
+}
+function hideModal() {
+  modalVisible.value = false;
+}
+
 async function onVerifyUser() {
   if (!phoneNum.value || !email.value) {
-    alert('전화번호와 이메일을 모두 입력해주세요.');
+    showModal('전화번호와 이메일을 모두 입력해주세요.', [
+      { text: '확인', onClick: hideModal },
+    ]);
     return;
   }
   userVerified.value = await verifyUserInfo(phoneNum.value, email.value);
@@ -177,8 +199,16 @@ const passwordStrength = computed(() => {
 async function onChangePassword() {
   if (!canChange.value) return;
   await changePassword(email.value, password.value);
-  alert('비밀번호가 변경되었습니다!');
-  router.push('/auth/login');
+
+  showModal('비밀번호가 변경되었습니다!', [
+    {
+      text: '확인',
+      onClick: () => {
+        hideModal();
+        router.push('/auth/login');
+      },
+    },
+  ]);
 }
 function formatPhoneNumber(e) {
   let digits = e.target.value.replace(/\D/g, ''); // 숫자만 추출
@@ -251,7 +281,7 @@ function onCancel() {
   font-weight: 500;
 }
 .verify-btn {
-  background: #2573ee;
+  background: #3573ee;
   color: #fff;
   border: none;
   padding: 8px 22px;
@@ -272,7 +302,7 @@ function onCancel() {
   border: 1.5px solid #e5e7eb;
 }
 .submit-btn {
-  background: #2573ee;
+  background: #3573ee;
   color: #fff;
   border: none;
 }

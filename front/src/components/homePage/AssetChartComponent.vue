@@ -3,21 +3,24 @@
     <div class="loading-state" v-if="loading">
       <p class="loading-message">자산 정보를 불러오는 중...</p>
     </div>
-    <template v-else-if="hasAssetData">
-      <div class="chart-container">
+    
+    <!-- 로딩이 끝나면 항상 차트 표시 -->
+    <template v-else>
+      <div class="chart-container" :class="{ 'empty-chart': !hasAssetData }">
         <div class="chart-wrapper">
           <Doughnut ref="doughnutChartRef" :data="chartData" :options="chartOptions" :plugins="chartPlugins" />
         </div>
       </div>
-      <div class="legend-container">
+      
+      <!-- 자산이 있을 때만 범례 표시 -->
+      <div class="legend-container" v-if="hasAssetData">
         <div
           class="legend-item"
           v-for="(item, index) in assetData"
           :key="index"
           :class="{ 'legend-hover': hoveredIndex === index }"
           @mouseover="hoveredIndex = index"
-          @mouseleave="hoveredIndex = null"
-        >
+          @mouseleave="hoveredIndex = null">
           <div class="legend-indicator">
             <div class="color-dot" :style="{ backgroundColor: item.color }"></div>
           </div>
@@ -30,18 +33,23 @@
           </div>
         </div>
       </div>
+      
+      <!-- 자산이 없을 때 메시지 표시 -->
+      <div class="empty-state" v-else>
+        <p class="empty-message">등록된 자산이 없습니다</p>
+      </div>
     </template>
-    <div class="empty-state" v-else>
-      <p class="empty-message">등록된 자산이 없습니다</p>
-    </div>
   </div>
 </template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'vue-chartjs';
 import assetApi from '@/api/assetApi';
+
 ChartJS.register(ArcElement, Tooltip, Legend);
+
 // Props로 userId 받기 (부모 컴포넌트에서 전달)
 const props = defineProps({
   userId: {
@@ -49,10 +57,12 @@ const props = defineProps({
     required: true,
   },
 });
+
 const hoveredIndex = ref(null);
 const loading = ref(false);
 const error = ref(null);
 const doughnutChartRef = ref(null);
+
 // 계좌 타입별 색상 매핑 (그룹화된 타입 기준)
 const accountTypeColors = {
   적금: '#A3E4E0',
@@ -63,16 +73,20 @@ const accountTypeColors = {
   채권: '#98FB98',
   기타: '#D3D3D3',
 };
+
 // API에서 가져온 실제 자산 데이터만 사용
 const apiAssetData = ref([]);
+
 // 자산 데이터가 있는지 확인
 const hasAssetData = computed(() => {
   return apiAssetData.value.length > 0;
 });
+
 const totalAssets = computed(() => {
   if (!hasAssetData.value) return 0;
   return apiAssetData.value.reduce((sum, asset) => sum + asset.amount, 0);
 });
+
 const assetData = computed(() => {
   if (!hasAssetData.value) return [];
   return apiAssetData.value.map((item) => ({
@@ -80,6 +94,7 @@ const assetData = computed(() => {
     percentage: totalAssets.value > 0 ? (item.amount / totalAssets.value) * 100 : 0,
   }));
 });
+
 const chartData = computed(() => {
   if (!hasAssetData.value) {
     // 데이터가 없을 때 회색 원형 차트
@@ -87,10 +102,12 @@ const chartData = computed(() => {
       labels: ['자산 없음'],
       datasets: [
         {
-          data: [1], // 임의의 값 1을 사용하여 전체 원을 그림
-          backgroundColor: ['#E5E5E5'],
-          borderColor: ['#E5E5E5'],
-          borderWidth: 2,
+          data: [100], // 전체 원을 그리기 위한 값
+          backgroundColor: ['#E8E8E8'],
+          borderColor: ['#D0D0D0'],
+          borderWidth: 1,
+          hoverBackgroundColor: ['#E8E8E8'], // 호버 시에도 같은 색상 유지
+          hoverBorderColor: ['#D0D0D0'],
         },
       ],
     };
@@ -107,10 +124,26 @@ const chartData = computed(() => {
     ],
   };
 });
+
 const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: true,
   aspectRatio: 1,
+  
+  // 수정: Interaction -> interaction (소문자)
+  interaction: hasAssetData.value ? {
+    intersect: true,
+    mode: 'point'
+  } : {
+    intersect: false,
+    mode: false
+  },
+  
+  // 자산이 없을 때는 이벤트 배열을 빈 배열로
+  events: hasAssetData.value
+    ? ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove']
+    : [],
+    
   plugins: {
     legend: {
       display: false,
@@ -136,19 +169,30 @@ const chartOptions = computed(() => ({
       },
     },
   },
+  
   elements: {
     arc: {
-      borderWidth: 2,
+      borderWidth: hasAssetData.value ? 2 : 1,
       borderColor: '#ffffff',
+      hoverBorderWidth: hasAssetData.value ? 3 : 1,
     },
   },
+  
   cutout: '60%',
   animation: {
     animateScale: true,
     animateRotate: true,
     duration: 1000,
   },
+  
+  // 자산이 없을 때는 호버 효과 비활성화
+  onHover: hasAssetData.value ? (event, elements) => {
+    if (event?.native?.target) {
+      event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+    }
+  } : null,
 }));
+
 const chartPlugins = [
   {
     id: 'centerText',
@@ -156,23 +200,31 @@ const chartPlugins = [
       const { width, height, ctx } = chart;
       ctx.restore();
       const fontSize = Math.min(width, height) / 16;
-      ctx.font = `bold ${fontSize}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = hasAssetData.value ? '#333' : '#999'; // 데이터가 없을 때 회색 텍스트
+      
       const centerX = width / 2;
       const centerY = height / 2;
+      
       if (hasAssetData.value) {
+        // 자산이 있을 때
+        ctx.fillStyle = '#333';
+        ctx.font = `bold ${fontSize}px Arial`;
         ctx.fillText('총 자산', centerX, centerY - fontSize / 2);
         ctx.font = `bold ${fontSize * 0.8}px Arial`;
         ctx.fillText(formatCurrency(totalAssets.value).replace(' 원', '원'), centerX, centerY + fontSize / 2);
       } else {
-        ctx.fillText('자산 없음', centerX, centerY);
+        // 자산이 없을 때
+        ctx.fillStyle = '#999';
+        ctx.font = `${fontSize * 1.1}px Arial`;
+        ctx.fillText('등록된', centerX, centerY - fontSize / 1.3);
+        ctx.fillText('자산이 없음', centerX, centerY + fontSize / 1.3);
       }
       ctx.save();
     },
   },
 ];
+
 // 계좌 타입을 그룹화하는 함수
 const getGroupedAccountType = (accountType) => {
   if (accountType.includes('적금')) {
@@ -191,6 +243,7 @@ const getGroupedAccountType = (accountType) => {
     return '기타'; // 기타 타입
   }
 };
+
 // 백엔드에서 계좌 데이터를 가져와서 accountType별로 그룹화
 const fetchUserAssetChart = async () => {
   loading.value = true;
@@ -234,6 +287,7 @@ const fetchUserAssetChart = async () => {
     loading.value = false;
   }
 };
+
 const formatCurrency = (amount) => {
   const value = amount === null || amount === undefined ? 0 : amount;
   return (
@@ -245,13 +299,16 @@ const formatCurrency = (amount) => {
       .replace('₩', '') + ' 원'
   );
 };
+
 defineExpose({
   fetchUserAssetChart,
 });
+
 onMounted(() => {
   fetchUserAssetChart();
 });
 </script>
+
 <style scoped>
 .user-asset-chart {
   background: #ffffff;
@@ -267,6 +324,7 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
 }
+
 .chart-container {
   display: flex;
   justify-content: center;
@@ -274,6 +332,16 @@ onMounted(() => {
   margin-bottom: 32px;
   width: 100%; /* 부모 너비에 맞춤 */
 }
+
+/* 빈 차트 스타일 */
+.chart-container.empty-chart {
+  opacity: 0.8;
+}
+
+.chart-container.empty-chart .chart-wrapper {
+  filter: grayscale(10%);
+}
+
 .chart-wrapper {
   position: relative;
   width: 300px;
@@ -282,6 +350,7 @@ onMounted(() => {
   max-width: 100%;
   max-height: 100%;
 }
+
 .legend-container {
   display: flex;
   flex-wrap: wrap;
@@ -295,6 +364,7 @@ onMounted(() => {
   height: 140px;
   align-content: flex-start;
 }
+
 .legend-item {
   display: flex;
   align-items: center;
@@ -307,23 +377,26 @@ onMounted(() => {
   max-width: calc(50% - 8px);
   min-width: 140px; /* 최소 너비를 약간 줄임 */
   justify-content: flex-start;
-  padding: 12px 16px;
   min-height: 40px;
   flex-shrink: 1;
 }
+
 /* 더 간단한 방법: 5번째가 존재할 때 컨테이너 내 모든 항목 축소 */
 .legend-container:has(.legend-item:nth-child(5)) .legend-item {
   padding: 8px 12px !important;
   min-height: 28px !important;
 }
+
 .legend-item:hover,
 .legend-hover {
   background-color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
 .legend-indicator {
   margin-right: 8px;
 }
+
 .color-dot {
   width: 16px;
   height: 16px;
@@ -332,6 +405,7 @@ onMounted(() => {
   border: 1px solid #eee;
   flex-shrink: 0;
 }
+
 .legend-content {
   flex: 1;
   display: flex;
@@ -340,23 +414,27 @@ onMounted(() => {
   align-items: baseline;
   gap: 8px; /* 항목 간 간격 조정 */
 }
+
 .asset-info {
   display: flex;
   align-items: center;
   gap: 4px;
 }
+
 .asset-type {
   font-weight: 500;
   color: #333;
   font-size: 16px; /* 폰트 크기 조정 */
   white-space: nowrap;
 }
+
 .asset-percentage {
   font-weight: 400;
   color: #666;
   font-size: 14px; /* 폰트 크기 조정 */
   white-space: nowrap;
 }
+
 .asset-amount {
   font-weight: 600;
   color: #333;
@@ -364,28 +442,60 @@ onMounted(() => {
   text-align: right;
   white-space: nowrap;
 }
-/* 빈 상태 스타일 */
+
+/* 빈 상태 스타일 개선 */
 .empty-state {
   margin-top: 20px;
   margin-bottom: 32px;
-}
-.empty-message {
-  color: #999;
-  font-size: 16px;
   text-align: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  border: 2px dashed #ddd;
+  width: 100%;
+  max-width: 400px;
+}
+
+.empty-message {
+  color: #666;
+  font-size: 18px;
+  font-weight: 500;
   margin: 0;
+  line-height: 1.4;
 }
 /* 로딩 상태 스타일 */
 .loading-state {
   margin-top: 20px;
   margin-bottom: 32px;
+  text-align: center;
+  padding: 20px;
 }
+
 .loading-message {
   color: #666;
   font-size: 16px;
   text-align: center;
   margin: 0;
+  position: relative;
 }
+
+.loading-message::after {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  border: 2px solid #ddd;
+  border-top: 2px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* 1024px 미만 화면에서 .asset-amount 숨기기 */
 @media (max-width: 1024px) {
   /* AssetCard.vue의 .asset-item .amount와 유사한 처리 */
@@ -396,6 +506,7 @@ onMounted(() => {
     justify-content: flex-start; /* 금액이 사라지면 왼쪽으로 정렬 */
   }
 }
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .user-asset-chart {
@@ -433,6 +544,7 @@ onMounted(() => {
     font-size: 12px;
   }
 }
+
 @media (max-width: 480px) {
   .chart-wrapper {
     width: 200px;

@@ -33,11 +33,13 @@
             {{ goal.success ? '성공' : '실패' }}
           </div>
           <button
-            class="btn"
-            :disabled="!goal.success || goal.rewarded || claimingMap[goal.goalId]"
+            class="btn-reward"
+            :class="rewardVariant(goal)"            
+            :disabled="isRewardDisabled(goal)"      
+            :aria-disabled="isRewardDisabled(goal)"
             @click="claim(goal)"
           >
-            {{ claimingMap[goal.goalId] ? '지급 중...' : (goal.rewarded ? '보상 지급완료' : '보상 받기') }}
+            {{ rewardLabel(goal) }}
           </button>
           <button class="btn btn-danger" @click="handleDeleteGoal(goal.goalId)">
             삭제
@@ -80,14 +82,12 @@ export default {
     async loadPastGoals() {
       try {
         const goals = await fetchPastGoals(this.userId);
-        this.pastGoals = goals;
         this.pastGoals = goals.map(g => ({ ...g, rewarded: false }));
         await this.checkRewardedStatuses();
       } catch (e) {
         console.error('지난 목표 조회 실패:', e);
       }
     },
-    // 모달 보여주는 헬퍼
     showModal(message, buttons) {
       this.modalMessage = message;
       this.modalButtons = buttons;
@@ -136,6 +136,22 @@ export default {
       );
     },
 
+    isRewardDisabled(goal) {
+      return !goal.success || goal.rewarded || this.claimingMap[goal.goalId];
+    },
+    rewardVariant(goal) {
+      if (this.claimingMap[goal.goalId]) return 'loading';
+      if (goal.rewarded) return 'done';                    
+      if (!goal.success) return 'blocked';                
+      return 'ready';                                      
+    },
+    rewardLabel(goal) {
+      if (this.claimingMap[goal.goalId]) return '지급 중...';
+      if (goal.rewarded) return '보상 지급완료';
+      if (!goal.success) return '보상 지급불가';
+      return '보상 받기';
+    },
+
     async claim(goal) {
       if (!goal.success || goal.rewarded || this.claimingMap[goal.goalId]) return;
       this.claimingMap[goal.goalId] = true;
@@ -156,7 +172,7 @@ export default {
             { text: '확인', onClick: () => (this.modalVisible = false) },
           ]);
         } else {
-          this.showModal('아직 보상 조건을 충족하지 않았어요.', [
+          this.showModal('보상 조건을 충족하지 않았어요.', [
             { text: '확인', onClick: () => (this.modalVisible = false) },
           ]);
         }
@@ -170,38 +186,46 @@ export default {
       }
     },
 
-    
-    formatDate(arr) {
-      if (!arr || arr.length !== 3) return '';
-      const [y, m, d] = arr;
-      return `${y}년 ${String(m).padStart(2, '0')}월 ${String(d).padStart(
-        2,
-        '0'
-      )}일`;
+    toDate(val) {
+      if (!val) return null;
+      if (val instanceof Date) return val;
+      if (Array.isArray(val) && val.length === 3) {
+        const [y, m, d] = val;
+        return new Date(Number(y), Number(m) - 1, Number(d));
+      }
+      if (typeof val === 'string') {
+        const parts = val.split(/[-/.]/);
+        if (parts.length >= 3) {
+          return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+        }
+        const d = new Date(val);
+        return isNaN(d) ? null : d;
+      }
+      return null;
+    },
+
+    formatDate(input) {
+      const d = this.toDate(input);
+      if (!d) return '';
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}년 ${m}월 ${day}일`;
     },
     formatAmount(amount) {
       return `${amount.toLocaleString()}원`;
     },
     getPeriodDiff(start, end) {
-      if (!start || !end) return '';
-      const startDate = new Date(start);
-      const endDate = new Date(end);
-
+      const s = this.toDate(start);
+      const e = this.toDate(end);
+      if (!s || !e) return '';
       let diffMonths =
-        (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-        (endDate.getMonth() - startDate.getMonth());
-
-      // 일(day) 차이가 양수면 한 달 추가
-      if (endDate.getDate() > startDate.getDate()) {
-        diffMonths += 1;
-      }
-
-      if (diffMonths < 24) {
-        return `${diffMonths}개월`;
-      } else {
-        const diffYears = diffMonths / 12;
-        return `${Math.round(diffYears)}년`;
-      }
+        (e.getFullYear() - s.getFullYear()) * 12 +
+        (e.getMonth() - s.getMonth());
+      if (e.getDate() > s.getDate()) diffMonths += 1;
+      return diffMonths < 24
+        ? `${diffMonths}개월`
+        : `${Math.round(diffMonths / 12)}년`;
     },
   },
   mounted() {
@@ -343,4 +367,48 @@ export default {
   font-weight: bold;
   cursor: pointer;
 }
+
+.past-goal-card .btn-reward {
+  width: 100%;
+  height: 44px;
+  border-radius: 18px;
+  font-weight: 700;
+  border: 0;
+  transition: filter .15s ease, transform .06s ease, box-shadow .12s ease;
+}
+
+.past-goal-card .btn-reward.ready {
+  background: #3573ee;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(53, 115, 238, 0.28);
+}
+.past-goal-card .btn-reward.ready:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.past-goal-card .btn-reward.blocked {
+  background: #e9ecef;
+  color: #9aa0a6;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.past-goal-card .btn-reward.done {
+  background: #dbeafe;   /* 연파랑 배경 */
+  color: #1d4ed8;        /* 진한 파랑 텍스트 */
+  box-shadow: 0 2px 6px rgba(29, 78, 216, 0.18);
+}
+
+.past-goal-card .btn-reward.loading {
+  background: #eef2ff;
+  color: #4f46e5;
+  cursor: progress;
+  box-shadow: none;
+}
+
+.past-goal-card .btn-reward:disabled {
+  pointer-events: none;
+}
+
 </style>

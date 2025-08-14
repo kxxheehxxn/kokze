@@ -102,6 +102,7 @@ import {
   getGoalById,
   getRecommendedProducts,
   deleteGoalById,
+  claimGoalReward
 } from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth';
 import RecommendedProductCard from '@/components/goal/RecommendedProductCard.vue';

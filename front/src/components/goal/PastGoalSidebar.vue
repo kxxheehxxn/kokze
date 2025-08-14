@@ -32,7 +32,13 @@
           <div :class="['status', goal.success ? 'success' : 'fail']">
             {{ goal.success ? '성공' : '실패' }}
           </div>
-
+          <button
+            class="btn"
+            :disabled="!goal.success || goal.rewarded || claimingMap[goal.goalId]"
+            @click="claim(goal)"
+          >
+            {{ claimingMap[goal.goalId] ? '지급 중...' : (goal.rewarded ? '보상 지급완료' : '보상 받기') }}
+          </button>
           <button class="btn btn-danger" @click="handleDeleteGoal(goal.goalId)">
             삭제
           </button>
@@ -50,7 +56,7 @@
   />
 </template>
 <script>
-import { fetchPastGoals, deleteGoalById } from '@/api/goalApi';
+import { fetchPastGoals, deleteGoalById, claimGoalReward, isGoalRewarded } from '@/api/goalApi';
 import { userAuthStore } from '@/stores/auth';
 import BaseModal from '@/components/BaseModal.vue';
 export default {
@@ -67,6 +73,7 @@ export default {
       modalVisible: false,
       modalMessage: '',
       modalButtons: [],
+      claimingMap: {},
     };
   },
   methods: {
@@ -74,6 +81,8 @@ export default {
       try {
         const goals = await fetchPastGoals(this.userId);
         this.pastGoals = goals;
+        this.pastGoals = goals.map(g => ({ ...g, rewarded: false }));
+        await this.checkRewardedStatuses();
       } catch (e) {
         console.error('지난 목표 조회 실패:', e);
       }
@@ -110,6 +119,58 @@ export default {
       ]);
     },
 
+    async checkRewardedStatuses() {
+      const auth = userAuthStore();
+      const token = auth.getToken();
+      await Promise.all(
+        this.pastGoals
+          .filter(g => g.success)
+          .map(async g => {
+            try {
+              const res = await isGoalRewarded(g.goalId, this.userId, token);
+              g.rewarded = !!res.data;
+            } catch (e) {
+              console.warn('보상 지급 여부 확인 실패:', g.goalId, e);
+            }
+          })
+      );
+    },
+
+    async claim(goal) {
+      if (!goal.success || goal.rewarded || this.claimingMap[goal.goalId]) return;
+      this.claimingMap[goal.goalId] = true;
+
+      const auth = userAuthStore();
+      const token = auth.getToken();
+      try {
+        const res = await claimGoalReward(goal.goalId, this.userId, token);
+        const { status, points } = res.data || {};
+        if (status === 'REWARDED') {
+          goal.rewarded = true;
+          this.showModal(`축하해요! ${Number(points).toLocaleString()}P 지급 완료 🎉`, [
+            { text: '확인', onClick: () => (this.modalVisible = false) },
+          ]);
+        } else if (status === 'ALREADY_REWARDED') {
+          goal.rewarded = true;
+          this.showModal('이미 지급된 보상입니다.', [
+            { text: '확인', onClick: () => (this.modalVisible = false) },
+          ]);
+        } else {
+          this.showModal('아직 보상 조건을 충족하지 않았어요.', [
+            { text: '확인', onClick: () => (this.modalVisible = false) },
+          ]);
+        }
+      } catch (e) {
+        console.error('claimGoalReward failed', e);
+        this.showModal('보상 지급 중 오류가 발생했습니다.', [
+          { text: '확인', onClick: () => (this.modalVisible = false) },
+        ]);
+      } finally {
+        this.claimingMap[goal.goalId] = false;
+      }
+    },
+
+    
     formatDate(arr) {
       if (!arr || arr.length !== 3) return '';
       const [y, m, d] = arr;

@@ -71,7 +71,10 @@ export default {
     },
     averageProgress() {
       if (!this.goals.length) return 0;
-      const total = this.goals.reduce((sum, g) => sum + g.progress, 0);
+      const total = this.goals.reduce((sum, g) => {
+        const p = Number(g.progress || 0);
+        return sum + Math.min(p, 100);
+      }, 0);
       return Math.floor(total / this.goals.length);
     },
   },

@@ -43,6 +43,7 @@ import HousingSavingDetail from './details/HousingSavingDetail.vue';
 import EducationDetail from './details/EducationDetail.vue';
 import CreditCardDetail from './details/CreditCardDetail.vue';
 import HousingDetail from './details/HousingDetail.vue';
+
 export default {
   name: 'TaxPage',
   components: {
@@ -157,6 +158,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 /* 기존 스타일 유지 */
 .tax-page {

@@ -306,17 +306,18 @@ import { storeToRefs } from 'pinia';
           if (!res.ok) throw new Error(await res.text());
           const rawSum = await res.json();
           const summary = typeof rawSum === 'string' ? JSON.parse(rawSum) : rawSum;
-          this.summaryMap = summary;  
+
+          this.summaryMap = summary;           // ✅ 추가!
           console.log("세금 요약 결과:", summary);
-          // 부모(TaxPage)로 요약 전달
-          const rows = Object.entries(summary).map(([code, total]) => ({
-            code,
-            total,
-            totalLabel: Number(total).toLocaleString('ko-KR') + '원',
-          }));
-          console.log('[child] emit update-tax-data', rows)
+
+          // 부모(TaxPage)로 요약 전달 (아래 숫자 파싱도 같이 수정)
+          const rows = Object.entries(summary).map(([code, total]) => {
+            const n = this.num(total);         // ✅ "1,234원" → 1234
+            return { code, total: n, totalLabel: n.toLocaleString('ko-KR') + '원' };
+          });
+
           this.$emit('update-tax-data', rows);
-          this.computeEstimate()
+          this.computeEstimate();              // 이제 정상 동작
           this.closePopup();
         } catch (err) {
           console.error('세금 정보 조회 오류:', err);

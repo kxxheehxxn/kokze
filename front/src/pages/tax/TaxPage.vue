@@ -17,9 +17,8 @@
 
         <div class="tax-info">
           <!-- ✅ DefaultInfo가 summary를 emit하면 updateTaxAmounts로 반영 -->
-          <DefaultInfo
-            v-if="!selected"
-            @update-tax-data="updateTaxAmounts"
+          <DefaultInfo v-if="!selected"
+            @update-tax-data="updateTaxAmounts"  
           />
           <component v-else :is="detailComponentName" :label="selected" />
         </div>
@@ -68,13 +67,13 @@ export default {
       selected: '',
       taxAmounts: {
         '소득기준 초과 부양가족': '0원',
-        '건강/고용보험': '300,110원',
+        '건강/고용보험': '0원',
         '국민연금': '0원',
         '보험료': '0원',
-        '의료비': '314,500원',
+        '의료비': '0원',
         '교육비': '0원',
-        '신용카드': '2,789,200원',
-        '직불카드 등': '7,230,000원',
+        '신용카드': '0원',
+        '직불카드 등': '0원',
         '현금영수증': '0원',
         '개인연금저축/연금계좌': '0원',
         '주택자금/월세액': '0원',
@@ -123,37 +122,36 @@ export default {
     }
   },
   methods: {
-    handleCardClick(label) {
-      this.selected = this.selected === label ? '' : label
-    },
-    updateTaxAmounts(summary) {
+    updateTaxAmounts(rows = []) {
+      if (!Array.isArray(rows)) {
+        console.warn('updateTaxAmounts payload가 배열이 아님:', rows);
+        return;
+      }
       // 백엔드 "코드 → 합계"를 "라벨 → 금액"으로 치환
       const codeToLabel = {
-        '0':'소득기준 초과 부양가족',
-        '1':'건강/고용보험',
-        '2':'국민연금',
-        '3':'보험료',
-        '4':'의료비',
-        '5':'교육비',
-        '6':'신용카드',
-        '7':'직불카드 등',
-        '8':'현금영수증',
-        '9':'개인연금저축/연금계좌',
-        '10':'주택자금/월세액',
-        '11':'주택마련저축',
-        '12':'장기집합투자증권저축/벤처기업투자신탁',
-        '13':'기부금'
+        '0': '건강/고용보험',
+        '1': '국민연금',
+        '3': '의료비',
+        '4': '교육비',
+        '5': '신용카드',
+        '6': '직불카드 등',
+        '7': '현금영수증',
       };
 
-      const next = { ...this.taxAmounts };
-      Object.entries(summary || {}).forEach(([code, total]) => {
-        const label = codeToLabel[String(code)];
+      rows.forEach(({ code, total }) => {
+        const label = codeToLabel[code];
         if (!label) return;
-        next[label] = (typeof total === 'string')
+
+        // 숫자/문자 모두 안전 파싱
+        const n = typeof total === 'number'
           ? total
-          : `${Number(total || 0).toLocaleString()}원`;
+          : Number(String(total).replace(/[^\d.-]/g, '')) || 0;
+
+        this.taxAmounts[label] = n.toLocaleString('ko-KR') + '원';
       });
-      this.taxAmounts = next;
+    },
+    handleCardClick(label) {
+      this.selected = this.selected === label ? '' : label
     }
   }
 };

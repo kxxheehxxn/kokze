@@ -96,7 +96,7 @@ import {
   getAccountsByUserId,
   createGoal,
   linkAccountToGoal,
-  deleteGoalById, // 🔁 롤백용
+  deleteGoalById,
 } from '@/api/goalApi';
 import ProductModal from '@/components/goal/ProductModal.vue';
 import { userAuthStore } from '@/stores/auth';
@@ -184,8 +184,6 @@ export default {
       return result + '원';
     },
 
-    // 생성 실패 -> "기간에 비해 금액이 많습니다."
-    // 연동 실패 -> 롤백 + "이미 연동되어있는 계좌입니다."
     async onSubmit() {
       if (this.loading) return;
       this.loading = true;
@@ -194,7 +192,6 @@ export default {
       const userId = auth.state.user.userId;
       const token = auth.getToken();
 
-      // 필수값 검증
       if (
         !this.goalName ||
         !this.startDate ||
@@ -207,7 +204,6 @@ export default {
         return;
       }
 
-      // (가능하면) 선제 차단: 응답에 is_linked/goal_id가 있으면 즉시 막기
       if (
         this.selectedAccount &&
         (this.selectedAccount.is_linked || this.selectedAccount.goal_id)
@@ -221,7 +217,7 @@ export default {
 
       const body = {
         goal_name: this.goalName,
-        target_amount: this.parsedAmount, // 숫자 보장
+        target_amount: this.parsedAmount,
         save_amount: 0,
         start_date: this.startDate,
         end_date: this.endDate,
@@ -230,7 +226,6 @@ export default {
 
       let goalId = null;
 
-      // 1) 목표 생성
       try {
         const res = await createGoal(userId, body, token);
         goalId = res.data.goal_id;
@@ -240,15 +235,14 @@ export default {
           err?.response?.status,
           err?.response?.data
         );
-        // 백이 구분 못 줘도: 생성 실패는 고정 문구
-        this.showModal('기간에 비해 금액이 너무 많습니다.', [
+
+        this.showModal('기간 대비 목표 금액이 과도합니다.', [
           { text: '확인', onClick: this.hideModal },
         ]);
         this.loading = false;
         return;
       }
 
-      // 2) 계좌 연동(선택)
       if (this.selectedAccount) {
         try {
           await linkAccountToGoal(
@@ -273,7 +267,7 @@ export default {
             err?.response?.status,
             err?.response?.data
           );
-          // 연동 실패 → 생성 롤백
+
           try {
             await deleteGoalById(goalId, token);
           } catch (rbErr) {
@@ -283,7 +277,7 @@ export default {
               rbErr?.response?.data
             );
           }
-          // 백이 코드 못 줘도: 연동 단계 실패는 고정 문구
+
           this.showModal('이미 연동되어있는 계좌입니다.', [
             { text: '확인', onClick: this.hideModal },
           ]);
@@ -292,7 +286,6 @@ export default {
         }
       }
 
-      // 3) 연동 없이 성공
       this.showModal('목표가 성공적으로 등록되었습니다!', [
         {
           text: '확인',
@@ -323,7 +316,7 @@ export default {
 
     handleProductConnect(accountId) {
       const acc = this.accounts.find((a) => a.account_id === accountId);
-      // 응답에 is_linked/goal_id 있으면 선택 단계에서도 차단
+
       if (acc?.is_linked || acc?.goal_id) {
         this.showModal('이미 연동되어있는 계좌입니다.', [
           { text: '확인', onClick: this.hideModal },

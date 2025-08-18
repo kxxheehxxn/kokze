@@ -232,7 +232,16 @@ export default {
           },
         ]);
       } catch (err) {
-        this.showModal('목표 수정 실패', [
+
+        const msg =
+        err?.response?.data?.message ||
+        (err?.response?.status === 400 && '요청 값이 올바르지 않습니다.') ||
+        (err?.response?.status === 403 && '권한이 없습니다.') ||
+        (err?.response?.status === 404 && '해당 목표를 찾을 수 없습니다.') ||
+        (err?.response?.status >= 500 && '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.') ||
+        '알 수 없는 오류가 발생했습니다.';
+
+        this.showModal(msg, [
           {
             text: '확인',
             onClick: () => {

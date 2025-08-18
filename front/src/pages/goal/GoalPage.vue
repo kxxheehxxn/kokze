@@ -21,7 +21,16 @@
         <div class="goal-grid">
           <div v-for="goal in goals" :key="goal.id" class="goal-wrapper">
             <GoalCard :goal="goal" />
-            <div class="product-box">{{ goal.product || '-' }}</div>
+            <div :class="['product-box', (goal.linkedAccounts && goal.linkedAccounts.length) ? 'acc-mode' : '']">
+              <template v-if="goal.linkedAccounts && goal.linkedAccounts.length">
+                <div class="acc-chip" v-for="acc in goal.linkedAccounts" :key="acc.account_id">
+                  <span class="bank">{{ acc.bank_name }}</span>
+                  <span class="num">{{ acc.account_num }}</span>
+                  <span class="bal">{{ formatCurrency(acc.balance) }}</span>
+                </div>
+              </template>
+              <span v-else>{{ goal.product || '-' }}</span>
+            </div>
           </div>
           <div v-for="n in emptySlots" :key="'add-' + n" class="goal-wrapper">
             <GoalAddCard />
@@ -58,7 +67,7 @@ export default {
   },
   computed: {
     emptySlots() {
-      return this.maxGoals - this.goals.length;
+      return Math.max(this.maxGoals - this.goals.length, 0);
     },
     averageProgress() {
       if (!this.goals.length) return 0;
@@ -94,6 +103,7 @@ export default {
             product: '-',
             period1: goal.start_date ?? '',
             period2: goal.end_date ?? '',
+            linkedAccounts: Array.isArray(goal.linked_accounts) ? goal.linked_accounts : [],
           };
         });
       } catch (error) {
@@ -101,8 +111,11 @@ export default {
       }
     },
     calculateProgress(saved, target) {
-      if (!saved || !target) return 0;
-      return Math.floor((saved / target) * 100);
+      if (!target) return 0;
+      return Math.floor((Number(saved || 0) / Number(target)) * 100);
+    },
+    formatCurrency(n) {
+     return `${Number(n || 0).toLocaleString()}원`;
     },
   },
 };
@@ -187,6 +200,9 @@ export default {
   box-shadow: 0 0 6px rgba(0, 120, 255, 0.15);
   height: 50px;
   box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 /* 지난 목표 리스트 이동 */
 .sidebar-fade-enter-active,
@@ -203,6 +219,30 @@ export default {
   transform: translateX(0);
   opacity: 1;
 }
+.product-box.acc-mode {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  height: auto;            
+  min-height: 50px;        
+  white-space: normal;     
+  overflow: visible;       
+}
+.product-box .acc-chip {
+  display: inline-flex;
+  gap: 6px;
+  align-items: baseline;
+  padding: 0;             
+  border-radius: 0;      
+  background: transparent;
+  box-shadow: none;      
+  font-size: 12px;
+}
+.product-box .acc-chip .bank { font-weight: 600; }
+.product-box .acc-chip .num  { opacity: 0.85; margin-left: 6px; }
+.product-box .acc-chip .bal  { margin-left: 8px; }
 @media (max-width: 1024px) {
   .goal-summary {
     margin-top: 0rem;

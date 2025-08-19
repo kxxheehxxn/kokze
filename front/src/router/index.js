@@ -73,10 +73,10 @@ const router = createRouter({
       beforeEnter: isAuthenticated,
     },
     {
-      path: '/goals/:goalId', // 상세 페이지 경로
+      path: '/goals/:goalId',
       name: 'GoalDetailPage',
       component: () => import('@/pages/goal/GoalDetailPage.vue'),
-      props: true, // goalId를 props로 전달
+      props: true,
     },
     {
       path: '/goals/create',
@@ -87,7 +87,7 @@ const router = createRouter({
       path: '/goals/edit/:goalId',
       name: 'GoalEditPage',
       component: () => import('@/pages/goal/GoalEditPage.vue'),
-      props: true, // goalId param을 props로 전달
+      props: true,
     },
     {
       path: '/find-password',

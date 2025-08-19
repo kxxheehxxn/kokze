@@ -71,7 +71,6 @@ export default {
       pastGoals: [],
       userName: auth.state.user.userName || '김콕재',
       userId: auth.state.user.userId,
-      // 모달 상태
       modalVisible: false,
       modalMessage: '',
       modalButtons: [],
@@ -395,8 +394,8 @@ export default {
 }
 
 .past-goal-card .btn-reward.done {
-  background: #dbeafe;   /* 연파랑 배경 */
-  color: #1d4ed8;        /* 진한 파랑 텍스트 */
+  background: #dbeafe;
+  color: #1d4ed8;
   box-shadow: 0 2px 6px rgba(29, 78, 216, 0.18);
 }
 

@@ -35,7 +35,6 @@ export default {
       })
     },
 
-    // 어떤 형태든 Date 객체로 변환: [y,m,d] | "YYYY-MM-DD" | Date
     toDate(val) {
       if (!val) return null
       if (val instanceof Date) return val

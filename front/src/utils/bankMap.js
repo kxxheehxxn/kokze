@@ -1,4 +1,3 @@
-// 한글 은행명을 영문 파일명으로 매핑
 export const bankNameMap = {
   경남은행: 'gyeongnam',
   광주은행: 'gwangju',

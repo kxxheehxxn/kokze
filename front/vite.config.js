@@ -21,6 +21,17 @@ export default defineConfig(({ mode }) => {
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, '/api'),
         },
+        '/tax': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+          rewrite: p => p.replace(/^\/tax/, '/api/tax')
+        },
+        '/taxinfo': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+          secure: false,
+          rewrite: p => p.replace(/^\/taxinfo/, '/api/taxinfo')
+        }
       },
     },
     build: {

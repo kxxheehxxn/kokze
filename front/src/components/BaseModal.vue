@@ -65,6 +65,7 @@ function buttonClass(idx) {
 .modal-message {
   margin-top: 10px;
   font-size: 20px;
+  white-space: pre-line;
 }
 button {
   width: 70px;

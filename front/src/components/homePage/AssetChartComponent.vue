@@ -197,13 +197,13 @@ const chartPlugins = [
       
       if (hasAssetData.value) {
         ctx.fillStyle = '#333';
-        ctx.font = `bold ${fontSize}px Arial`;
+        ctx.font = `bold ${fontSize}px 'Freesentation-Regular'`;  
         ctx.fillText('총 자산', centerX, centerY - fontSize / 2);
-        ctx.font = `bold ${fontSize * 0.8}px Arial`;
+        ctx.font = `bold ${fontSize * 0.8}px 'Freesentation-Regular'`;
         ctx.fillText(formatCurrency(totalAssets.value).replace(' 원', '원'), centerX, centerY + fontSize / 2);
       } else {
         ctx.fillStyle = '#999';
-        ctx.font = `${fontSize * 1.1}px Arial`;
+        ctx.font = `${fontSize * 1.1}px 'Freesentation-Regular'`;
         ctx.fillText('등록된', centerX, centerY - fontSize / 1.3);
         ctx.fillText('자산이 없음', centerX, centerY + fontSize / 1.3);
       }

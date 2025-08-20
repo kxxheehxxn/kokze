@@ -22,19 +22,15 @@
 const props = defineProps({
   visible: Boolean,
   message: String,
-  buttons: Array, // [{ text: '확인', onClick: () => {} }]
+  buttons: Array, 
 });
 
-// 버튼 색상 결정 함수
 function buttonClass(idx) {
   if (props.buttons.length === 1) {
-    // 버튼이 하나면 파랑색
     return 'primary-btn';
   } else if (props.buttons.length >= 2) {
-    // 버튼이 두개 이상이면 마지막 버튼만 파랑, 나머지는 회색
     return idx === props.buttons.length - 1 ? 'primary-btn' : 'secondary-btn';
   }
-  // 기본 회색
   return 'secondary-btn';
 }
 </script>

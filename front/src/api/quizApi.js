@@ -17,7 +17,6 @@ export const quizApi = {
           case 400:
             throw new Error('잘못된 요청입니다. 사용자 정보를 확인해주세요.');
           case 409:
-            // 409 응답: 이미 푼 퀴즈 데이터 반환
             throw error;
           case 500:
             throw new Error(

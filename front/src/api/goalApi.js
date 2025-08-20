@@ -94,7 +94,6 @@ export const claimGoalReward = (goalId, userId, token) =>
   });
 
 
-// 추천 목표 API 호출
 export async function fetchRecommendedGoal(userId) {
   try {
     const response = await axios.get('/api/goal/recommend-next', {

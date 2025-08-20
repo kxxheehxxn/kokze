@@ -50,49 +50,49 @@
   </UserCardLayout>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { getUserInfo, updateUserProfile, createTestUser } from '@/api/userApi';
-import UserCardLayout from '@/components/UserCardLayout.vue';
-import BaseModal from '@/components/BaseModal.vue';
-const salary = ref(0);
-const payAmount = ref(0);
-const loading = ref(false);
-const error = ref(null);
-const router = useRouter();
-const modalVisible = ref(false);
-const modalMessage = ref('');
-const modalButtons = ref([]);
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { getUserInfo, updateUserProfile, createTestUser } from '@/api/userApi'
+import UserCardLayout from '@/components/UserCardLayout.vue'
+import BaseModal from '@/components/BaseModal.vue'
+const salary = ref(0)
+const payAmount = ref(0)
+const loading = ref(false)
+const error = ref(null)
+const router = useRouter()
+const modalVisible = ref(false)
+const modalMessage = ref('')
+const modalButtons = ref([])
 async function loadUserAsset() {
-  error.value = null;
+  error.value = null
   try {
-    const user = await getUserInfo();
-    salary.value = user.salary || 0;
-    payAmount.value = user.payAmount || 0;
+    const user = await getUserInfo()
+    salary.value = user.salary || 0
+    payAmount.value = user.payAmount || 0
   } catch (e) {
-    error.value = '사용자 정보를 불러올 수 없습니다.';
+    error.value = '사용자 정보를 불러올 수 없습니다.'
     try {
-      await createTestUser();
-      const user = await getUserInfo();
-      salary.value = user.salary || 0;
-      payAmount.value = user.payAmount || 0;
-      error.value = null;
+      await createTestUser()
+      const user = await getUserInfo()
+      salary.value = user.salary || 0
+      payAmount.value = user.payAmount || 0
+      error.value = null
     } catch (testError) {
-      error.value = '테스트용 사용자 생성에도 실패했습니다.';
+      error.value = '테스트용 사용자 생성에도 실패했습니다.'
     }
   }
 }
 function formatNumber(value) {
-  if (value === null || value === undefined) return '';
-  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  if (value === null || value === undefined) return ''
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 function parseNumber(value) {
-  const cleaned = value.replace(/[^0-9]/g, '');
-  return cleaned ? parseInt(cleaned, 10) : 0;
+  const cleaned = value.replace(/[^0-9]/g, '')
+  return cleaned ? parseInt(cleaned, 10) : 0
 }
 onMounted(() => {
-  loadUserAsset();
-});
+  loadUserAsset()
+})
 async function onSubmit() {
   if (
     salary.value === null ||
@@ -100,57 +100,57 @@ async function onSubmit() {
     isNaN(salary.value) ||
     isNaN(payAmount.value)
   ) {
-    error.value = '모든 필드를 숫자로 정확히 입력해주세요.';
-    return;
+    error.value = '모든 필드를 숫자로 정확히 입력해주세요.'
+    return
   }
-  loading.value = true;
-  error.value = null;
+  loading.value = true
+  error.value = null
   try {
     const result = await updateUserProfile({
       salary: salary.value,
       payAmount: payAmount.value,
-    });
+    })
     if (result.success) {
       // 성공 시 모달 띄우기
-      modalMessage.value = '자산 정보가 성공적으로 수정되었습니다.';
+      modalMessage.value = '자산 정보가 성공적으로 수정되었습니다.'
       modalButtons.value = [
         {
           text: '확인',
           onClick: () => {
-            modalVisible.value = false;
-            router.push('/user');
+            modalVisible.value = false
+            router.push('/user')
           },
         },
-      ];
-      modalVisible.value = true;
+      ]
+      modalVisible.value = true
     } else {
       error.value =
         '자산 정보 수정에 실패했습니다: ' +
-        (result.message || '알 수 없는 오류');
+        (result.message || '알 수 없는 오류')
     }
   } catch (e) {
-    error.value = '자산 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.';
+    error.value = '자산 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 function onCancel() {
-  router.back();
+  router.back()
 }
 function numberToKorean(num) {
-  const units = ['', '만', '억', '조'];
-  const result = [];
-  let strNum = String(num);
-  let i = 0;
+  const units = ['', '만', '억', '조']
+  const result = []
+  let strNum = String(num)
+  let i = 0
   while (strNum.length > 0) {
-    const chunk = strNum.length >= 4 ? strNum.slice(-4) : strNum;
-    strNum = strNum.slice(0, -4);
+    const chunk = strNum.length >= 4 ? strNum.slice(-4) : strNum
+    strNum = strNum.slice(0, -4)
     if (Number(chunk) !== 0) {
-      result.unshift(`${Number(chunk)}${units[i]}`);
+      result.unshift(`${Number(chunk)}${units[i]}`)
     }
-    i++;
+    i++
   }
-  return result.length > 0 ? result.join(' ') + ' 원' : ' 원';
+  return result.length > 0 ? result.join(' ') + ' 원' : ' 원'
 }
 </script>
 <style scoped>

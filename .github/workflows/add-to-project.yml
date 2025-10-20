@@ -1,0 +1,19 @@
+name: add-to-project
+on:
+  issues:
+    types: [opened, labeled]
+  pull_request_target:
+    types: [opened, reopened]
+permissions:
+  issues: write
+  pull-requests: write
+  project: write
+  contents: read
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@v0.6.1
+        with:
+          project-url: https://github.com/users/kxxheehxxn/projects/9
+          github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,64 @@
+name: ci
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      back: ${{ steps.filter.outputs.back }}
+      front: ${{ steps.filter.outputs.front }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            back:
+              - 'back/**'
+            front:
+              - 'front/**'
+
+  back:
+    needs: changes
+    if: needs.changes.outputs.back == 'true'
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: back } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - run: ./gradlew -q test
+
+  front:
+    needs: changes
+    if: needs.changes.outputs.front == 'true'
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: front } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test --if-present
+
+  required:
+    needs: [changes, back, front]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Assert required jobs succeeded
+        run: |
+          echo "changed back=${{ needs.changes.outputs.back }}, front=${{ needs.changes.outputs.front }}"
+          if [ "${{ needs.changes.outputs.back }}" = "true" ] && [ "${{ needs.back.result }}" != "success" ]; then
+            echo "❌ back job failed or skipped"; exit 1; fi
+          if [ "${{ needs.changes.outputs.front }}" = "true" ] && [ "${{ needs.front.result }}" != "success" ]; then
+            echo "❌ front job failed or skipped"; exit 1; fi
+          echo "✅ all required checks passed"

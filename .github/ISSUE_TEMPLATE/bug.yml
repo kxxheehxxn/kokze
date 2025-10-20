@@ -1,10 +1,21 @@
 name: Bug
+description: 버그를 제보하는 템플릿입니다
 title: "[BUG] "
-labels: ["type:bug","priority:mid"]
+labels: ["type:bug", "priority:mid"]
 body:
   - type: textarea
-    attributes: { label: 재현 단계 }
+    attributes:
+      label: 재현 단계
+      description: 어떤 상황에서 문제가 발생했는지 단계별로 작성해주세요.
   - type: textarea
-    attributes: { label: 기대/실제 결과 }
+    attributes:
+      label: 기대/실제 결과
+      description: 기대한 동작과 실제 동작을 비교해주세요.
   - type: textarea
-    attributes: { label: 로그/스크린샷 }
+    attributes:
+      label: 로그/스크린샷
+      description: 오류 메시지, 콘솔 로그, 스크린샷 등을 첨부해주세요.
+  - type: input
+    attributes:
+      label: 영향 범위
+      description: 문제가 발생한 영역을 작성해주세요 (예: back/front)

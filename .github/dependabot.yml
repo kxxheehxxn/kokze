@@ -2,7 +2,26 @@ version: 2
 updates:
   - package-ecosystem: gradle
     directory: /back
-    schedule: { interval: monthly }
+    schedule: { interval: monthly }   
+    open-pull-requests-limit: 2       
+    rebase-strategy: disabled          
+    ignore:
+      - dependency-name: "*"           
+        update-types: ["version-update:semver-major"]
+    groups:                            
+      gradle-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
   - package-ecosystem: npm
     directory: /front
     schedule: { interval: monthly }
+    open-pull-requests-limit: 2
+    rebase-strategy: disabled
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      npm-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]

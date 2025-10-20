@@ -1,0 +1,13 @@
+name-template: "Release ${version}"
+tag-template: "${version}"
+categories:
+  - title:  Features
+    labels: ["type:feature"]
+  - title:  Fixes
+    labels: ["type:bug"]
+  - title:  Refactor/Chore
+    labels: ["type:refactor", "type:chore"]
+change-template: "- $TITLE (#$NUMBER) @$AUTHOR"
+template: |
+  ## Changes
+  $CHANGES

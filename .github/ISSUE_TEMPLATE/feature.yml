@@ -1,0 +1,10 @@
+name: Feature
+title: "[FEAT] "
+labels: ["type:feature"]
+body:
+  - type: textarea
+    attributes: { label: 배경/문제 }
+  - type: textarea
+    attributes: { label: 제안/해결(요약) }
+  - type: textarea
+    attributes: { label: 수용 기준(AC), description: 체크박스로 기재 }

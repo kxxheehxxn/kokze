@@ -1,6 +1,13 @@
-area:back:
+"area:back":
   - "back/**"
-area:front:
+
+"area:front":
   - "front/**"
-type:docs:
+
+"type:docs":
   - "**/*.md"
+
+"dependencies":
+  - "front/package.json"
+  - "front/package-lock.json"
+  - "back/**/build.gradle*"

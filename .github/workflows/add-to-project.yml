@@ -4,11 +4,13 @@ on:
     types: [opened, labeled]
   pull_request_target:
     types: [opened, reopened]
+
 permissions:
+  contents: read
   issues: write
   pull-requests: write
-  project: write
-  contents: read
+  project: write  
+
 jobs:
   add:
     runs-on: ubuntu-latest

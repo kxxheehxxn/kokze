@@ -1,0 +1,6 @@
+area:back:
+  - "back/**"
+area:front:
+  - "front/**"
+type:docs:
+  - "**/*.md"

@@ -1,0 +1,149 @@
+@font-face {
+  font-family: 'Freesentation-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-4Regular.woff2')
+    format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+* {
+  font-family: 'Freesentation-Regular';
+}
+
+html,
+body {
+  background-color: #fbfbfb;
+}
+
+/* 페이지 네이션 */
+.pagination-container {
+  display: flex;
+  /* column-gap: 10px; */
+}
+.paginate-buttons {
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+  background-color: rgb(255, 255, 255); /*rgb(242, 242, 242);*/
+  border: 1px solid white; /* rgb(217, 217, 217);*/
+  color: rgb(63, 63, 63);
+}
+.paginate-buttons:hover {
+  background-color: #f0efef;
+  border-radius: 5px;
+}
+.active-page {
+  color: black;
+  font-weight: bold;
+}
+.active-page:hover {
+  background-color: #f2f2f2;
+}
+
+/* assets/main.css 파일에 추가 */
+
+/* Bootstrap container 제한 완전 해제 */
+#app {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 100vh;
+}
+
+/* 모든 container 클래스들의 제한 해제 */
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+  max-width: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* 기본 여백 제거 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Bootstrap gutter 제거 */
+:root {
+  --bs-gutter-x: 0 !important;
+  --bs-gutter-y: 0 !important;
+}
+.no-nav-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 80px;
+  background-color: transparent;
+}
+
+/* 로고 왼쪽 정렬을 위한 여백 */
+.no-nav-header .logo-section {
+  margin-left: 20px;
+}
+.logo-section {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  background-color: transparent;
+  flex-shrink: 0;
+  margin-left: 20px; /* 로고에만 왼쪽 여백 */
+}
+.logo-section:hover {
+  transform: scale(1.05);
+}
+.logo {
+  background: transparent;
+}
+.logo-icon {
+  width: 54px;
+  height: 54px;
+  background: transparent !important;
+  border-radius: 50%;
+  padding: 2px;
+  object-fit: contain;
+}
+.signup-box {
+  background-color: #fff;
+  width: 100%;
+  max-width: 900px;
+  padding: 90px 140px;
+  border-radius: 30px;
+  box-shadow: 0 0 20px #85858540;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.sign-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+@media (max-width: 1024px) and (orientation: portrait) {
+  .signup-box {
+    margin: 20px;
+    min-height: 80vh;
+  }
+  .logo-section {
+    margin-left: 15px; /* 왼쪽 여백 줄임 */
+  }
+
+  .logo-icon {
+    width: 48px; /* 로고 아이콘 크기 줄임 */
+    height: 48px;
+  }
+}

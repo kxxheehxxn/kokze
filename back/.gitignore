@@ -13,8 +13,12 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
+# Vue build output
+src/main/webapp/resources/assets/
+
 ### Spring Properties ###
 application.properties
+redis.properties
 
 ### Eclipse ###
 .apt_generated
@@ -40,3 +44,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Webapp 폴더 제외 ###
+src/main/webapp/

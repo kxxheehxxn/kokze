@@ -6,10 +6,49 @@
 <configuration>
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true" />
+        <setting name="defaultExecutorType" value="REUSE"/>
+        <setting name="jdbcTypeForNull" value="NULL"/>
     </settings>
 
     <typeAliases>
-        <package name="org.ozea.board.domain" />
+        <package name="org.ozea.inquiry.domain" />
+        <package name="org.ozea.user.domain" />
+        <package name="org.ozea.goal.domain" />
+        <package name="org.ozea.notice.domain" />
+        <package name="org.ozea.asset.domain"/>
+        <package name="org.ozea.point.domain" />
+        <package name="org.ozea.bank.domain" />
+        <package name="org.ozea.product.domain"/>
+        <package name="org.ozea.term.domain"/>
+        <package name="org.ozea.quiz.domain"/>
     </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="org.ozea.common.type.UUIDTypeHandler" javaType="java.util.UUID"/>
+        <typeHandler javaType="java.time.LocalDate"
+                     handler="org.ozea.common.mybatis.type.LocalDateCompatTypeHandler"/>
+
+        <typeHandler javaType="java.time.LocalDateTime"
+                     handler="org.ozea.common.mybatis.type.LocalDateTimeCompatTypeHandler"/>
+
+        <typeHandler javaType="java.time.LocalTime"
+                     handler="org.ozea.common.mybatis.type.LocalTimeCompatTypeHandler"/>
+    </typeHandlers>
+
+    <mappers>
+        <mapper resource="org/ozea/goal/mapper/GoalMapper.xml"/>
+        <mapper resource="org/ozea/user/mapper/UserMapper.xml"/>
+        <mapper resource="org/ozea/inquiry/mapper/InquiryMapper.xml"/>
+        <mapper resource="org/ozea/notice/mapper/NoticeMapper.xml"/>
+        <mapper resource="org/ozea/asset/mapper/AssetMapper.xml"/>
+        <mapper resource="org/ozea/point/mapper/PointMapper.xml"/>
+        <mapper resource="org/ozea/bank/mapper/BankCodeMapper.xml"/>
+        <mapper resource="org/ozea/product/mapper/ProductMapper.xml"/>
+        <mapper resource="org/ozea/term/mapper/TermMapper.xml"/>
+        <mapper resource="org/ozea/quiz/mapper/QuizMapper.xml"/>
+        <mapper resource="org/ozea/api/allaccount/mapper/AllAccountMapper.xml"/>
+        <mapper resource="org/ozea/api/taxkakaoouth/mapper/TaxKakaoOuthMapper.xml"/>
+        <mapper resource="org/ozea/taxinfo/mapper/TaxInfoMapper.xml"/>
+    </mappers>
 
 </configuration>

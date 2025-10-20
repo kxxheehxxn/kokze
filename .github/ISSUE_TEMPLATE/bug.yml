@@ -1,0 +1,10 @@
+name: Bug
+title: "[BUG] "
+labels: ["type:bug","priority:mid"]
+body:
+  - type: textarea
+    attributes: { label: 재현 단계 }
+  - type: textarea
+    attributes: { label: 기대/실제 결과 }
+  - type: textarea
+    attributes: { label: 로그/스크린샷 }

@@ -1,10 +1,17 @@
 name: Feature
+description: 새로운 기능 추가 요청 템플릿입니다
 title: "[FEAT] "
 labels: ["type:feature"]
 body:
   - type: textarea
-    attributes: { label: 배경/문제 }
+    attributes:
+      label: 배경/문제
+      description: 왜 필요한 기능인가요?
   - type: textarea
-    attributes: { label: 제안/해결(요약) }
+    attributes:
+      label: 제안/해결(요약)
+      description: 핵심 아이디어를 간단히 작성해주세요
   - type: textarea
-    attributes: { label: 수용 기준(AC), description: 체크박스로 기재 }
+    attributes:
+      label: 수용 기준(AC)
+      description: 체크리스트 형태로 명시해주세요

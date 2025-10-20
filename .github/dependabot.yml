@@ -1,0 +1,8 @@
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /back
+    schedule: { interval: monthly }
+  - package-ecosystem: npm
+    directory: /front
+    schedule: { interval: monthly }

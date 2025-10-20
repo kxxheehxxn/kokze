@@ -1,13 +1,18 @@
 "area:back":
-  - "back/**"
+  - changed-files:
+      - any-glob-to-any-file: "back/**"
 
 "area:front":
-  - "front/**"
+  - changed-files:
+      - any-glob-to-any-file: "front/**"
 
 "type:docs":
-  - "**/*.md"
+  - changed-files:
+      - any-glob-to-any-file: "**/*.md"
 
 "dependencies":
-  - "front/package.json"
-  - "front/package-lock.json"
-  - "back/**/build.gradle*"
+  - changed-files:
+      - any-glob-to-any-file: |
+          front/package.json
+          front/package-lock.json
+          back/**/build.gradle*

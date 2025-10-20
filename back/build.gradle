@@ -85,8 +85,8 @@ dependencies {
   implementation "org.springframework.security:spring-security-taglibs:${springSecurityVersion}"
 
   // ===== AOP =====
-  implementation 'org.aspectj:aspectjrt:1.9.20'
-  implementation 'org.aspectj:aspectjweaver:1.9.20'
+  implementation 'org.aspectj:aspectjrt:1.9.24'
+  implementation 'org.aspectj:aspectjweaver:1.9.24'
 
   // ===== Mail =====
   implementation 'com.sun.mail:javax.mail:1.6.2'

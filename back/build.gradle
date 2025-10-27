@@ -121,9 +121,10 @@ dependencies {
 
   implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
-  //프로메테우스
+  // 프로메테우스 (explicit versions to avoid BOM hiccups in CI)
   implementation 'io.micrometer:micrometer-core:1.12.6'
   implementation 'io.micrometer:micrometer-registry-prometheus:1.12.6'
+  compileOnly   'io.micrometer:micrometer-registry-prometheus:1.12.6'
   implementation 'com.lmax:disruptor:3.4.4'
 }
 
@@ -140,6 +141,12 @@ configurations.all {
     force 'org.apache.logging.log4j:log4j-core:2.23.1'
     force 'org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1'
 
+    // Guard: if anything tries to override or drop micrometer-registry-prometheus, pin it explicitly
+    eachDependency { details ->
+      if (details.requested.group == 'io.micrometer' && details.requested.name == 'micrometer-registry-prometheus') {
+        details.useVersion '1.12.6'
+      }
+    }
   }
   exclude group: 'ch.qos.logback', module: 'logback-classic'
   exclude group: 'ch.qos.logback', module: 'logback-core'

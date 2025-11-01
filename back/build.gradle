@@ -12,7 +12,7 @@ repositories {
 }
 
 ext {
-  junitVersion = '5.14.0'
+  junitVersion = '5.14.1'
   springVersion = '5.3.39'
   lombokVersion = '1.18.42'
   springSecurityVersion = '5.8.16'
@@ -73,7 +73,7 @@ dependencies {
   implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
 
   // ===== JSON =====
-  implementation platform('com.fasterxml.jackson:jackson-bom:2.20.0')
+  implementation platform('com.fasterxml.jackson:jackson-bom:2.20.1')
   implementation 'com.fasterxml.jackson.core:jackson-databind'
   implementation 'com.fasterxml.jackson.core:jackson-annotations'
   implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'

@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9d339375-98ec-46dc-ae5f-3fbbd5c1a4a2" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/HomeController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/controller/ApiTestController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/servlet-context.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dockerignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/ci-cd.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-08-1.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-10-1.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-11-1.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-12-1.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-12-10.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-12-2.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-12-3.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-12-4.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-12-5.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-12-6.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-12-7.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-12-8.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application-2025-08-12-9.log.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/application.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/ai/OpenAIParams.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/ai/config/OpenAIConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/ai/controller/AiController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/ai/dto/ChatDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/ai/dto/SummaryReq.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/ai/filter/RateLimitFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/ai/service/OpenAISummarizeService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/ai/service/OpenAISummarizeServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/allaccount/controller/AllAccountController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/allaccount/dto/request/AllAccountReqDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/allaccount/dto/response/AllAccountResDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/allaccount/mapper/AllAccountMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/allaccount/service/AllAccountService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/taxkakaoouth/controller/TaxKakaoOuthController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/taxkakaoouth/dto/request/TaxKakaoOuthReqDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/taxkakaoouth/dto/request/TaxOuthReqDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/taxkakaoouth/dto/request/TwoWayInfoDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/taxkakaoouth/mapper/TaxKakaoOuthMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/taxkakaoouth/service/TaxKakaoOuthService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/util/CodefApiRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/util/CommonConstant.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/util/HttpRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/util/RSAUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/api/util/RequestToken.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/asset/controller/AssetController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/asset/domain/AssetVO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/asset/domain/BankAccountVO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/asset/dto/AssetDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/asset/dto/BankAccountDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/asset/mapper/AssetMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/asset/service/AssetImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/asset/service/AssetService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/bank/controller/BankCodeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/bank/domain/BankCode.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/bank/dto/BankCodeDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/bank/mapper/BankCodeMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/bank/service/BankCodeService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/bank/service/BankCodeServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/cache/CacheHelper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/config/AsyncConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/config/OpenApiConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/config/RedisConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/config/RootConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/config/ServletConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/config/WebConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/controller/DebugController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/controller/HomeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/dto/ApiResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/exception/ErrorCode.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/exception/GlobalExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/filter/IdempotencyFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/limiter/RateLimiter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/limiter/SlidingWindowRateLimiter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/mybatis/type/LocalDateCompatTypeHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/mybatis/type/LocalDateTimeCompatTypeHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/mybatis/type/LocalTimeCompatTypeHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/pagenation/Page.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/pagenation/PageRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/type/UUIDTypeHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/util/JsonResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/common/util/LogFileWriter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/exception/ApiException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/controller/GoalController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/domain/Goal.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/dto/request/GoalCreateRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/dto/request/GoalUpdateRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/dto/request/LinkAccountRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/dto/response/ClaimRewardResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/dto/response/GoalDetailResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/dto/response/GoalListResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/dto/response/LinkedAccountDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/dto/response/PastGoalResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/dto/response/ProductRecommendResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/dto/response/RecommendNextGoalDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/mapper/GoalMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/service/GoalService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/goal/service/GoalServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/inquiry/controller/InquiryController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/inquiry/domain/InquiryVO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/inquiry/dto/InquiryDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/inquiry/mapper/InquiryMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/inquiry/service/InquiryService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/inquiry/service/InquiryServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/monitoring/config/PrometheusConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/monitoring/controller/MonitoringController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/monitoring/filter/RequestTimingFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/monitoring/web/PrometheusScrapeServlet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/monitoring/web/WebMvcConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/notice/controller/NoticeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/notice/domain/NoticeVO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/notice/dto/NoticeDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/notice/mapper/NoticeMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/notice/service/NoticeService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/notice/service/NoticeServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/point/controller/PointController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/point/domain/Point.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/point/dto/PointDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/point/mapper/PointMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/point/service/PointService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/point/service/PointServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/client/FssApiClient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/client/dto/FssApiResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/client/dto/FssApiResult.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/client/dto/FssProductDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/client/dto/FssProductOptionDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/controller/ProductController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/domain/Product.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/domain/ProductOption.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/dto/request/ProductFilterRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/dto/response/MbtiRecommendResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/dto/response/ProductDetailResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/dto/response/ProductListResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/dto/response/ProductOptionDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/dto/response/ProductResponseDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/mapper/ProductMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/scheduler/ProductScheduler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/service/ProductService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/service/ProductServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/service/ProductSummaryWorker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/controller/QuizController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/domain/QuizVO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/domain/UserQuizVO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/dto/QuizDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/dto/QuizResponseDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/dto/QuizSubmitRequestDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/dto/QuizSubmitResponseDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/dto/SolvedQuizResponseDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/exception/AlreadySolvedException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/mapper/QuizMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/service/QuizService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/quiz/service/QuizServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/account/domain/CustomUser.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/account/dto/AuthResultDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/account/dto/LoginDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/account/dto/UserInfoDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/client/KakaoApiClient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/config/KakaoUserDetailsService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/config/LocalUserDetailsService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/config/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/controller/AuthController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/controller/KakaoApiController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/controller/LogoutController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/controller/TokenController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/filter/AuthenticationErrorFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/filter/JwtAuthenticationFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/filter/JwtUsernamePasswordAuthenticationFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/handler/CustomAccessDeniedHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/handler/CustomAuthenticationEntryPoint.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/handler/LoginFailureHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/handler/LoginSuccessHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/service/CustomUserDetailsService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/service/LoginAttemptService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/util/JwtProcessor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/util/blacklist/RedisTokenBlacklistService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/security/util/blacklist/TokenBlacklistService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/taxinfo/controller/TaxInfoController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/taxinfo/dto/TaxBasicDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/taxinfo/dto/TaxDetailDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/taxinfo/dto/TaxInfoItemDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/taxinfo/dto/TaxInfoReqDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/taxinfo/mapper/TaxInfoMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/taxinfo/service/TaxInfoService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/term/controller/TermController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/term/domain/TermVO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/term/dto/TermDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/term/mapper/TermMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/term/service/TermService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/controller/UserController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/domain/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/dto/PasswordResetDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/dto/UserDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/dto/UserSignupDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/dto/VerificationDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/exception/PasswordMissmatchException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/mapper/UserMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/service/EmailService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/service/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/service/UserServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/user/service/VerificationCodeService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db/migration/V2__Sample_Data.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/log4jdbc.log4j2.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/mybatis-config.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/api/allaccount/mapper/AllAccountMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/api/taxkakaoouth/mapper/TaxKakaoOuthMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/asset/mapper/AssetMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/bank/mapper/BankCodeMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/goal/mapper/GoalMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/inquiry/mapper/InquiryMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/notice/mapper/NoticeMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/point/mapper/PointMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/product/mapper/ProductMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/quiz/mapper/QuizMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/taxinfo/mapper/TaxInfoMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/term/mapper/TermMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/ozea/user/mapper/UserMapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/redis.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/AllAccountTest.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/additional-info.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/index.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/local-login.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/main.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/mbti-survey.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/signup.jsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/resources/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/resources/index.html" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Jsp File" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "kxxheehxxn"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/kxxheehxxn/kokze.git",
+    "accountId": "59de69c3-f375-461f-946b-010512c53641"
+  }
+}]]></component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="35KmNXPhVUFBrxHKSCyi1boxWA2" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build back.executor": "Run",
+    "RunOnceActivity.git.unshallow": "true",
+    "Tomcat Server.Tomcat 9.0.105.executor": "Run",
+    "git-widget-placeholder": "22-feat-remove",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="Tomcat 9.0.105" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.105" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
+      <option name="COMMON_VM_ARGUMENTS" value="-Dfile.encoding=UTF-8" />
+      <option name="UPDATING_POLICY" value="restart-server" />
+      <deployment>
+        <artifact name="Gradle : org.ozea : back-1.0-SNAPSHOT.war">
+          <settings>
+            <option name="CONTEXT_PATH" value="/" />
+          </settings>
+        </artifact>
+      </deployment>
+      <server-settings>
+        <option name="BASE_DIRECTORY_NAME" value="f48fe063-13e5-4fab-bd25-e57a26752169" />
+      </server-settings>
+      <predefined_log_file enabled="true" id="Tomcat" />
+      <predefined_log_file enabled="true" id="Tomcat Catalina" />
+      <predefined_log_file id="Tomcat Manager" />
+      <predefined_log_file id="Tomcat Host Manager" />
+      <predefined_log_file id="Tomcat Localhost Access" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="55884" />
+      </RunnerSettings>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Cover">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Profile">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="Gradle : org.ozea : back-1.0-SNAPSHOT.war" />
+        </option>
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9d339375-98ec-46dc-ae5f-3fbbd5c1a4a2" name="Changes" comment="" />
+      <created>1762867097187</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1762867097187</updated>
+      <workItem from="1762867098285" duration="1429000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

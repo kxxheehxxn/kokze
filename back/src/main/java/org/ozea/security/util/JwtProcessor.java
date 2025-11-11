@@ -10,10 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Log4j2
 @Component
@@ -66,32 +63,38 @@ public class JwtProcessor {
         claims.put("jti", UUID.randomUUID().toString());
 
         JwtBuilder builder = Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuer(issuer)
-                .setIssuedAt(now)
-                .setExpiration(exp);
+                .header()
+                .type(Header.JWT_TYPE)
+                .and()
+                .claims(claims)
+                .subject(username)
+                .issuer(issuer)
+                .issuedAt(now)
+                .expiration(exp);
 
         if (includeAudience) {
-            builder.setAudience(audience);
+            builder.audience().add(audience).and();
         }
 
-        return builder.signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
+        return builder
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     private JwtParser baseParser() {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
                 .requireIssuer(issuer)
-                .setAllowedClockSkewSeconds(120)
+                .clockSkewSeconds(120)
                 .build();
     }
 
     public String getUsernameAllowExpired(String token) {
         if (token == null || token.trim().isEmpty()) return null;
         try {
-            Claims c = baseParser().parseClaimsJws(token).getBody();
+            Claims c = baseParser()
+                    .parseSignedClaims(token)
+                    .getPayload();
             String sub = c.getSubject();
             return (sub != null) ? sub : c.get("username", String.class);
         } catch (ExpiredJwtException e) {
@@ -108,10 +111,18 @@ public class JwtProcessor {
     public boolean validateToken(String token) {
         if (token == null || token.isBlank()) return false;
         try {
-            Claims c = baseParser().parseClaimsJws(token).getBody();
+            Claims c = baseParser()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
             if ("access".equals(c.get("type", String.class))) {
-                if (!audience.equals(c.getAudience())) {
-                    log.warn("[JWT FAIL] audience mismatch exp={} act={}", audience, c.getAudience());
+                Set<String> audiences = c.getAudience();
+                String aud = (audiences != null && !audiences.isEmpty())
+                        ? audiences.iterator().next()
+                        : null;
+
+                if (aud == null || !audience.equals(aud)) {
+                    log.warn("[JWT FAIL] audience mismatch exp={} act={}", audience, aud);
                     return false;
                 }
             }
@@ -130,7 +141,9 @@ public class JwtProcessor {
 
     public String getUsername(String token) {
         try {
-            Claims c = baseParser().parseClaimsJws(token).getBody();
+            Claims c = baseParser()
+                    .parseSignedClaims(token)
+                    .getPayload();
             String sub = c.getSubject();
             return sub != null ? sub : c.get("username", String.class);
         } catch (JwtException e) {
@@ -141,7 +154,10 @@ public class JwtProcessor {
 
     public String getTokenType(String token) {
         try {
-            return baseParser().parseClaimsJws(token).getBody().get("type", String.class);
+            return baseParser()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .get("type", String.class);
         } catch (JwtException e) {
             log.warn("JWT getTokenType fail: {}", e.getMessage());
             return null;
@@ -150,7 +166,10 @@ public class JwtProcessor {
 
     public String getJti(String token) {
         try {
-            return baseParser().parseClaimsJws(token).getBody().get("jti", String.class);
+            return baseParser()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .get("jti", String.class);
         } catch (JwtException e) {
             log.warn("JWT getJti fail: {}", e.getMessage());
             return null;
@@ -159,7 +178,10 @@ public class JwtProcessor {
 
     public Date getExpirationDate(String token) {
         try {
-            return baseParser().parseClaimsJws(token).getBody().getExpiration();
+            return baseParser()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getExpiration();
         } catch (JwtException e) {
             log.warn("JWT getExpirationDate fail: {}", e.getMessage());
             return null;

@@ -10,10 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Log4j2
 @Component
@@ -66,9 +63,9 @@ public class JwtProcessor {
         claims.put("jti", UUID.randomUUID().toString());
 
         JwtBuilder builder = Jwts.builder()
-                .header()               // header builder 열고
-                .type(Header.JWT_TYPE)  // typ: JWT
-                .and()                  // 다시 main builder로
+                .header()
+                .type(Header.JWT_TYPE)
+                .and()
                 .claims(claims)
                 .subject(username)
                 .issuer(issuer)
@@ -85,10 +82,10 @@ public class JwtProcessor {
     }
 
     private JwtParser baseParser() {
-        return Jwts.parser()                      // 예전 parserBuilder() → 이제 parser()
-                .verifyWith(getSigningKey())      // 예전 setSigningKey() 대체
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
                 .requireIssuer(issuer)
-                .clockSkewSeconds(120)            // 예전 setAllowedClockSkewSeconds(...)
+                .clockSkewSeconds(120)
                 .build();
     }
 
@@ -96,12 +93,11 @@ public class JwtProcessor {
         if (token == null || token.trim().isEmpty()) return null;
         try {
             Claims c = baseParser()
-                    .parseSignedClaims(token)     // 예전 parseClaimsJws → parseSignedClaims
+                    .parseSignedClaims(token)
                     .getPayload();
             String sub = c.getSubject();
             return (sub != null) ? sub : c.get("username", String.class);
         } catch (ExpiredJwtException e) {
-            // 만료된 토큰은 여기서 claims를 꺼낼 수 있음
             Claims c = e.getClaims();
             if (c == null) return null;
             String sub = c.getSubject();
@@ -118,9 +114,14 @@ public class JwtProcessor {
             Claims c = baseParser()
                     .parseSignedClaims(token)
                     .getPayload();
+
             if ("access".equals(c.get("type", String.class))) {
-                String aud = c.getAudience().toString();
-                if (!audience.equals(aud)) {
+                Set<String> audiences = c.getAudience();
+                String aud = (audiences != null && !audiences.isEmpty())
+                        ? audiences.iterator().next()
+                        : null;
+
+                if (aud == null || !audience.equals(aud)) {
                     log.warn("[JWT FAIL] audience mismatch exp={} act={}", audience, aud);
                     return false;
                 }

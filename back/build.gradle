@@ -136,20 +136,23 @@ configurations.all {
   resolutionStrategy {
     force 'redis.clients:jedis:3.10.0'
     force 'org.springframework.data:spring-data-redis:2.7.18'
-
     force 'org.apache.logging.log4j:log4j-api:2.23.1'
     force 'org.apache.logging.log4j:log4j-core:2.23.1'
     force 'org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1'
     force 'io.jsonwebtoken:jjwt-api:0.13.0'
+    force 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    force 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 
-    // Guard: if anything tries to override or drop micrometer-registry-prometheus, pin it explicitly
     eachDependency { details ->
-      if (details.requested.group == 'io.micrometer' && details.requested.name == 'micrometer-registry-prometheus') {
+      if (details.requested.group == 'io.micrometer' &&
+              details.requested.name == 'micrometer-registry-prometheus') {
         details.useVersion '1.12.6'
       }
     }
   }
+
   exclude group: 'io.jsonwebtoken', module: 'jjwt'
+
   exclude group: 'ch.qos.logback', module: 'logback-classic'
   exclude group: 'ch.qos.logback', module: 'logback-core'
   exclude group: 'org.slf4j', module: 'slf4j-simple'

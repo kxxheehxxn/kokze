@@ -1,16 +1,26 @@
 package org.ozea.product.service;
-import org.ozea.product.dto.request.ProductFilterRequestDto;
-import org.ozea.product.dto.response.MbtiRecommendResponseDto;
-import org.ozea.product.dto.response.ProductDetailResponseDto;
-import org.ozea.product.dto.response.ProductListResponseDto;
-import org.ozea.product.dto.response.ProductResponseDto;
+
+import lombok.RequiredArgsConstructor;
+import org.ozea.product.dto.ProductDto;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.UUID;
-public interface ProductService {
-    List<MbtiRecommendResponseDto> getRecommendedProductsByMbti(UUID userId);
-    List<ProductListResponseDto> getProductList(int page, int size);
-    int getTotalProductCount();
-    ProductDetailResponseDto getProductDetail(String finPrdtCd);
-    List<ProductListResponseDto> filterProducts(ProductFilterRequestDto filterDto);
-    String refreshAndSaveSummary(String finPrdtCd);
+
+@Service
+@RequiredArgsConstructor
+public class ProductService {
+
+    public List<ProductDto> findAll() {
+        // TODO: 크롤링 결과 or DB
+        return List.of(
+                ProductDto.builder()
+                        .id("p1")
+                        .name("청년 적금 4%")
+                        .bank("OO은행")
+                        .description("청년 대상 우대금리")
+                        .summary("청년 우대 적금\n금리 4%\n1년 만기")
+                        .category("SAVING")
+                        .build()
+        );
+    }
 }

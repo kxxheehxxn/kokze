@@ -1,25 +1,14 @@
 package org.ozea.user.domain;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.time.LocalDate;
-import java.util.UUID;
+
+import lombok.*;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class User  {
-    private UUID userId;
-    private String name;
+public class User {
+    private Long id;
     private String email;
-    private String password;
-    private String mbti;
-    private String phoneNum;
-    private LocalDate birthDate;
-    private String sex;
-    private Long salary;
-    private Long payAmount;
-    private String role;
-    private String kakaoAccessToken;
+    private String nickname;
+    private String tendencyType;
 }

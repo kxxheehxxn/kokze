@@ -12,7 +12,7 @@ repositories {
 }
 
 ext {
-  junitVersion = '5.14.0'
+  junitVersion = '5.14.1'
   springVersion = '5.3.39'
   lombokVersion = '1.18.42'
   springSecurityVersion = '5.8.16'
@@ -73,7 +73,7 @@ dependencies {
   implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
 
   // ===== JSON =====
-  implementation platform('com.fasterxml.jackson:jackson-bom:2.20.0')
+  implementation platform('com.fasterxml.jackson:jackson-bom:2.20.1')
   implementation 'com.fasterxml.jackson.core:jackson-databind'
   implementation 'com.fasterxml.jackson.core:jackson-annotations'
   implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
@@ -91,8 +91,8 @@ dependencies {
   implementation "org.springframework.security:spring-security-taglibs:${springSecurityVersion}"
 
   // ===== AOP =====
-  implementation 'org.aspectj:aspectjrt:1.9.24'
-  implementation 'org.aspectj:aspectjweaver:1.9.24'
+  implementation 'org.aspectj:aspectjrt:1.9.25'
+  implementation 'org.aspectj:aspectjweaver:1.9.25'
 
   // ===== Mail =====
   implementation 'com.sun.mail:javax.mail:1.6.2'
@@ -122,9 +122,9 @@ dependencies {
   implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
   // 프로메테우스 (explicit versions to avoid BOM hiccups in CI)
-  implementation 'io.micrometer:micrometer-core:1.15.5'
-  implementation 'io.micrometer:micrometer-registry-prometheus:1.15.5'
-  compileOnly   'io.micrometer:micrometer-registry-prometheus:1.15.5'
+  implementation 'io.micrometer:micrometer-core:1.16.0'
+  implementation 'io.micrometer:micrometer-registry-prometheus:1.16.0'
+  compileOnly   'io.micrometer:micrometer-registry-prometheus:1.16.0'
   implementation 'com.lmax:disruptor:3.4.4'
 }
 

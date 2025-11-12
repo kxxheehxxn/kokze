@@ -44,6 +44,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
     testCompileOnly 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    //Spring Security
+    implementation "org.springframework.security:spring-security-web:5.8.16"
+    implementation "org.springframework.security:spring-security-config:5.8.16"
+    implementation "org.springframework.security:spring-security-crypto:5.8.16"
 }
 
 test {

@@ -17,8 +17,6 @@
 
     <!-- @RequestMapping, @ResponseBody 등 활성화 + JSON 메시지컨버터 등록 -->
     <mvc:annotation-driven/>
-
-    <!-- JSP를 쓴다면만 필요. 프론트 분리면 생략 가능 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/"/>
         <property name="suffix" value=".jsp"/>

@@ -1,5 +1,6 @@
 package org.ozea.auth.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.ozea.auth.dto.LoginRequest;
 import org.ozea.auth.dto.LoginResponse;
 import org.ozea.auth.service.KakaoAuthService;
@@ -11,17 +12,13 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final LocalAuthService localAuthService;
     private final KakaoAuthService kakaoAuthService;
-
-    public AuthController(LocalAuthService localAuthService, KakaoAuthService kakaoAuthService) {
-        this.localAuthService = localAuthService;
-        this.kakaoAuthService = kakaoAuthService;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {

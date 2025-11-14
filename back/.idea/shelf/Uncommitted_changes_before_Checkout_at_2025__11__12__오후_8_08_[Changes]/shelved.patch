@@ -1,0 +1,117 @@
+Index: src/main/java/org/ozea/recommend/controller/RecommendController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.ozea.recommend.controller;\n\nimport org.ozea.recommend.dto.RecommendResponseDto;\nimport org.ozea.recommend.service.RecommendService;\nimport org.springframework.web.bind.annotation.*;\n\n@RestController\n@RequestMapping(\"/api/recommend\")\npublic class RecommendController {\n\n    private final RecommendService recommendService;\n    public RecommendController(RecommendService recommendService) {\n        this.recommendService = recommendService;\n    }\n\n    @GetMapping\n    public RecommendResponseDto recommend() {\n        return recommendService.recommendForCurrentUser();\n    }\n}
+===================================================================
+diff --git a/src/main/java/org/ozea/recommend/controller/RecommendController.java b/src/main/java/org/ozea/recommend/controller/RecommendController.java
+--- a/src/main/java/org/ozea/recommend/controller/RecommendController.java	(revision e75aeb290280d23a4f4446bbe49c39106ba090c4)
++++ b/src/main/java/org/ozea/recommend/controller/RecommendController.java	(date 1762882253581)
+@@ -1,17 +1,16 @@
+ package org.ozea.recommend.controller;
+ 
++import lombok.RequiredArgsConstructor;
+ import org.ozea.recommend.dto.RecommendResponseDto;
+ import org.ozea.recommend.service.RecommendService;
+ import org.springframework.web.bind.annotation.*;
+ 
++@RequiredArgsConstructor
+ @RestController
+ @RequestMapping("/api/recommend")
+ public class RecommendController {
+ 
+     private final RecommendService recommendService;
+-    public RecommendController(RecommendService recommendService) {
+-        this.recommendService = recommendService;
+-    }
+ 
+     @GetMapping
+     public RecommendResponseDto recommend() {
+Index: src/main/java/org/ozea/assessment/controller/AssessmentController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.ozea.assessment.controller;\n\nimport org.ozea.assessment.dto.AssessmentAnswerDto;\nimport org.ozea.assessment.dto.AssessmentResultDto;\nimport org.ozea.assessment.service.AssessmentService;\nimport org.springframework.web.bind.annotation.*;\n\n@RestController\n@RequestMapping(\"/api/assessment\")\npublic class AssessmentController {\n\n    private final AssessmentService assessmentService;\n\n    public AssessmentController(AssessmentService assessmentService) {\n        this.assessmentService = assessmentService;\n    }\n\n    @PostMapping(\"/submit\")\n    public AssessmentResultDto submit(@RequestBody AssessmentAnswerDto dto) {\n        return assessmentService.evaluate(dto);\n    }\n\n    @GetMapping(\"/me\")\n    public AssessmentResultDto myResult() {\n        // TODO: JWT에서 사용자 꺼내서 조회\n        return new AssessmentResultDto(\"UNKNOWN\");\n    }\n}
+===================================================================
+diff --git a/src/main/java/org/ozea/assessment/controller/AssessmentController.java b/src/main/java/org/ozea/assessment/controller/AssessmentController.java
+--- a/src/main/java/org/ozea/assessment/controller/AssessmentController.java	(revision e75aeb290280d23a4f4446bbe49c39106ba090c4)
++++ b/src/main/java/org/ozea/assessment/controller/AssessmentController.java	(date 1762882253585)
+@@ -1,20 +1,18 @@
+ package org.ozea.assessment.controller;
+ 
++import lombok.RequiredArgsConstructor;
+ import org.ozea.assessment.dto.AssessmentAnswerDto;
+ import org.ozea.assessment.dto.AssessmentResultDto;
+ import org.ozea.assessment.service.AssessmentService;
+ import org.springframework.web.bind.annotation.*;
+ 
++@RequiredArgsConstructor
+ @RestController
+ @RequestMapping("/api/assessment")
+ public class AssessmentController {
+ 
+     private final AssessmentService assessmentService;
+ 
+-    public AssessmentController(AssessmentService assessmentService) {
+-        this.assessmentService = assessmentService;
+-    }
+-
+     @PostMapping("/submit")
+     public AssessmentResultDto submit(@RequestBody AssessmentAnswerDto dto) {
+         return assessmentService.evaluate(dto);
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"9d339375-98ec-46dc-ae5f-3fbbd5c1a4a2\" name=\"Changes\" comment=\"\">\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/ai/dto/SummaryRequest.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/ai/dto/SummaryResponse.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/ai/service/AiSummaryService.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/ai/service/AiSummaryServiceImpl.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/assessment/controller/AssessmentController.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/assessment/dto/AssessmentAnswerDto.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/assessment/dto/AssessmentResultDto.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/assessment/service/AssessmentService.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/assessment/service/AssessmentServiceImpl.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/auth/controller/AuthController.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/auth/dto/LoginRequest.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/auth/dto/LoginResponse.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/auth/jwt/JwtProvider.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/auth/service/KakaoAuthService.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/auth/service/LocalAuthService.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/common/dto/ApiResponse.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/config/WebConfig.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/crawling/service/CrawlingService.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/product/controller/ProductController.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/product/dto/ProductDto.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/product/service/ProductService.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/recommend/controller/RecommendController.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/recommend/dto/RecommendResponseDto.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/recommend/service/RecommendService.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/user/domain/User.java\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/ozea/user/service/UserService.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/compiler.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/compiler.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/build.gradle\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/build.gradle\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/ozea/HomeController.java\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/ozea/controller/ApiTestController.java\" beforeDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"ExternalProjectsData\">\n    <projectState path=\"$PROJECT_DIR$\">\n      <ProjectState />\n    </projectState>\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Jsp File\" />\n        <option value=\"Class\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$/..\" />\n  </component>\n  <component name=\"GitHubPullRequestSearchHistory\"><![CDATA[{\n  \"lastFilter\": {\n    \"state\": \"OPEN\",\n    \"assignee\": \"kxxheehxxn\"\n  }\n}]]></component>\n  <component name=\"GithubPullRequestsUISettings\"><![CDATA[{\n  \"selectedUrlAndAccountId\": {\n    \"url\": \"https://github.com/kxxheehxxn/kokze.git\",\n    \"accountId\": \"59de69c3-f375-461f-946b-010512c53641\"\n  }\n}]]></component>\n  <component name=\"KubernetesApiPersistence\"><![CDATA[{}]]></component>\n  <component name=\"KubernetesApiProvider\"><![CDATA[{\n  \"isMigrated\": true\n}]]></component>\n  <component name=\"LogFilters\">\n    <option name=\"FILTER_ERRORS\" value=\"false\" />\n    <option name=\"FILTER_WARNINGS\" value=\"false\" />\n    <option name=\"FILTER_INFO\" value=\"true\" />\n    <option name=\"FILTER_DEBUG\" value=\"true\" />\n    <option name=\"CUSTOM_FILTER\" />\n  </component>\n  <component name=\"ProjectColorInfo\"><![CDATA[{\n  \"associatedIndex\": 8\n}]]></component>\n  <component name=\"ProjectId\" id=\"35KmNXPhVUFBrxHKSCyi1boxWA2\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"Gradle.Build back.executor\": \"Run\",\n    \"RunOnceActivity.git.unshallow\": \"true\",\n    \"Tomcat Server.Tomcat 9.0.105.executor\": \"Run\",\n    \"git-widget-placeholder\": \"22-feat-remove\",\n    \"kotlin-language-version-configured\": \"true\",\n    \"node.js.detected.package.eslint\": \"true\",\n    \"node.js.detected.package.tslint\": \"true\",\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\n    \"nodejs_package_manager_path\": \"npm\",\n    \"settings.editor.selected.configurable\": \"reference.projectsettings.compiler.annotationProcessors\",\n    \"vue.rearranger.settings.migration\": \"true\"\n  }\n}]]></component>\n  <component name=\"RecentsManager\">\n    <key name=\"CreateClassDialog.RecentsKey\">\n      <recent name=\"org.ozea.assessment.service\" />\n    </key>\n  </component>\n  <component name=\"RunManager\">\n    <configuration name=\"Tomcat 9.0.105\" type=\"#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory\" factoryName=\"Local\" APPLICATION_SERVER_NAME=\"Tomcat 9.0.105\" ALTERNATIVE_JRE_ENABLED=\"false\" nameIsGenerated=\"true\">\n      <option name=\"COMMON_VM_ARGUMENTS\" value=\"-Dfile.encoding=UTF-8\" />\n      <option name=\"UPDATING_POLICY\" value=\"restart-server\" />\n      <deployment>\n        <artifact name=\"Gradle : org.ozea : back-1.0-SNAPSHOT.war\">\n          <settings>\n            <option name=\"CONTEXT_PATH\" value=\"/\" />\n          </settings>\n        </artifact>\n      </deployment>\n      <server-settings>\n        <option name=\"BASE_DIRECTORY_NAME\" value=\"f48fe063-13e5-4fab-bd25-e57a26752169\" />\n      </server-settings>\n      <predefined_log_file enabled=\"true\" id=\"Tomcat\" />\n      <predefined_log_file enabled=\"true\" id=\"Tomcat Catalina\" />\n      <predefined_log_file id=\"Tomcat Manager\" />\n      <predefined_log_file id=\"Tomcat Host Manager\" />\n      <predefined_log_file id=\"Tomcat Localhost Access\" />\n      <RunnerSettings RunnerId=\"Debug\">\n        <option name=\"DEBUG_PORT\" value=\"55884\" />\n      </RunnerSettings>\n      <ConfigurationWrapper VM_VAR=\"JAVA_OPTS\" RunnerId=\"Cover\">\n        <option name=\"USE_ENV_VARIABLES\" value=\"true\" />\n        <STARTUP>\n          <option name=\"USE_DEFAULT\" value=\"true\" />\n          <option name=\"SCRIPT\" value=\"\" />\n          <option name=\"VM_PARAMETERS\" value=\"\" />\n          <option name=\"PROGRAM_PARAMETERS\" value=\"\" />\n        </STARTUP>\n        <SHUTDOWN>\n          <option name=\"USE_DEFAULT\" value=\"true\" />\n          <option name=\"SCRIPT\" value=\"\" />\n          <option name=\"VM_PARAMETERS\" value=\"\" />\n          <option name=\"PROGRAM_PARAMETERS\" value=\"\" />\n        </SHUTDOWN>\n      </ConfigurationWrapper>\n      <ConfigurationWrapper VM_VAR=\"JAVA_OPTS\" RunnerId=\"Debug\">\n        <option name=\"USE_ENV_VARIABLES\" value=\"true\" />\n        <STARTUP>\n          <option name=\"USE_DEFAULT\" value=\"true\" />\n          <option name=\"SCRIPT\" value=\"\" />\n          <option name=\"VM_PARAMETERS\" value=\"\" />\n          <option name=\"PROGRAM_PARAMETERS\" value=\"\" />\n        </STARTUP>\n        <SHUTDOWN>\n          <option name=\"USE_DEFAULT\" value=\"true\" />\n          <option name=\"SCRIPT\" value=\"\" />\n          <option name=\"VM_PARAMETERS\" value=\"\" />\n          <option name=\"PROGRAM_PARAMETERS\" value=\"\" />\n        </SHUTDOWN>\n      </ConfigurationWrapper>\n      <ConfigurationWrapper VM_VAR=\"JAVA_OPTS\" RunnerId=\"Profile\">\n        <option name=\"USE_ENV_VARIABLES\" value=\"true\" />\n        <STARTUP>\n          <option name=\"USE_DEFAULT\" value=\"true\" />\n          <option name=\"SCRIPT\" value=\"\" />\n          <option name=\"VM_PARAMETERS\" value=\"\" />\n          <option name=\"PROGRAM_PARAMETERS\" value=\"\" />\n        </STARTUP>\n        <SHUTDOWN>\n          <option name=\"USE_DEFAULT\" value=\"true\" />\n          <option name=\"SCRIPT\" value=\"\" />\n          <option name=\"VM_PARAMETERS\" value=\"\" />\n          <option name=\"PROGRAM_PARAMETERS\" value=\"\" />\n        </SHUTDOWN>\n      </ConfigurationWrapper>\n      <ConfigurationWrapper VM_VAR=\"JAVA_OPTS\" RunnerId=\"Run\">\n        <option name=\"USE_ENV_VARIABLES\" value=\"true\" />\n        <STARTUP>\n          <option name=\"USE_DEFAULT\" value=\"true\" />\n          <option name=\"SCRIPT\" value=\"\" />\n          <option name=\"VM_PARAMETERS\" value=\"\" />\n          <option name=\"PROGRAM_PARAMETERS\" value=\"\" />\n        </STARTUP>\n        <SHUTDOWN>\n          <option name=\"USE_DEFAULT\" value=\"true\" />\n          <option name=\"SCRIPT\" value=\"\" />\n          <option name=\"VM_PARAMETERS\" value=\"\" />\n          <option name=\"PROGRAM_PARAMETERS\" value=\"\" />\n        </SHUTDOWN>\n      </ConfigurationWrapper>\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n        <option name=\"BuildArtifacts\" enabled=\"true\">\n          <artifact name=\"Gradle : org.ozea : back-1.0-SNAPSHOT.war\" />\n        </option>\n      </method>\n    </configuration>\n  </component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27\" />\n        <option value=\"bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"9d339375-98ec-46dc-ae5f-3fbbd5c1a4a2\" name=\"Changes\" comment=\"\" />\n      <created>1762867097187</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1762867097187</updated>\n      <workItem from=\"1762867098285\" duration=\"7026000\" />\n    </task>\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n</project>
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision e75aeb290280d23a4f4446bbe49c39106ba090c4)
++++ b/.idea/workspace.xml	(date 1762944610728)
+@@ -5,37 +5,10 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="9d339375-98ec-46dc-ae5f-3fbbd5c1a4a2" name="Changes" comment="">
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/ai/dto/SummaryRequest.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/ai/dto/SummaryResponse.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/ai/service/AiSummaryService.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/ai/service/AiSummaryServiceImpl.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/assessment/controller/AssessmentController.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/assessment/dto/AssessmentAnswerDto.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/assessment/dto/AssessmentResultDto.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/assessment/service/AssessmentService.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/assessment/service/AssessmentServiceImpl.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/auth/controller/AuthController.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/auth/dto/LoginRequest.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/auth/dto/LoginResponse.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/auth/jwt/JwtProvider.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/auth/service/KakaoAuthService.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/auth/service/LocalAuthService.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/common/dto/ApiResponse.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/config/WebConfig.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/crawling/service/CrawlingService.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/product/controller/ProductController.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/product/dto/ProductDto.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/product/service/ProductService.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/recommend/controller/RecommendController.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/recommend/dto/RecommendResponseDto.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/recommend/service/RecommendService.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/user/domain/User.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/user/service/UserService.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/HomeController.java" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/controller/ApiTestController.java" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/assessment/controller/AssessmentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/ozea/assessment/controller/AssessmentController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/ozea/product/controller/ProductController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/recommend/controller/RecommendController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/ozea/recommend/controller/RecommendController.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -215,7 +188,7 @@
+       <option name="number" value="Default" />
+       <option name="presentableId" value="Default" />
+       <updated>1762867097187</updated>
+-      <workItem from="1762867098285" duration="7026000" />
++      <workItem from="1762867098285" duration="10823000" />
+     </task>
+     <servers />
+   </component>

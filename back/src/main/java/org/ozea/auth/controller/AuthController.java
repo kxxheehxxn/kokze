@@ -1,10 +1,11 @@
 package org.ozea.auth.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.ozea.auth.dto.LoginRequest;
 import org.ozea.auth.dto.LoginResponse;
-import org.ozea.auth.service.KakaoAuthService;
 import org.ozea.auth.service.LocalAuthService;
+import org.ozea.auth.service.KakaoAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +13,10 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
-@RequiredArgsConstructor
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final LocalAuthService localAuthService;
@@ -22,7 +24,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
-        return ResponseEntity.ok(localAuthService.login(req));
+        log.info("POST /api/auth/login called: {}", req);
+        LoginResponse res = localAuthService.login(req);
+        return ResponseEntity.ok(res);
     }
 
     @PostMapping("/kakao")
@@ -36,7 +40,7 @@ public class AuthController {
         if (principal == null) {
             res.put("authenticated", false);
             res.put("username", null);
-        }else {
+        } else {
             res.put("authenticated", true);
             res.put("username", principal.getName());
         }

@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
   last_login_at  TIMESTAMP    NULL,
   created_at     TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at     TIMESTAMP    NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  tendency       varchar(50)  NOT NULL ,
+  tendency       varchar(50)  NULL ,
   UNIQUE KEY ux_users_email (email),
   KEY ix_users_last_login_at (last_login_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -7,8 +7,10 @@ import java.util.Map;
 
 @RestController
 public class HealthController {
+
     @GetMapping("/api/health")
-    public Map<String, Object> health(){
+    public Map<String, String> ping() {
+        System.out.println(">>>> /api/ping called");
         return Map.of("status", "ok");
     }
 }

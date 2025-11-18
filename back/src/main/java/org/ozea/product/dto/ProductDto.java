@@ -1,19 +1,37 @@
 package org.ozea.product.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Data
+import java.math.BigDecimal;
+
+@Entity
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "products")
 public class ProductDto {
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
     private String name;
-    private String bank;
-    private String description;
-    private String summary;
+
+    @Column(nullable = false, length = 30)
     private String category;
+
+    @Column(nullable = false, length = 20)
+    private String riskLevel;
+
+    @Column(precision = 5, scale = 2)
+    private BigDecimal interestRate;
+
+    @Column(precision = 15, scale = 0)
+    private BigDecimal minBalance;
+
+    @Column(columnDefinition = "text")
+    private String description;
 }

@@ -3,6 +3,7 @@ package org.ozea.auth.service;
 import lombok.RequiredArgsConstructor;
 import org.ozea.auth.dto.LoginRequest;
 import org.ozea.auth.dto.LoginResponse;
+import org.ozea.auth.dto.SignupRequest;
 import org.ozea.auth.jwt.JwtProvider;
 import org.ozea.user.domain.User;
 import org.ozea.user.repository.UserRepository;
@@ -37,6 +38,30 @@ public class LocalAuthService {
 
         String token = jwtProvider.generateToken(user.getEmail());
 
+        return LoginResponse.ok(token, user.getEmail());
+    }
+
+    public LoginResponse signup(SignupRequest req) {
+        if(userRepository.existsByEmail(req.getEmail())){
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+        }
+
+        String passwordHash = passwordEncoder.encode(req.getPassword());
+
+        User user = User.builder()
+                .email(req.getEmail())
+                .passwordHash(passwordHash)
+                .name(req.getName())
+                .phone(req.getPhone())
+                .role("USER")
+                .provider("LOCAL")
+                .active(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        userRepository.save(user);
+
+        String token = jwtProvider.generateToken(user.getEmail());
         return LoginResponse.ok(token, user.getEmail());
     }
 }

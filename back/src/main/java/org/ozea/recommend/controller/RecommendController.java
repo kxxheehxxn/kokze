@@ -12,6 +12,11 @@ public class RecommendController {
 
     private final RecommendService recommendService;
 
+    /**
+     * Provides recommendations for the current request context.
+     *
+     * @return a RecommendResponseDto containing recommended items and associated metadata
+     */
     @GetMapping
     public RecommendResponseDto recommend() {
         return recommendService.recommend();

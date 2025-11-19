@@ -14,6 +14,11 @@ public class ProductController {
 
     private final ProductService productService;
 
+    /**
+     * Retrieve all products.
+     *
+     * @return a list of ProductDto objects representing all products.
+     */
     @GetMapping
     public List<ProductDto> list() {
         return productService.findAll();

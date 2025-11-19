@@ -15,6 +15,12 @@ public class RecommendService {
     private final UserRepository userRepository;
     private final Recommender recommender;
 
+    /**
+     * Produce recommendation results for the current authenticated user, or for an anonymous session when no user is authenticated.
+     *
+     * @return a RecommendResponseDto containing recommendations for the current user, or recommendations for an anonymous session when no user is authenticated
+     * @throws IllegalStateException if an authenticated principal exists but no corresponding User is found
+     */
     public RecommendResponseDto recommend() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 

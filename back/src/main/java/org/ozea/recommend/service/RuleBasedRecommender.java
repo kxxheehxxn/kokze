@@ -18,6 +18,13 @@ public class RuleBasedRecommender implements Recommender {
     private final AssessmentRepository assessmentRepository;
     private final ProductRepository productRepository;
 
+    /**
+     * Provide product recommendations based on the user's authentication and latest risk assessment.
+     *
+     * @param user the authenticated user, or `null` to indicate an unauthenticated (guest) request
+     * @return a RecommendResponseDto containing recommended products — for guests, MEDIUM-risk products; for authenticated users, products matching the user's mapped risk level together with the assessment result
+     * @throws IllegalStateException if the authenticated user has no recorded RISK_TOLERANCE assessment
+     */
     @Override
     public RecommendResponseDto recommendFor(User user) {
         //비로그인시
@@ -39,6 +46,12 @@ public class RuleBasedRecommender implements Recommender {
         return RecommendResponseDto.from(products, result);
     }
 
+    /**
+     * Map an assessment result code to the corresponding product risk level.
+     *
+     * @param resultCode the assessment result code (e.g. "CONSERVATIVE", "AGGRESSIVE"); other values are treated as medium risk
+     * @return `"LOW"` for `"CONSERVATIVE"`, `"HIGH"` for `"AGGRESSIVE"`, `"MEDIUM"` for any other value
+     */
     private String mapRisk(String resultCode) {
         return switch (resultCode) {
             case "CONSERVATIVE" -> "LOW";

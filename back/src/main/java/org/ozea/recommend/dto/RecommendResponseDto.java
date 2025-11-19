@@ -26,4 +26,13 @@ public class RecommendResponseDto {
                 .products(products)
                 .build();
     }
+
+    public static RecommendResponseDto guest(List<ProductDto> products){
+        return RecommendResponseDto.builder()
+                .type("GUEST")
+                .resultCode("DEFAULT")
+                .score(null)
+                .products(products)
+                .build();
+    }
 }

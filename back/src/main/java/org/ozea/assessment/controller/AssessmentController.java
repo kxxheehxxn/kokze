@@ -1,5 +1,6 @@
 package org.ozea.assessment.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.ozea.assessment.dto.AssessmentAnswerDto;
 import org.ozea.assessment.dto.AssessmentResultDto;
@@ -19,7 +20,7 @@ public class AssessmentController {
     private final UserRepository userRepository;
 
     @PostMapping("/submit")
-    public AssessmentResultDto submit(@RequestBody AssessmentAnswerDto dto) {
+    public AssessmentResultDto submit(@Valid @RequestBody AssessmentAnswerDto dto) {
         User user = getCurrentUser();
 
         return assessmentService.evaluate(dto, user);

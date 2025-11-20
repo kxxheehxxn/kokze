@@ -6,6 +6,7 @@ import org.ozea.assessment.dto.AssessmentResultDto;
 import org.ozea.assessment.repository.AssessmentRepository;
 import org.ozea.user.domain.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -13,8 +14,9 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class AssessmentServiceImpl implements AssessmentService {
 
-    private AssessmentRepository assessmentRepository;
+    private final AssessmentRepository assessmentRepository;
 
+    @Transactional
     @Override
     public AssessmentResultDto evaluate(AssessmentAnswerDto dto, User user) {
         int score = calculateScore(dto);

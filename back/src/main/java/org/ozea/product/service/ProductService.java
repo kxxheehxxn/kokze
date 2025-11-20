@@ -2,6 +2,7 @@ package org.ozea.product.service;
 
 import lombok.RequiredArgsConstructor;
 import org.ozea.product.dto.ProductDto;
+import org.ozea.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,13 +11,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService {
 
+    private final ProductRepository productRepository;
+
     public List<ProductDto> findAll() {
-        // TODO: 크롤링 결과 or DB
-        return List.of(
-                ProductDto.builder()
-                        .id(1L)
-                        .name("청년 적금 4%")
-                        .build()
-        );
+        return productRepository.findAll();
     }
 }

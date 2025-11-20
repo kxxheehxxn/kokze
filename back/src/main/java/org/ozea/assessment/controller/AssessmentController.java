@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.ozea.assessment.dto.AssessmentAnswerDto;
 import org.ozea.assessment.dto.AssessmentResultDto;
 import org.ozea.assessment.service.AssessmentService;
-import org.ozea.common.dto.ApiResponse;
-import org.springframework.http.ResponseEntity;
+import org.ozea.user.domain.User;
+import org.ozea.user.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,18 +17,32 @@ import org.springframework.web.bind.annotation.*;
 public class AssessmentController {
 
     private final AssessmentService assessmentService;
+    private final UserRepository userRepository;
 
     @PostMapping("/submit")
-    public ResponseEntity<ApiResponse<AssessmentResultDto>> submit(
-            @Valid @RequestBody AssessmentAnswerDto dto
-    ) {
-        AssessmentResultDto result = assessmentService.evaluate(dto);
-        return ResponseEntity.ok(ApiResponse.ok(result));
+    public AssessmentResultDto submit(@Valid @RequestBody AssessmentAnswerDto dto) {
+        User user = getCurrentUser();
+
+        return assessmentService.evaluate(dto, user);
     }
 
     @GetMapping("/me")
     public AssessmentResultDto myResult() {
-        // TODO: JWT에서 사용자 꺼내서 조회
-        return new AssessmentResultDto();
+        User user = getCurrentUser();
+
+        return assessmentService.getLatestResultFor(user);
+    }
+
+    private User getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if(auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())){
+            throw new IllegalArgumentException("로그인이 필요합니다");
+        }
+
+        String email = (String) auth.getPrincipal();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("유저를 찾을 수 없습니다."));
     }
 }

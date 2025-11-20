@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.ozea.assessment.dto.AssessmentResultDto;
 import org.ozea.assessment.repository.AssessmentRepository;
 import org.ozea.product.dto.ProductDto;
-import org.ozea.product.repository.ProductRepository;
 import org.ozea.product.service.ProductCatalog;
 import org.ozea.recommend.dto.RecommendResponseDto;
 import org.ozea.user.domain.User;

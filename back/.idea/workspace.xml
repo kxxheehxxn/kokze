@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d1940fa6-888a-401e-93d4-b5e09d99e1b8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/product/service/DbProductCatalog.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/ozea/product/service/ProductCatalog.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V3__init_products.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/migration/V4__seed_products.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/product/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/ozea/product/service/ProductService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/ozea/recommend/service/RuleBasedRecommender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/ozea/recommend/service/RuleBasedRecommender.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -122,7 +122,7 @@
       <workItem from="1763124352458" duration="855000" />
       <workItem from="1763125211360" duration="4114000" />
       <workItem from="1763280092833" duration="23170000" />
-      <workItem from="1763543832958" duration="14020000" />
+      <workItem from="1763543832958" duration="15810000" />
     </task>
     <servers />
   </component>

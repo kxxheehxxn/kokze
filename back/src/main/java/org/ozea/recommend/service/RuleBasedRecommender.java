@@ -3,6 +3,7 @@ package org.ozea.recommend.service;
 import lombok.RequiredArgsConstructor;
 import org.ozea.assessment.dto.AssessmentResultDto;
 import org.ozea.assessment.repository.AssessmentRepository;
+import org.ozea.assessment.service.RiskProfileProvider;
 import org.ozea.product.dto.ProductDto;
 import org.ozea.product.service.ProductCatalog;
 import org.ozea.recommend.dto.RecommendResponseDto;
@@ -15,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RuleBasedRecommender implements Recommender {
 
-    private final AssessmentRepository assessmentRepository;
+    private final RiskProfileProvider riskProfileProvider;
     private final ProductCatalog productCatalog;
 
     @Override
@@ -28,9 +29,7 @@ public class RuleBasedRecommender implements Recommender {
         }
 
         //로그인시
-        AssessmentResultDto result = assessmentRepository
-                .findTopByUserAndTypeOrderByCreatedAtDesc(user, "RISK_TOLERANCE")
-                .orElseThrow(() -> new IllegalStateException("위험 성향 평가 결과가 없습니다."));
+        AssessmentResultDto result = riskProfileProvider.getLatestRiskProfile(user);
 
         String riskLevel = mapRisk(result.getResultCode());
 

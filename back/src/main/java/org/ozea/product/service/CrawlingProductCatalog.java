@@ -22,7 +22,7 @@ public class CrawlingProductCatalog implements ProductCatalog {
     private final CrawlingService crawlingService;
 
     private final Map<String, List<ProductDto>> riskCache = new ConcurrentHashMap<>();
-    private List<ProductDto> popularCache;
+    private volatile List<ProductDto> popularCache;
 
     private Instant lastRefresh = Instant.EPOCH;
     private static final Duration TTL = Duration.ofMinutes(10);
@@ -30,7 +30,7 @@ public class CrawlingProductCatalog implements ProductCatalog {
     @Override
     public List<ProductDto> findByRiskLevel(String riskLevel) {
         refreshCacheIfNeeded();
-        return riskCache != null ? popularCache : List.of();
+        return riskCache.getOrDefault(riskLevel, List.of());
     }
 
     private synchronized void refreshCacheIfNeeded() {
@@ -44,6 +44,9 @@ public class CrawlingProductCatalog implements ProductCatalog {
 
         crawled.forEach(p->{
             String risk = p.getRiskLevel();
+            if(risk == null){
+                return;
+            }
             riskCache.computeIfAbsent(risk, k -> new ArrayList<>()).add(p);
         });
 
@@ -59,6 +62,7 @@ public class CrawlingProductCatalog implements ProductCatalog {
 
     @Override
     public List<ProductDto> findPopular() {
-        return List.of();
+        refreshCacheIfNeeded();
+        return popularCache != null ? popularCache : List.of();
     }
 }

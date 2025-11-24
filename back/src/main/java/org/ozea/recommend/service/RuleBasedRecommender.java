@@ -2,7 +2,6 @@ package org.ozea.recommend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.ozea.assessment.dto.AssessmentResultDto;
-import org.ozea.assessment.repository.AssessmentRepository;
 import org.ozea.assessment.service.RiskProfileProvider;
 import org.ozea.product.dto.ProductDto;
 import org.ozea.product.service.ProductCatalog;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service("ruleBasedRecommender")
 @RequiredArgsConstructor
 public class RuleBasedRecommender implements Recommender {
 
@@ -24,7 +23,7 @@ public class RuleBasedRecommender implements Recommender {
         //비로그인시
         if(user == null){
             //우선적으로 미디움에 해당하는 상품 추천
-            List<ProductDto> products = productCatalog.findByRiskLevel("MEDIUM");
+            List<ProductDto> products = productCatalog.findPopular();
             return RecommendResponseDto.guest(products);
         }
 

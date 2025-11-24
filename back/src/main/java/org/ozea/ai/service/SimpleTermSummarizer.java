@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 @Service
 public class SimpleTermSummarizer implements TermSummarizer {
     //변경 가능
-
+    //백업
     @Override
     public String summarizeTo3Lines(String rawTerms) {
         if (rawTerms == null || rawTerms.isBlank()) {

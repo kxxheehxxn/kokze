@@ -32,7 +32,7 @@ public class AiRecommender implements Recommender {
                 result = riskProfileProvider.getLatestRiskProfile(user);
                 String riskLevel = mapRisk(result.getResultCode());
                 candidates = productCatalog.findByRiskLevel(riskLevel);
-            } catch (IllegalArgumentException e){
+            } catch (IllegalStateException e){
                 candidates = productCatalog.findPopular();
             }
         }

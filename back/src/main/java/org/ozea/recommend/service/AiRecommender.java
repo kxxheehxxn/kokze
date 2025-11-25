@@ -28,9 +28,13 @@ public class AiRecommender implements Recommender {
         if (user == null) {
             candidates = productCatalog.findPopular();
         } else {
-            result = riskProfileProvider.getLatestRiskProfile(user);
-            String riskLevel = mapRisk(result.getResultCode());
-            candidates = productCatalog.findByRiskLevel(riskLevel);
+            try{
+                result = riskProfileProvider.getLatestRiskProfile(user);
+                String riskLevel = mapRisk(result.getResultCode());
+                candidates = productCatalog.findByRiskLevel(riskLevel);
+            } catch (IllegalArgumentException e){
+                candidates = productCatalog.findPopular();
+            }
         }
 
         List<ProductDto> ranked = aiRecommendationClient.rankProducts(user, candidates);

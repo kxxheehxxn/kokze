@@ -10,16 +10,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class RecommendService {
 
     private final UserRepository userRepository;
-
-    @Qualifier("ruleBasedRecommender")
     private final Recommender ruleBasedRecommender;
-
-    @Qualifier("aiRecommender")
     private final Recommender aiRecommender;
+
+    public RecommendService(UserRepository userRepository, @Qualifier("ruleBasedRecommender") Recommender ruleBasedRecommender, @Qualifier("aiRecommender") Recommender aiRecommender) {
+        this.userRepository = userRepository;
+        this.ruleBasedRecommender = ruleBasedRecommender;
+        this.aiRecommender = aiRecommender;
+    }
 
     public RecommendResponseDto recommend(String strategy) {
 

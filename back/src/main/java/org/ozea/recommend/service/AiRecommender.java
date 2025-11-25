@@ -1,6 +1,7 @@
 package org.ozea.recommend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.ozea.ai.service.AiRecommendationClient;
 import org.ozea.assessment.dto.AssessmentResultDto;
 import org.ozea.assessment.service.RiskProfileProvider;
 import org.ozea.product.dto.ProductDto;
@@ -9,7 +10,6 @@ import org.ozea.recommend.dto.RecommendResponseDto;
 import org.ozea.user.domain.User;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Service("aiRecommender")
@@ -18,7 +18,7 @@ public class AiRecommender implements Recommender {
 
     private final RiskProfileProvider riskProfileProvider;
     private final ProductCatalog productCatalog;
-    //LLM 클라이언트 주입 예정
+    private final AiRecommendationClient aiRecommendationClient;
 
     @Override
     public RecommendResponseDto recommendFor(User user) {
@@ -33,12 +33,7 @@ public class AiRecommender implements Recommender {
             candidates = productCatalog.findByRiskLevel(riskLevel);
         }
 
-        List<ProductDto> ranked = candidates.stream()
-                .sorted(Comparator.comparing(
-                        ProductDto::getInterestRate,
-                        Comparator.nullsLast(Comparator.reverseOrder())
-                ))
-                .toList();
+        List<ProductDto> ranked = aiRecommendationClient.rankProducts(user, candidates);
 
         if(user == null){
             return RecommendResponseDto.guest(ranked);
